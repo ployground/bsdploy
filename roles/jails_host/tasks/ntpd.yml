@@ -1,0 +1,7 @@
+---
+- name: Enable ntpd in rc.conf
+  lineinfile: dest=/etc/rc.conf regexp=^ntpd_enable= line=ntpd_enable=\"YES\"
+  notify: restart ntpd
+- name: Disable public use of ntpd
+  lineinfile: dest=/etc/ntp.conf line='restrict default ignore'
+  notify: restart ntpd

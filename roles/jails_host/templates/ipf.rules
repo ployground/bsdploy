@@ -1,0 +1,2 @@
+pass in quick on {{ ansible_default_ipv4.interface }} all
+pass out quick on {{ ansible_default_ipv4.interface }} all

@@ -1,0 +1,3 @@
+---
+- name: renew dhcp lease
+  raw: /sbin/dhclient {{ ansible_default_ipv4.interface }} || true

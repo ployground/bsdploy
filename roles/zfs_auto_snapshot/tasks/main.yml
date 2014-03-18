@@ -1,0 +1,18 @@
+---
+- name: Ensure zfstools is installed
+  pkgng: name=zfstools state=present
+
+- name: Setup hourly zfs-auto-snapshot
+  cron: name="hourly zfs-auto-snapshot"  special_time=hourly  job="PATH=$PATH:/sbin:/usr/local/bin /usr/local/sbin/zfs-auto-snapshot -u hourly  24"
+- name: Setup daily zfs-auto-snapshot
+  cron: name="daily zfs-auto-snapshot"   special_time=daily   job="PATH=$PATH:/sbin:/usr/local/bin /usr/local/sbin/zfs-auto-snapshot -u daily    7"
+- name: Setup weekly zfs-auto-snapshot
+  cron: name="weekly zfs-auto-snapshot"  special_time=weekly  job="PATH=$PATH:/sbin:/usr/local/bin /usr/local/sbin/zfs-auto-snapshot -u weekly   4"
+- name: Setup monthly zfs-auto-snapshot
+  cron: name="monthly zfs-auto-snapshot" special_time=monthly job="PATH=$PATH:/sbin:/usr/local/bin /usr/local/sbin/zfs-auto-snapshot -u monthly 12"
+
+- name: Ensure python package without version number is installed
+  pkgng: name=python state=present
+
+- name: Install snapshot backup script
+  copy: src=zfs_snap_backup/zfs_snap_backup dest=/usr/local/bin/zfs_snap_backup mode=0755

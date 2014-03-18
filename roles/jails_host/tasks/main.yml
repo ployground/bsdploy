@@ -1,0 +1,137 @@
+---
+- name: bind host sshd to primary ip
+  lineinfile: dest=/etc/ssh/sshd_config regexp=^ListenAddress line='ListenAddress {{ ansible_default_ipv4.address }}'
+  notify: restart sshd
+
+- { include: ntpd.yml, tags: ntpd }
+
+- name: Enable ipfilter in rc.conf
+  lineinfile: dest=/etc/rc.conf regexp=^ipfilter_enable= line=ipfilter_enable=\"YES\"
+  notify: restart network
+- name: Set ipfilter_rules in rc.conf
+  lineinfile: dest=/etc/rc.conf regexp=^ipfilter_rules= line=ipfilter_rules=\"/etc/ipf.rules\"
+  notify: restart network
+- name: Setup ipf.rules
+  template: src=ipf.rules dest=/etc/ipf.rules
+  notify: restart network
+
+- name: Enable ipmon in rc.conf
+  lineinfile: dest=/etc/rc.conf regexp=^ipmon_enable= line=ipmon_enable=\"YES\"
+  notify: restart network
+- name: Set ipmon_flags in rc.conf
+  lineinfile: dest=/etc/rc.conf regexp=^ipmon_flags= line=ipmon_flags=\"-Ds\"
+  notify: restart network
+
+- name: Enable ipnat in rc.conf
+  lineinfile: dest=/etc/rc.conf regexp=^ipnat_enable= line=ipnat_enable=\"YES\"
+  notify: restart network
+- name: Set ipnat_rules in rc.conf
+  lineinfile: dest=/etc/rc.conf regexp=^ipnat_rules= line=ipnat_rules=\"/etc/ipnat.rules\"
+  notify: restart network
+- name: Setup ipnat.rules
+  template: src=ipnat.rules dest=/etc/ipnat.rules
+  notify: restart network
+  tags: ipnat_rules
+
+- name: Enable gateway in rc.conf
+  lineinfile: dest=/etc/rc.conf regexp=^gateway_enable= line=gateway_enable=\"YES\"
+  notify: restart network
+
+- name: Add lo1 to rc.conf
+  lineinfile: dest=/etc/rc.conf regexp=^cloned_interfaces= line=cloned_interfaces=\"lo1\"
+  notify: restart network
+
+- name: Enable allow_raw_sockets
+  sysctl: name=security.jail.allow_raw_sockets value=1 state=present
+- name: Enable sysvipc_allowed
+  sysctl: name=security.jail.sysvipc_allowed value=1 state=present
+
+- name: Ensure helper packages are installed
+  pkgng: name={{ item }} state=present
+  with_items:
+  - ezjail
+  - sudo
+  - screen
+  - bash
+  - rsync
+
+- name: Set default jail interface
+  lineinfile: dest=/etc/rc.conf regexp=^jail_interface= line=jail_interface=\"lo1\"
+  notify: restart ezjail
+- name: Set default jail parameters
+  lineinfile: dest=/etc/rc.conf regexp=^jail_parameters= line=jail_parameters=\"allow.raw_sockets=1\ allow.sysvipc=1\"
+  notify: restart ezjail
+- name: Set default jail exec stop
+  lineinfile: dest=/etc/rc.conf regexp=^jail_exec_stop= line=jail_exec_stop=\"/bin/sh\ /etc/rc.shutdown\"
+  notify: restart ezjail
+
+- name: Enable ezjail in rc.conf
+  lineinfile: dest=/etc/rc.conf regexp=^ezjail_enable= line=ezjail_enable=\"YES\"
+  notify: restart ezjail
+- name: Setup ezjail.conf
+  template: src=ezjail.conf dest=/usr/local/etc/ezjail.conf
+  notify: restart ezjail
+
+- name: Setup data zpool
+  zpool:
+    name="{{ awsome_bootstrap_data_pool_name }}"
+    geli="{{ awsome_bootstrap_geli|bool }}"
+    devices="{{ awsome_bootstrap_data_pool_devices }}"
+    raid_mode="{{ awsome_bootstrap_raid_mode }}"
+  register: data_pool_result
+
+- name: Setup rc.conf lines for data zpool
+  lineinfile: dest=/etc/rc.conf regexp={{ item.regexp }} line={{ item.line }}
+  with_items: data_pool_result.rc_lines
+  when: data_pool_result.rc_lines|default()
+
+- name: Set data zpool options
+  zfs:
+    name="{{ awsome_bootstrap_data_pool_name }}"
+    state=present
+    atime=off
+    checksum=fletcher4
+
+- name: Jails ZFS file system
+  zfs:
+    name="{{ awsome_bootstrap_data_pool_name }}/jails"
+    state=present
+    mountpoint=/usr/jails
+
+- name: Initialize ezjail (may take a while)
+  command: "ezjail-admin install -h {{ awsome_ezjail_install_host }} -r {{ awsome_ezjail_install_release|default(ansible_distribution_release) }} creates=/usr/jails/basejail"
+
+- name: Download pkg.txz
+  get_url: dest=/var/cache/pkg/All/pkg.txz url={{ pkg_txz_url }}
+
+- name: Directory for jail flavour "base"
+  file: dest=/usr/jails/flavours/base state=directory owner=root group=wheel
+
+- name: Pkg in base flavour
+  command: "tar -x -C /usr/jails/flavours/base --chroot --exclude '+*' -f /var/cache/pkg/All/pkg.txz creates=/usr/jails/flavours/base/usr/local/sbin/pkg"
+
+- name: The .ssh directory for root in base flavour
+  file: dest=/usr/jails/flavours/base/root/.ssh state=directory mode=0600 owner=root group=wheel
+- name: The etc directory in base flavour
+  file: dest=/usr/jails/flavours/base/etc state=directory owner=root group=wheel
+- name: The etc/ssh directory in base flavour
+  file: dest=/usr/jails/flavours/base/etc/ssh state=directory owner=root group=wheel
+
+- copy: src=make.conf dest=/usr/jails/flavours/base/etc/make.conf owner=root group=wheel
+- file: dest=/usr/jails/flavours/base/usr/local/etc/pkg/repos state=directory owner=root group=wheel
+- copy: src=pkg.conf dest=/usr/jails/flavours/base/usr/local/etc/pkg.conf owner=root group=wheel
+- template: src=FreeBSD.conf dest=/usr/jails/flavours/base/usr/local/etc/pkg/repos/FreeBSD.conf owner=root group=wheel
+
+- name: rc.conf for base flavour
+  copy: src=base_flavour_rc.conf dest=/usr/jails/flavours/base/etc/rc.conf owner=root group=wheel
+- name: sshd_config for base flavour
+  copy: src=base_flavour_sshd_config dest=/usr/jails/flavours/base/etc/ssh/sshd_config owner=root group=wheel
+- name: motd for base flavour
+  copy: src=base_flavour_motd dest=/usr/jails/flavours/base/etc/motd owner=root group=wheel
+- name: copy some settings from host to base flavour
+  shell: cmp -s {{ item.src }} {{ item.dest }} || cp -v {{ item.src }} {{ item.dest }}
+  register: _cp_settings_result
+  changed_when: _cp_settings_result.stdout|default() != ''
+  with_items:
+    - { src: "/etc/resolv.conf", dest: "/usr/jails/flavours/base/etc/resolv.conf" }
+    - { src: "/root/.ssh/authorized_keys", dest: "/usr/jails/flavours/base/root/.ssh/authorized_keys" }

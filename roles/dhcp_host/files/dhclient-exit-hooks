@@ -1,0 +1,10 @@
+# reset the sshd_config in any case
+case "$reason" in
+        BOUND|RENEW|REBIND|REBOOT)
+                # if we get a new ip, we add it to sshd_config and reload
+                grep -v "^ListenAddress" /etc/ssh/sshd_config > /etc/ssh/sshd_config.dhclientbase
+                cp /etc/ssh/sshd_config.dhclientbase /etc/ssh/sshd_config
+                echo "ListenAddress $new_ip_address" >> /etc/ssh/sshd_config
+                service sshd reload
+        ;;
+esac
