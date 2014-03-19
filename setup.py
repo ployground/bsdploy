@@ -11,7 +11,7 @@ setup(
     url='http://github.com/tomster/bsdploy',
     include_package_data=True,
     zip_safe=False,
-    packages=['ploy'],
+    packages=['bsdploy'],
     install_requires=[
         'setuptools',
         'ansible',
@@ -20,6 +20,6 @@ setup(
     ],
     entry_points="""
       [console_scripts]
-      ploy = ploy:main
-      pssh = ploy:aws_ssh
+      ploy = bsdploy:main
+      pssh = bsdploy:aws_ssh
     """)
