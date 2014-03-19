@@ -10,12 +10,17 @@ def bootstrap(**kwargs):
     import sys
     env.shell = '/bin/sh -c'
     necessary_files = {
-        'identity.pub': {'remote': '/mnt/root/.ssh/authorized_keys'},
+        'authorized_keys': {'remote': '/mnt/root/.ssh/authorized_keys'},
         'rc.conf': {'remote': '/mnt/etc/rc.conf'},
-        'sshd_config': {'remote': '/mnt/etc/ssh/sshd_config'},
-        'make.conf': {'remote': '/mnt/etc/make.conf'},
-        'pkg.conf': {'remote': '/mnt/usr/local/etc/pkg.conf'},
-        'FreeBSD.conf': {'remote': '/mnt/usr/local/etc/pkg/repos/FreeBSD.conf'}}
+        'sshd_config': {'remote': '/mnt/etc/ssh/sshd_config'}}
+
+    if not os.path.exists(os.path.join(env['lcwd'], 'authorized_keys')):
+        if os.path.exists(os.path.expanduser('~/.ssh/identity.pub')):
+            if not yesno("\nUse ~/.ssh/idenity.pub?"):
+                return
+        open(os.path.join(env['lcwd'], 'authorized_keys'), 'w').write(
+            open(os.path.expanduser('~/.ssh/identity.pub')).read())
+
     for key, info in necessary_files.items():
         local_path = os.path.join(env['lcwd'], key)
         if not os.path.exists(local_path):
