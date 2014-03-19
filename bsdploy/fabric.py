@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 
 
 def bootstrap(**kwargs):
@@ -24,7 +24,7 @@ def bootstrap(**kwargs):
     for key, info in necessary_files.items():
         local_path = os.path.join(env['lcwd'], key)
         if not os.path.exists(local_path):
-            print "You have to create %s first." % local_path
+            print("You have to create %s first." % local_path)
             sys.exit(1)
         info['local'] = local_path
     ssh_keys = set([
@@ -37,7 +37,7 @@ def bootstrap(**kwargs):
         if os.path.exists(ssh_key):
             pub_key = '%s.pub' % ssh_key
             if not os.path.exists(pub_key):
-                print "Public key '%s' for '%s' missing." % (pub_key, ssh_key)
+                print("Public key '%s' for '%s' missing." % (pub_key, ssh_key))
                 sys.exit(1)
     # default ssh settings for mfsbsd with possible overwrite by bootstrap-fingerprint
     fingerprint = env.server.config.get(
@@ -69,7 +69,7 @@ def bootstrap(**kwargs):
             if result.return_code == 0:
                 bsd_url = result.strip()
     if not bsd_url:
-        print "Found no FreeBSD system to install, please specify bootstrap-bsd-url and make sure mfsbsd is running"
+        print("Found no FreeBSD system to install, please specify bootstrap-bsd-url and make sure mfsbsd is running")
         return
     install_devices = [cd_device, usb_device]
     devices = set(sysctl_devices)
@@ -78,13 +78,13 @@ def bootstrap(**kwargs):
             if install_device.startswith(sysctl_device):
                 devices.remove(sysctl_device)
     devices = env.server.config.get('bootstrap-system-devices', ' '.join(devices)).split()
-    print "\nFound the following disk devices on the system:\n    %s" % ' '.join(sysctl_devices)
+    print("\nFound the following disk devices on the system:\n    %s" % ' '.join(sysctl_devices))
     real_interfaces = [x for x in interfaces.split() if not x.startswith('lo')]
     if len(real_interfaces):
-        print "\nFound the following network interfaces, now is your chance to update your rc.conf accordingly!\n    %s" % ' '.join(real_interfaces)
+        print("\nFound the following network interfaces, now is your chance to update your rc.conf accordingly!\n    %s" % ' '.join(real_interfaces))
         first_interface = real_interfaces[0]
     else:
-        print "\nWARNING! Found no suitable network interface!"
+        print("\nWARNING! Found no suitable network interface!")
         first_interface = None
     if not yesno("\nContinuing will destroy the existing data on the following devices:\n    %s\n\nContinue?" % ' '.join(devices)):
         return
@@ -170,5 +170,5 @@ def bootstrap(**kwargs):
     if value_asbool(env.server.config.get('bootstrap-reboot', 'true')):
         with settings(hide('warnings'), warn_only=True):
             run('reboot')
-    print "The SSH fingerprint of the newly bootstrapped server is:"
-    print fingerprint
+    print("The SSH fingerprint of the newly bootstrapped server is:")
+    print(fingerprint)
