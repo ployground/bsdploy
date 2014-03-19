@@ -21,5 +21,5 @@ setup(
     entry_points="""
       [console_scripts]
       ploy = ploy:main
-      pssh = mr.awsome:aws_ssh
+      pssh = ploy:aws_ssh
     """)
