@@ -22,4 +22,6 @@ setup(
       [console_scripts]
       ploy = bsdploy:main
       pssh = bsdploy:aws_ssh
+      [ansible_paths]
+      ploy = bsdploy:ansible_paths
     """)
