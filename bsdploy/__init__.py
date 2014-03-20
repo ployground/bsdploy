@@ -17,7 +17,7 @@ ansible_paths = dict(
 )
 
 
-class PloyBootstrapCmd(object):
+class PloyBootstrapHostCmd(object):
 
     def __init__(self, aws):
         self.aws = aws
@@ -25,7 +25,7 @@ class PloyBootstrapCmd(object):
     def __call__(self, argv, help):
         """Bootstrap a jailhost that's been booted into MFSBsd."""
         parser = argparse.ArgumentParser(
-            prog="ploy bootstrap",
+            prog="ploy bootstrap-jailhost",
             description=help,
             add_help=False,
         )
@@ -66,7 +66,7 @@ class PloyConfigureHostCmd(object):
 
 def get_commands(aws):
     return [
-        ('bootstrap', PloyBootstrapCmd(aws)),
+        ('bootstrap-jailhost', PloyBootstrapHostCmd(aws)),
         ('configure-jailhost', PloyConfigureHostCmd(aws)),
         ]
 
