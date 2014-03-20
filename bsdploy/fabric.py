@@ -215,7 +215,7 @@ def bootstrap(**kwargs):
 
     # upload bootstrap files
     for info in bootstrap_files.values():
-        if 'remote' in info:
+        if 'remote' in info and exists(info['local']):
             put(info['local'], info['remote'], mode=info.get('mode'))
 
     # install pkg, the tarball is also used for the ezjail flavour in bootstrap_ezjail
