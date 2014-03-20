@@ -2,15 +2,15 @@ from __future__ import absolute_import, print_function
 from os.path import join, expanduser, exists, abspath
 from . import ploy_path
 
-""" we need some files to bootstrap the FreeBSD installation.
-Some...
-    - need to be provided by the user (i.e. authorized_keys)
-    - others have some (sensible) defaults (i.e. rc.conf)
-    - some can be downloaded via URL (i.e.) http://pkg.freebsd.org/freebsd:9:x86:64/latest/Latest/pkg.txz
-"""
-
 
 def get_bootstrap_files(env, ssh_keys=None):
+
+    """ we need some files to bootstrap the FreeBSD installation.
+    Some...
+        - need to be provided by the user (i.e. authorized_keys)
+        - others have some (sensible) defaults (i.e. rc.conf)
+        - some can be downloaded via URL (i.e.) http://pkg.freebsd.org/freebsd:9:x86:64/latest/Latest/pkg.txz
+    """
 
     ploy_conf_path = join(env.server.master.main_config.path)
     default_template_path = join(ploy_path, 'bootstrap-files')
