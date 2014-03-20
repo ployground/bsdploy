@@ -14,7 +14,7 @@ def get_bootstrap_files(env, ssh_keys=None):
 
     ploy_conf_path = join(env.server.master.main_config.path)
     default_template_path = join(ploy_path, 'bootstrap-files')
-    custom_template_path = abspath(join(ploy_conf_path, '..', 'bootstrap-files'))
+    custom_template_path = abspath(join(ploy_conf_path, '..', 'deployment', 'bootstrap-files'))
     download_path = abspath(join(ploy_conf_path, '..', 'downloads'))
 
     bootstrap_files = {
