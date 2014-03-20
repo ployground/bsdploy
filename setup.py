@@ -21,7 +21,7 @@ setup(
     entry_points="""
       [console_scripts]
       ploy = bsdploy:main
-      pssh = bsdploy:aws_ssh
+      pssh = bsdploy:ssh
       [ansible_paths]
       ploy = bsdploy:ansible_paths
     """)
