@@ -17,6 +17,7 @@ setup(
         'ansible',
         'mr.awsome.ansible',
         'mr.awsome.ezjail',
+        'mr.awsome.fabric',
     ],
     entry_points="""
       [console_scripts]
