@@ -1,5 +1,92 @@
 from __future__ import absolute_import, print_function
+from os.path import join, expanduser, exists, abspath
+from . import ploy_path
 
+""" we need some files to bootstrap the FreeBSD installation.
+Some...
+    - need to be provided by the user (i.e. authorized_keys)
+    - others have some (sensible) defaults (i.e. rc.conf)
+    - some can be downloaded via URL (i.e.) http://pkg.freebsd.org/freebsd:9:x86:64/latest/Latest/pkg.txz
+"""
+
+
+def get_bootstrap_files(env, ssh_keys=None):
+
+    ploy_conf_path = join(env.server.master.main_config.path)
+    default_template_path = join(ploy_path, 'bootstrap-files')
+    custom_template_path = abspath(join(ploy_conf_path, '..', 'bootstrap-files'))
+    download_path = abspath(join(ploy_conf_path, '..', 'downloads'))
+
+    bootstrap_files = {
+        'authorized_keys': {
+            'remote': '/mnt/root/.ssh/',
+            'expected_path': ploy_conf_path,
+            'fallback': expanduser('~/.ssh/identity.pub')
+            },
+        'rc.conf': {
+            'remote': '/mnt/etc/rc.conf'
+            },
+        'make.conf': {
+            'remote': '/mnt/etc/make.conf'
+            },
+        'pkg.conf': {
+            'remote': '/mnt/usr/local/etc/pkg.conf'
+            },
+        'FreeBSD.conf': {
+            'remote': '/mnt/usr/local/etc/pkg/repos/FreeBSD.conf'
+            },
+        'sshd_config': {
+            'remote': '/mnt/etc/ssh/sshd_config'
+            },
+        'pkg.txz': {
+            'url': 'http://pkg.freebsd.org/freebsd:9:x86:64/latest/Latest/pkg.txz',
+            'remote': '/mnt/var/cache/pkg/All/pkg.txz'
+            },
+        'mfsbsd-se-9.2-RELEASE-amd64.iso': {
+            'url': 'http://mfsbsd.vx.sk/files/iso/9/amd64/mfsbsd-se-9.2-RELEASE-amd64.iso',
+            'md5': '660d2b65e55a982c071891b7996fe684',
+            },
+    }
+
+    for filename, info in bootstrap_files.items():
+        if 'expected_path' in info:
+            expected_path = info['expected_path']
+        elif 'url' in info:
+            expected_path = download_path
+        else:
+            expected_path = custom_template_path
+
+        local_path = join(expected_path, filename)
+
+        if not exists(local_path) and not 'url' in info:
+            local_path = info.get('fallback', join(default_template_path, filename))
+
+        if not exists(local_path) and not 'url' in info:
+            print('Cannot find %s' % local_path)
+            sys.exit(1)
+
+        bootstrap_files[filename]['local'] = local_path
+
+    if ssh_keys is not None:
+        for ssh_key_name, ssh_key_options in list(ssh_keys):
+            ssh_key = join(custom_template_path, ssh_key_name)
+            if exists(ssh_key):
+                pub_key_name = '%s.pub' % ssh_key_name
+                pub_key = '%s.pub' % ssh_key
+                if not exists(pub_key):
+                    print("Public key '%s' for '%s' missing." % (pub_key, ssh_key))
+                    sys.exit(1)
+                bootstrap_files[ssh_key_name] = dict(local=ssh_key, remote='/mnt/etc/ssh/%s' % ssh_key_name, mode=0600)
+                bootstrap_files[pub_key_name] = dict(local=pub_key, remote='/mnt/etc/ssh/%s' % pub_key_name, mode=0644)
+
+    return bootstrap_files
+
+def fetch_assets(**kwargs):
+    from fabric.api import env, local
+    bootstrap_files = get_bootstrap_files(env)
+    for filename, asset in bootstrap_files.items():
+        if 'url' in asset:
+            local('wget -c -O {local} {url} '.format(**asset))
 
 def bootstrap(**kwargs):
     from fabric.api import env, put, run, settings, hide
@@ -9,36 +96,20 @@ def bootstrap(**kwargs):
     import os
     import sys
     env.shell = '/bin/sh -c'
-    necessary_files = {
-        'authorized_keys': {'remote': '/mnt/root/.ssh/authorized_keys'},
-        'rc.conf': {'remote': '/mnt/etc/rc.conf'},
-        'sshd_config': {'remote': '/mnt/etc/ssh/sshd_config'}}
 
-    if not os.path.exists(os.path.join(env['lcwd'], 'authorized_keys')):
-        if os.path.exists(os.path.expanduser('~/.ssh/identity.pub')):
-            if not yesno("\nUse ~/.ssh/idenity.pub?"):
-                return
-        open(os.path.join(env['lcwd'], 'authorized_keys'), 'w').write(
-            open(os.path.expanduser('~/.ssh/identity.pub')).read())
-
-    for key, info in necessary_files.items():
-        local_path = os.path.join(env['lcwd'], key)
-        if not os.path.exists(local_path):
-            print("You have to create %s first." % local_path)
-            sys.exit(1)
-        info['local'] = local_path
     ssh_keys = set([
         ('ssh_host_key', '-t rsa1 -b 1024'),
         ('ssh_host_rsa_key', '-t rsa'),
         ('ssh_host_dsa_key', '-t dsa'),
         ('ssh_host_ecdsa_key', '-t ecdsa')])
-    for ssh_key_info in list(ssh_keys):
-        ssh_key = os.path.join(env['lcwd'], ssh_key_info[0])
-        if os.path.exists(ssh_key):
-            pub_key = '%s.pub' % ssh_key
-            if not os.path.exists(pub_key):
-                print("Public key '%s' for '%s' missing." % (pub_key, ssh_key))
-                sys.exit(1)
+
+    bootstrap_files = get_bootstrap_files(env, ssh_keys=ssh_keys)
+
+    print("Using these local files for bootstrapping:")
+    for info in bootstrap_files.values():
+        if 'remote' in info:
+            print('{local} -> {remote}'.format(**info))
+
     # default ssh settings for mfsbsd with possible overwrite by bootstrap-fingerprint
     fingerprint = env.server.config.get(
         'bootstrap-fingerprint',
@@ -90,7 +161,7 @@ def bootstrap(**kwargs):
         return
     if first_interface is not None:
         ifconfig = 'ifconfig_%s' % first_interface
-        for line in open(necessary_files['rc.conf']['local']):
+        for line in open(bootstrap_files['rc.conf']['local']):
             if line.strip().startswith(ifconfig):
                 break
         else:
@@ -139,13 +210,18 @@ def bootstrap(**kwargs):
     run('mkdir -p /mnt/root/.ssh && chmod 0600 /mnt/root/.ssh')
     run('cp /etc/resolv.conf /mnt/etc/resolv.conf')
     run('mkdir -p /mnt/usr/local/etc/pkg/repos')
-    for info in necessary_files.values():
-        put(info['local'], info['remote'])
-    # install pkg, the tarball is also used for the ezjail flavour in bootstrap_ezjail
     run('mkdir -p /mnt/var/cache/pkg/All')
-    run('fetch -o /mnt/var/cache/pkg/All/pkg.txz http://pkg.freebsd.org/freebsd:9:x86:64/latest/Latest/pkg.txz')
-    run('chmod 0600 /mnt/var/cache/pkg/All/pkg.txz')
-    run("tar -x -C /mnt --chroot --exclude '+*' -f /mnt/var/cache/pkg/All/pkg.txz")
+
+    # upload bootstrap files
+    for info in bootstrap_files.values():
+        if 'remote' in info:
+            put(info['local'], info['remote'], mode=info.get('mode'))
+
+    # install pkg, the tarball is also used for the ezjail flavour in bootstrap_ezjail
+    if not exists(bootstrap_files['pkg.txz']['local']):
+        run('fetch -o {remote} {url}'.format(**bootstrap_files['pkg.txz']))
+    run('chmod 0600 {remote}'.format(**bootstrap_files['pkg.txz']))
+    run("tar -x -C /mnt --chroot --exclude '+*' -f {remote}".format(**bootstrap_files['pkg.txz']))
     # run pkg2ng for which the shared library path needs to be updated
     run('chroot /mnt /etc/rc.d/ldconfig start')
     run('chroot /mnt pkg2ng')
@@ -157,13 +233,7 @@ def bootstrap(**kwargs):
     run('echo autoboot_delay=%s >> /mnt/boot/loader.conf' % autoboot_delay)
     # ssh host keys
     for ssh_key, ssh_keygen_args in ssh_keys:
-        ssh_key_path = os.path.join(env['lcwd'], ssh_key)
-        if os.path.exists(ssh_key_path):
-            pub_key = '%s.pub' % ssh_key
-            pub_key_path = os.path.join(env['lcwd'], pub_key)
-            put(ssh_key_path, '/mnt/etc/ssh/%s' % ssh_key, mode=0600)
-            put(pub_key_path, '/mnt/etc/ssh/%s' % pub_key, mode=0644)
-        else:
+        if ssh_key not in bootstrap_files:
             run("ssh-keygen %s -f /mnt/etc/ssh/%s -N ''" % (ssh_keygen_args, ssh_key))
     fingerprint = run("ssh-keygen -lf /mnt/etc/ssh/ssh_host_rsa_key")
     # reboot
