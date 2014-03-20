@@ -70,6 +70,23 @@ def get_commands(aws):
         ('configure-jailhost', PloyConfigureHostCmd(aws)),
         ]
 
+def get_massagers():
+    from mr.awsome.config import HooksMassager
+    return [HooksMassager('ez-instance', 'hooks')]
 
 plugin = dict(
+    get_massagers=get_massagers,
     get_commands=get_commands)
+
+
+class AWSomeHooks(object):
+
+    def before_start(self, server):
+        """make sure we have a startup script for jails that installs python
+        into it (so we can control it via ansible)
+        """
+        if 'startup_script' not in server.config:
+            server.config['startup_script'] = path.join(ploy_path, 'startup-ansible-jail')
+
+
+
