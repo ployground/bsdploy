@@ -20,9 +20,11 @@ setup(
         'mr.awsome.fabric',
     ],
     entry_points="""
-      [console_scripts]
-      ploy = bsdploy:main
-      pssh = bsdploy:ssh
-      [ansible_paths]
-      ploy = bsdploy:ansible_paths
+        [console_scripts]
+        ploy = bsdploy:main
+        pssh = bsdploy:ssh
+        [ansible_paths]
+        ploy = bsdploy:ansible_paths
+        [mr.awsome.plugins]
+        ploy = bsdploy:plugin
     """)
