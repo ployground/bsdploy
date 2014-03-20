@@ -1,0 +1,5 @@
+---
+- user: root
+  roles:
+    - dhcp_host
+    - jails_host
