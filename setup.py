@@ -1,6 +1,10 @@
 from setuptools import setup
+import os
 
-version = "0.1"
+here = os.path.abspath(os.path.dirname(__file__))
+README = open(os.path.join(here, 'README.rst')).read()
+
+version = "0.1alpha1"
 
 setup(
     version=version,
