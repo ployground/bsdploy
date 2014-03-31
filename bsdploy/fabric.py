@@ -20,7 +20,7 @@ def get_bootstrap_files(env, ssh_keys=None):
 
     bootstrap_files = {
         'authorized_keys': {
-            'remote': '/mnt/root/.ssh/',
+            'remote': '/mnt/root/.ssh/authorized_keys',
             'expected_path': ploy_conf_path,
             'fallback': expanduser('~/.ssh/identity.pub')
             },
