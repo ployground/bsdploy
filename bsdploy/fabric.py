@@ -11,13 +11,28 @@ def get_bootstrap_files(env, ssh_keys=None):
         - need to be provided by the user (i.e. authorized_keys)
         - others have some (sensible) defaults (i.e. rc.conf)
         - some can be downloaded via URL (i.e.) http://pkg.freebsd.org/freebsd:9:x86:64/latest/Latest/pkg.txz
+
+    For those which can be downloaded we check the downloads directory. if the file exists there 
+    (and if the checksum matches TODO!) we will upload it to the host. If not, we will fetch the file
+    from the given URL from the host.
+
+    For files that cannot be downloaded (authorized_keys, rc.conf etc.) we allow the user to provide their
+    own version in a ``bootstrap-files`` folder. The location of this folder can either be explicitly provided
+    via the ``bootstrap-files`` key in the host definition of the config file or it defaults to ``deployment/bootstrap-files``.
+
+    If the file is not found there, we revert to the default
+    files that are part of bsdploy. If the file cannot be found there either we either error out or for authorized_keys
+    we look in ``~/.ssh/identity.pub``.
     """
 
     ploy_conf_path = join(env.server.master.main_config.path)
     default_template_path = join(ploy_path, 'bootstrap-files')
-    custom_template_path = abspath(join(ploy_conf_path, '..', 'deployment', 'bootstrap-files'))
+    host_defined_path = env.server.master.instances[env.server.master.id].config.get('bootstrap-files')
+    if host_defined_path is None:
+        custom_template_path = abspath(join(ploy_conf_path, '..', 'deployment', 'bootstrap-files'))
+    else:
+        custom_template_path = abspath(join(ploy_conf_path, host_defined_path))
     download_path = abspath(join(ploy_conf_path, '..', 'downloads'))
-
     bootstrap_files = {
         'authorized_keys': {
             'remote': '/mnt/root/.ssh/authorized_keys',
@@ -79,7 +94,6 @@ def get_bootstrap_files(env, ssh_keys=None):
                     sys.exit(1)
                 bootstrap_files[ssh_key_name] = dict(local=ssh_key, remote='/mnt/etc/ssh/%s' % ssh_key_name, mode=0600)
                 bootstrap_files[pub_key_name] = dict(local=pub_key, remote='/mnt/etc/ssh/%s' % pub_key_name, mode=0644)
-
     return bootstrap_files
 
 def fetch_assets(**kwargs):
@@ -110,7 +124,6 @@ def bootstrap(**kwargs):
     for info in bootstrap_files.values():
         if 'remote' in info:
             print('{local} -> {remote}'.format(**info))
-
     # default ssh settings for mfsbsd with possible overwrite by bootstrap-fingerprint
     fingerprint = env.server.config.get(
         'bootstrap-fingerprint',
