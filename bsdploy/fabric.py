@@ -183,7 +183,7 @@ def bootstrap(**kwargs):
                 return
     zfsinstall = env.server.config.get('bootstrap-zfsinstall')
     if zfsinstall:
-        put(zfsinstall, '/root/bin/myzfsinstall', mode=0755)
+        put(abspath(join(env.server.master.main_config.path, zfsinstall)), '/root/bin/myzfsinstall', mode=0755)
         zfsinstall = 'myzfsinstall'
     else:
         zfsinstall = 'zfsinstall'
