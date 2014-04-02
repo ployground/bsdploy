@@ -25,14 +25,19 @@ class PloyBootstrapHostCmd(object):
             add_help=False,
         )
         masters = dict((master.id, master) for master in self.aws.get_masters('ezjail_admin'))
-        parser.add_argument(
-            "master",
-            nargs=1,
-            metavar="master",
-            help="Name of the jailhost from the config.",
-            choices=masters)
+        if len(masters) > 1:
+            parser.add_argument(
+                "master",
+                nargs=1,
+                metavar="master",
+                help="Name of the jailhost from the config.",
+                choices=masters)
         args = parser.parse_args(argv[:1])
-        instance = self.aws.instances[args.master[0]]
+        if len(masters) > 1:
+            master = args.master[0]
+        else:
+            master = masters.keys()[0]
+        instance = self.aws.instances[master]
         instance.do('bootstrap')
 
 
