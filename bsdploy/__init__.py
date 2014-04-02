@@ -2,11 +2,6 @@ import argparse
 from mr.awsome import aws, aws_ssh
 from os import path
 
-def main(**kw):
-    return aws(configname='ploy.conf', **kw)
-
-def ssh(**kw):  # pragma: no cover
-    return aws_ssh(configname='ploy.conf', **kw)
 
 # register our own library and roles paths into ansible
 ploy_path = path.abspath(path.join(path.dirname(__file__), '../'))
@@ -89,4 +84,13 @@ class AWSomeHooks(object):
             server.config['startup_script'] = path.join(ploy_path, 'startup-ansible-jail')
 
 
+def ploy(configname=None, **kw):  # pragma: no cover
+    if configname is None:
+        configname = 'ploy.conf'
+    return aws(configname=configname, **kw)
 
+
+def ploy_ssh(configname=None, **kw):  # pragma: no cover
+    if configname is None:
+        configname = 'ploy.conf'
+    return aws_ssh(configname=configname, **kw)
