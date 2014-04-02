@@ -59,11 +59,12 @@ class PloyConfigureHostCmd(object):
         instance = self.aws.instances[args.master[0]]
         instance.apply_playbook(path.join(ploy_path, 'roles', 'jailhost.yml'))
 
+
 def get_commands(aws):
     return [
         ('bootstrap-jailhost', PloyBootstrapHostCmd(aws)),
-        ('configure-jailhost', PloyConfigureHostCmd(aws)),
-        ]
+        ('configure-jailhost', PloyConfigureHostCmd(aws))]
+
 
 def get_massagers():
     from mr.awsome.config import HooksMassager

@@ -5,14 +5,13 @@ from . import ploy_path
 
 
 def get_bootstrap_files(env, ssh_keys=None):
-
     """ we need some files to bootstrap the FreeBSD installation.
     Some...
         - need to be provided by the user (i.e. authorized_keys)
         - others have some (sensible) defaults (i.e. rc.conf)
         - some can be downloaded via URL (i.e.) http://pkg.freebsd.org/freebsd:9:x86:64/latest/Latest/pkg.txz
 
-    For those which can be downloaded we check the downloads directory. if the file exists there 
+    For those which can be downloaded we check the downloads directory. if the file exists there
     (and if the checksum matches TODO!) we will upload it to the host. If not, we will fetch the file
     from the given URL from the host.
 
@@ -37,31 +36,23 @@ def get_bootstrap_files(env, ssh_keys=None):
         'authorized_keys': {
             'remote': '/mnt/root/.ssh/authorized_keys',
             'expected_path': ploy_conf_path,
-            'fallback': expanduser('~/.ssh/identity.pub')
-            },
+            'fallback': expanduser('~/.ssh/identity.pub')},
         'rc.conf': {
-            'remote': '/mnt/etc/rc.conf'
-            },
+            'remote': '/mnt/etc/rc.conf'},
         'make.conf': {
-            'remote': '/mnt/etc/make.conf'
-            },
+            'remote': '/mnt/etc/make.conf'},
         'pkg.conf': {
-            'remote': '/mnt/usr/local/etc/pkg.conf'
-            },
+            'remote': '/mnt/usr/local/etc/pkg.conf'},
         'FreeBSD.conf': {
-            'remote': '/mnt/usr/local/etc/pkg/repos/FreeBSD.conf'
-            },
+            'remote': '/mnt/usr/local/etc/pkg/repos/FreeBSD.conf'},
         'sshd_config': {
-            'remote': '/mnt/etc/ssh/sshd_config'
-            },
+            'remote': '/mnt/etc/ssh/sshd_config'},
         'pkg.txz': {
             'url': 'http://pkg.freebsd.org/freebsd:9:x86:64/latest/Latest/pkg.txz',
-            'remote': '/mnt/var/cache/pkg/All/pkg.txz'
-            },
+            'remote': '/mnt/var/cache/pkg/All/pkg.txz'},
         'mfsbsd-se-9.2-RELEASE-amd64.iso': {
             'url': 'http://mfsbsd.vx.sk/files/iso/9/amd64/mfsbsd-se-9.2-RELEASE-amd64.iso',
-            'md5': '660d2b65e55a982c071891b7996fe684',
-            },
+            'md5': '660d2b65e55a982c071891b7996fe684'},
     }
 
     for filename, info in bootstrap_files.items():
@@ -74,10 +65,10 @@ def get_bootstrap_files(env, ssh_keys=None):
 
         local_path = join(expected_path, filename)
 
-        if not exists(local_path) and not 'url' in info:
+        if not exists(local_path) and 'url' not in info:
             local_path = info.get('fallback', join(default_template_path, filename))
 
-        if not exists(local_path) and not 'url' in info:
+        if not exists(local_path) and 'url' not in info:
             print('Cannot find %s' % local_path)
             sys.exit(1)
 
@@ -96,6 +87,7 @@ def get_bootstrap_files(env, ssh_keys=None):
                 bootstrap_files[pub_key_name] = dict(local=pub_key, remote='/mnt/etc/ssh/%s' % pub_key_name, mode=0644)
     return bootstrap_files
 
+
 def fetch_assets(**kwargs):
     from fabric.api import env, local
     bootstrap_files = get_bootstrap_files(env)
@@ -103,13 +95,12 @@ def fetch_assets(**kwargs):
         if 'url' in asset:
             local('wget -c -O {local} {url} '.format(**asset))
 
+
 def bootstrap(**kwargs):
     from fabric.api import env, put, run, settings, hide
     from mr.awsome.common import yesno
     from mr.awsome.config import value_asbool
     import math
-    import os
-    import sys
     env.shell = '/bin/sh -c'
 
     ssh_keys = set([
