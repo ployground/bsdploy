@@ -3,6 +3,10 @@ import yaml
 import sys
 from mr.awsome.common import yesno
 from os.path import join, expanduser, exists, abspath
+try:
+    from yaml import CSafeLoader as SafeLoader
+except ImportError:
+    from yaml import SafeLoader
 from . import ploy_path
 
 
@@ -48,10 +52,11 @@ def get_bootstrap_files(env, ssh_keys=None):
         if not exists(bootstrap_file_yaml):
             continue
         with open(bootstrap_file_yaml) as f:
-            info = yaml.safe_load(f)
+            info = yaml.load(f, Loader=SafeLoader)
         if info is None:
             continue
         bootstrap_files.update(info)
+
     for filename, info in bootstrap_files.items():
         if 'expected_path' in info:
             expected_path = info['expected_path']
