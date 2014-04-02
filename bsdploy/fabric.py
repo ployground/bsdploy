@@ -109,8 +109,13 @@ def get_bootstrap_files(env, ssh_keys=None):
 
 
 def _fetch_packages(env, packagesite, packages):
-    import lzma
     import tarfile
+    try:
+        import lzma
+    except ImportError:
+        print("ERROR: The lzma package couldn't be imported.")
+        print("You most likely need to install pyliblzma in your virtualenv.")
+        sys.exit(1)
     ploy_conf_path = join(env.server.master.main_config.path)
     download_path = abspath(join(ploy_conf_path, '..', 'downloads'))
     packageinfo = {}
