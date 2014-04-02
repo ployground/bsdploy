@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function
 import sys
+from mr.awsome.common import yesno
 from os.path import join, expanduser, exists, abspath
 from . import ploy_path
 
@@ -65,8 +66,14 @@ def get_bootstrap_files(env, ssh_keys=None):
 
         local_path = join(expected_path, filename)
 
+        if not exists(local_path) and 'fallback' in info:
+            print("The '%s' file is missing." % local_path)
+            local_path = info['fallback']
+            if not yesno("Should we generate it using the key in '%s'?" % local_path):
+                sys.exit(1)
+
         if not exists(local_path) and 'url' not in info:
-            local_path = info.get('fallback', join(default_template_path, filename))
+            local_path = join(default_template_path, filename)
 
         if not exists(local_path) and 'url' not in info:
             print('Cannot find %s' % local_path)
@@ -98,7 +105,6 @@ def fetch_assets(**kwargs):
 
 def bootstrap(**kwargs):
     from fabric.api import env, put, run, settings, hide
-    from mr.awsome.common import yesno
     from mr.awsome.config import value_asbool
     import math
     env.shell = '/bin/sh -c'
