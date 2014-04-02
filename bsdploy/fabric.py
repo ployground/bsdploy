@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function
+import yaml
 import sys
 from mr.awsome.common import yesno
 from os.path import join, expanduser, exists, abspath
@@ -33,25 +34,22 @@ def get_bootstrap_files(env, ssh_keys=None):
     else:
         custom_template_path = abspath(join(ploy_conf_path, host_defined_path))
     download_path = abspath(join(ploy_conf_path, '..', 'downloads'))
+    bootstrap_file_yamls = [
+        abspath(join(default_template_path, 'files.yml')),
+        abspath(join(custom_template_path, 'files.yml'))]
     bootstrap_files = {
         'authorized_keys': {
             'remote': '/mnt/root/.ssh/authorized_keys',
             'expected_path': ploy_conf_path,
-            'fallback': expanduser('~/.ssh/identity.pub')},
-        'rc.conf': {
-            'remote': '/mnt/etc/rc.conf'},
-        'make.conf': {
-            'remote': '/mnt/etc/make.conf'},
-        'pkg.conf': {
-            'remote': '/mnt/usr/local/etc/pkg.conf'},
-        'FreeBSD.conf': {
-            'remote': '/mnt/usr/local/etc/pkg/repos/FreeBSD.conf'},
-        'sshd_config': {
-            'remote': '/mnt/etc/ssh/sshd_config'},
-        'pkg.txz': {
-            'url': 'http://pkg.freebsd.org/freebsd:9:x86:64/latest/Latest/pkg.txz',
-            'remote': '/mnt/var/cache/pkg/All/pkg.txz'}}
-
+            'fallback': expanduser('~/.ssh/identity.pub')}}
+    for bootstrap_file_yaml in bootstrap_file_yamls:
+        if not exists(bootstrap_file_yaml):
+            continue
+        with open(bootstrap_file_yaml) as f:
+            info = yaml.load(f)
+        if info is None:
+            continue
+        bootstrap_files.update(info)
     for filename, info in bootstrap_files.items():
         if 'expected_path' in info:
             expected_path = info['expected_path']
@@ -117,10 +115,11 @@ def bootstrap(**kwargs):
     for info in bootstrap_files.values():
         if 'remote' in info and exists(info['local']):
             print('{local} -> {remote}'.format(**info))
-    print("\nThe following files will be downloaded on the host durin bootstrapping:")
+    print("\nThe following files will be downloaded on the host during bootstrap:")
     for info in bootstrap_files.values():
         if 'remote' in info and 'url' in info and not exists(info['local']):
             print('{url} -> {remote}'.format(**info))
+    print
     # default ssh settings for mfsbsd with possible overwrite by bootstrap-fingerprint
     fingerprint = env.server.config.get(
         'bootstrap-fingerprint',
