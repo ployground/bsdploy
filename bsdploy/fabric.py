@@ -46,7 +46,7 @@ def get_bootstrap_files(env, ssh_keys=None):
         if not exists(bootstrap_file_yaml):
             continue
         with open(bootstrap_file_yaml) as f:
-            info = yaml.load(f)
+            info = yaml.safe_load(f)
         if info is None:
             continue
         bootstrap_files.update(info)
