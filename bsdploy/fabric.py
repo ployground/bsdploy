@@ -153,7 +153,9 @@ def fetch_assets(**kwargs):
     from fabric.api import env, local
     bootstrap_files = get_bootstrap_files(env)
     items = bootstrap_files.items()
-    packages = ['python', 'python27']
+    packages = set(
+        env.server.master.instance.config.get('bootstrap-packages', '').split())
+    packages.update(['python27'])
     for filename, asset in items:
         if 'url' in asset:
             if not exists(dirname(asset['local'])):
