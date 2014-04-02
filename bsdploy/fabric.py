@@ -113,10 +113,14 @@ def bootstrap(**kwargs):
 
     bootstrap_files = get_bootstrap_files(env, ssh_keys=ssh_keys)
 
-    print("Using these local files for bootstrapping:")
+    print("\nUsing these local files for bootstrapping:")
     for info in bootstrap_files.values():
-        if 'remote' in info:
+        if 'remote' in info and exists(info['local']):
             print('{local} -> {remote}'.format(**info))
+    print("\nThe following files will be downloaded on the host durin bootstrapping:")
+    for info in bootstrap_files.values():
+        if 'remote' in info and 'url' in info and not exists(info['local']):
+            print('{url} -> {remote}'.format(**info))
     # default ssh settings for mfsbsd with possible overwrite by bootstrap-fingerprint
     fingerprint = env.server.config.get(
         'bootstrap-fingerprint',
