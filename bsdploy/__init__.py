@@ -80,10 +80,6 @@ def get_massagers():
     from mr.awsome.config import HooksMassager
     return [HooksMassager('ez-instance', 'hooks')]
 
-plugin = dict(
-    get_massagers=get_massagers,
-    get_commands=get_commands)
-
 
 class AWSomeHooks(object):
 
@@ -91,8 +87,20 @@ class AWSomeHooks(object):
         """make sure we have a startup script for jails that installs python
         into it (so we can control it via ansible)
         """
+        if not server.master.sectiongroupname.startswith('ez-'):
+            return
         if 'startup_script' not in server.config:
             server.config['startup_script'] = path.join(ploy_path, 'startup-ansible-jail')
+
+
+def get_hooks():
+    return [AWSomeHooks()]
+
+
+plugin = dict(
+    get_hooks=get_hooks,
+    get_massagers=get_massagers,
+    get_commands=get_commands)
 
 
 def ploy(configname=None, **kw):  # pragma: no cover
