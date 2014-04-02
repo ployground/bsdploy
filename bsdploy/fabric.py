@@ -50,11 +50,7 @@ def get_bootstrap_files(env, ssh_keys=None):
             'remote': '/mnt/etc/ssh/sshd_config'},
         'pkg.txz': {
             'url': 'http://pkg.freebsd.org/freebsd:9:x86:64/latest/Latest/pkg.txz',
-            'remote': '/mnt/var/cache/pkg/All/pkg.txz'},
-        'mfsbsd-se-9.2-RELEASE-amd64.iso': {
-            'url': 'http://mfsbsd.vx.sk/files/iso/9/amd64/mfsbsd-se-9.2-RELEASE-amd64.iso',
-            'md5': '660d2b65e55a982c071891b7996fe684'},
-    }
+            'remote': '/mnt/var/cache/pkg/All/pkg.txz'}}
 
     for filename, info in bootstrap_files.items():
         if 'expected_path' in info:
