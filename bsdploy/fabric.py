@@ -1,8 +1,9 @@
 from __future__ import absolute_import, print_function
+import os
 import yaml
 import sys
 from mr.awsome.common import yesno
-from os.path import join, expanduser, exists, abspath
+from os.path import join, expanduser, exists, abspath, dirname
 try:
     from yaml import CSafeLoader as SafeLoader
 except ImportError:
@@ -82,6 +83,17 @@ def get_bootstrap_files(env, ssh_keys=None):
 
         bootstrap_files[filename]['local'] = local_path
 
+    packages_path = join(download_path, 'packages')
+    if exists(packages_path):
+        for dirpath, dirnames, filenames in os.walk(packages_path):
+            path = dirpath.split(packages_path)[1][1:]
+            for filename in filenames:
+                if not filename.endswith('.txz'):
+                    continue
+                bootstrap_files[join(path, filename)] = dict(
+                    local=join(dirpath, filename),
+                    remote=join('/mnt/var/cache/pkg/All', filename))
+
     if ssh_keys is not None:
         for ssh_key_name, ssh_key_options in list(ssh_keys):
             ssh_key = join(custom_template_path, ssh_key_name)
@@ -96,12 +108,59 @@ def get_bootstrap_files(env, ssh_keys=None):
     return bootstrap_files
 
 
+def _fetch_packages(env, packagesite, packages):
+    import lzma
+    import tarfile
+    ploy_conf_path = join(env.server.master.main_config.path)
+    download_path = abspath(join(ploy_conf_path, '..', 'downloads'))
+    packageinfo = {}
+    print("Loading package information from '%s'." % packagesite)
+    if SafeLoader.__name__ != 'CSafeLoader':
+        print("WARNING: The C extensions for PyYAML aren't installed.")
+        print("This can take quite a long while ...")
+    else:
+        print("This can take a while ...")
+    for line in tarfile.TarFile(fileobj=lzma.LZMAFile(packagesite)).extractfile('packagesite.yaml'):
+        info = yaml.load(line, Loader=SafeLoader)
+        packageinfo[info['name']] = dict(
+            path=info['path'],
+            arch=info['arch'],
+            deps=info.get('deps', {}).keys())
+    deps = set(packages)
+    seen = set()
+    items = []
+    while 1:
+        try:
+            dep = deps.pop()
+        except KeyError:
+            break
+        if dep in seen:
+            continue
+        info = packageinfo[dep]
+        deps.update(info['deps'])
+        path = '%s/latest/%s' % (info['arch'], info['path'])
+        items.append((
+            join('packages', path),
+            dict(
+                url='http://pkg.freebsd.org/%s' % path,
+                local=join(download_path, 'packages', path),
+                remote=join('/mnt/var/cache/pkg/', info['path']))))
+        seen.add(dep)
+    return items
+
+
 def fetch_assets(**kwargs):
     from fabric.api import env, local
     bootstrap_files = get_bootstrap_files(env)
-    for filename, asset in bootstrap_files.items():
+    items = bootstrap_files.items()
+    packages = ['python', 'python27']
+    for filename, asset in items:
         if 'url' in asset:
+            if not exists(dirname(asset['local'])):
+                os.makedirs(dirname(asset['local']))
             local('wget -c -O {local} {url} '.format(**asset))
+        if filename == 'packagesite.txz':
+            items.extend(_fetch_packages(env, asset['local'], packages))
 
 
 def bootstrap(**kwargs):
