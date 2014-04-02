@@ -6,9 +6,11 @@
 'pkg.conf':
     remote: '/mnt/usr/local/etc/pkg.conf'
 'FreeBSD.conf':
+    directory: '/mnt/usr/local/etc/pkg/repos'
     remote: '/mnt/usr/local/etc/pkg/repos/FreeBSD.conf'
 'sshd_config':
     remote: '/mnt/etc/ssh/sshd_config'
 'pkg.txz':
     url: 'http://pkg.freebsd.org/freebsd:9:x86:64/latest/Latest/pkg.txz'
+    directory: '/mnt/var/cache/pkg/All'
     remote: '/mnt/var/cache/pkg/All/pkg.txz'

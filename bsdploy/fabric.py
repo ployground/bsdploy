@@ -39,6 +39,8 @@ def get_bootstrap_files(env, ssh_keys=None):
         abspath(join(custom_template_path, 'files.yml'))]
     bootstrap_files = {
         'authorized_keys': {
+            'directory': '/mnt/root/.ssh',
+            'directory_mode': '0600',
             'remote': '/mnt/root/.ssh/authorized_keys',
             'expected_path': ploy_conf_path,
             'fallback': expanduser('~/.ssh/identity.pub')}}
@@ -217,10 +219,14 @@ def bootstrap(**kwargs):
     if 'devfs on /rw/dev' not in mounts:
         run('mount -t devfs devfs /mnt/dev')
     # setup bare essentials
-    run('mkdir -p /mnt/root/.ssh && chmod 0600 /mnt/root/.ssh')
     run('cp /etc/resolv.conf /mnt/etc/resolv.conf')
-    run('mkdir -p /mnt/usr/local/etc/pkg/repos')
-    run('mkdir -p /mnt/var/cache/pkg/All')
+    for info in bootstrap_files.values():
+        if 'directory' not in info:
+            continue
+        cmd = 'mkdir -p "%s"' % info['directory']
+        if 'directory_mode' in info:
+            cmd = '%s && chmod %s "%s"' % (cmd, info['directory_mode'], info['directory'])
+        run(cmd, shell=False)
 
     # upload bootstrap files
     for info in bootstrap_files.values():
