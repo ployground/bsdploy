@@ -47,14 +47,6 @@ Development
 To develop ``bsdploy`` itself use the provided Makfile – running ``make`` will install a development version of itself and its direct dependencies (i.e. the ``mr.awsome.*`` packages).
 
 
-TODO
-====
-
- - documentation *cough*
- - include poudriere support
- - make the private network for the jails configurable (the hard coded 10.0.0.x is not always desirable)
-
-
  Misc
  ====
 
@@ -76,3 +68,17 @@ i.e. to then only update the ipnat rules, do this::
      bin/ploy playbook staging.yml -t configure -t ipnat_rules
 
 the 'trick' is to use multiple tags to narrow down the tasks to only what you need.
+
+
+TODO
+====
+
+ [ ] documentation *cough*
+ [x] make rc.conf a template (to support non-DHCP jailhost scenario)
+ [x] allow for offline installation of ezjail
+ [x] allow for offline installation of pkgng
+ [ ] include poudriere support
+ [ ] eliminate need for proxycommandin ploy.conf
+ [ ] eliminate need for proxyhost in ploy.conf
+ [x] eliminate need for hooks entries for jail configuration in ploy.conf
+ [x] make the private network for the jails configurable (the hard coded 10.0.0.x is not always desirable)
