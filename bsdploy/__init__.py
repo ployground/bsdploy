@@ -97,10 +97,18 @@ def get_hooks():
     return [AWSomeHooks()]
 
 
+def get_ansible_vars(server):
+    result = {}
+    if server.master.sectiongroupname.startswith('ez-'):
+        result['ansible_python_interpreter'] = '/usr/local/bin/python2.7'
+    return result
+
+
 plugin = dict(
     get_hooks=get_hooks,
     get_massagers=get_massagers,
-    get_commands=get_commands)
+    get_commands=get_commands,
+    get_ansible_vars=get_ansible_vars)
 
 
 def ploy(configname=None, **kw):  # pragma: no cover
