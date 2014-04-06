@@ -48,7 +48,11 @@ def get_bootstrap_files(env, ssh_keys=None):
             'directory_mode': '0600',
             'remote': '/mnt/root/.ssh/authorized_keys',
             'expected_path': ploy_conf_path,
-            'fallback': expanduser('~/.ssh/identity.pub')}}
+            'fallback': [
+                expanduser('~/.ssh/identity.pub'),
+                expanduser('~/.ssh/id_rsa.pub'),
+                expanduser('~/.ssh/id_dsa.pub'),
+                expanduser('~/.ssh/id_ecdsa.pub')]}}
     for bootstrap_file_yaml in bootstrap_file_yamls:
         if not exists(bootstrap_file_yaml):
             continue
@@ -69,9 +73,19 @@ def get_bootstrap_files(env, ssh_keys=None):
         local_path = join(expected_path, filename)
 
         if not exists(local_path) and 'fallback' in info:
+            local_paths = info['fallback']
+            if isinstance(local_paths, basestring):
+                local_paths = [local_paths]
+            local_paths = [x for x in local_paths if exists(x)]
+            if not local_paths:
+                print("Found no public key in ~/.ssh, you have to create '%s' manually" % local_path)
+                sys.exit(1)
             print("The '%s' file is missing." % local_path)
-            local_path = info['fallback']
-            if not yesno("Should we generate it using the key in '%s'?" % local_path):
+            for local_path in local_paths:
+                if yesno("Should we generate it using the key in '%s'?" % local_path):
+                    break
+            else:
+                # answered no to all options
                 sys.exit(1)
 
         if not exists(local_path) and 'url' not in info:
