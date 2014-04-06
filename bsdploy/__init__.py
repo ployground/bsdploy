@@ -32,7 +32,7 @@ class PloyBootstrapHostCmd(object):
                 metavar="master",
                 help="Name of the jailhost from the config.",
                 choices=masters)
-        args = parser.parse_args(argv[:1])
+        args = parser.parse_args(argv)
         if len(masters) > 1:
             master = args.master[0]
         else:
@@ -61,7 +61,7 @@ class PloyConfigureHostCmd(object):
                 metavar="master",
                 help="Name of the jailhost from the config.",
                 choices=masters)
-        args = parser.parse_args(argv[:1])
+        args = parser.parse_args(argv)
         if len(masters) > 1:
             master = args.master[0]
         else:
