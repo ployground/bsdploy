@@ -67,7 +67,7 @@ class PloyConfigureHostCmd(object):
         else:
             master = masters.keys()[0]
         instance = self.aws.instances[master]
-        instance.apply_playbook(path.join(ploy_path, 'roles', 'jailhost.yml'))
+        instance.apply_playbook(path.join(ploy_path, 'roles', 'jailhost.yml'), skip_host_check=True)
 
 
 def get_commands(aws):
