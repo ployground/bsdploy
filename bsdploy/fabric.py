@@ -170,6 +170,9 @@ def _fetch_packages(env, packagesite, packages):
 
 
 def fetch_assets(**kwargs):
+    """ download bootstrap assets to control host.
+    If present on the control host they will be uploaded to the target host during bootstrapping.
+    """
     from fabric.api import env, local
     bootstrap_files = get_bootstrap_files(env)
     items = bootstrap_files.items()
