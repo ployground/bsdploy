@@ -7,7 +7,7 @@ awsome_ezjail_install_host: "ftp.freebsd.org"
 jails_dir: /usr/jails
 jails_zfs_root: tank/jails
 zfs_checksum: fletcher4
-pkg_txz_url: http://pkg.freebsd.org/freebsd:9:x86:64/latest/Latest/pkg.txz
+pkg_txz_url: http://pkg.freebsd.org/freebsd:9:x86:64/quarterly/Latest/pkg.txz
 jails_pkg_url: "pkg+http://pkg.freeBSD.org/${ABI}/latest"
 ipnat_jail_networks:
     - 10.0.0.0/8
