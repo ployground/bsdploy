@@ -42,6 +42,9 @@ class PloyBootstrapHostCmd(object):
         bootstrap_type = instance.config.get('bootstrap')
         if bootstrap_type:
             bootstrap_task = '%s_%s' % (bootstrap_task, bootstrap_type)
+        if 'fabfile' not in instance.config:
+            import os
+            instance.config['fabfile'] = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'fabfile.py')
         instance.do(bootstrap_task)
 
 
