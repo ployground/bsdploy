@@ -87,7 +87,10 @@ class AWSomeHooks(object):
         """make sure we have a startup script for jails that installs python
         into it (so we can control it via ansible)
         """
-        if not server.master.sectiongroupname.startswith('ez-'):
+        try:
+            if not server.master.sectiongroupname.startswith('ez-'):
+                return
+        except AttributeError:
             return
         if 'startup_script' not in server.config:
             server.config['startup_script'] = path.join(ploy_path, 'startup-ansible-jail')
