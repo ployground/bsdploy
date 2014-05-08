@@ -38,7 +38,11 @@ class PloyBootstrapHostCmd(object):
         else:
             master = masters.keys()[0]
         instance = self.aws.instances[master]
-        instance.do('bootstrap')
+        bootstrap_task = 'bootstrap'
+        bootstrap_type = instance.config.get('bootstrap')
+        if bootstrap_type:
+            bootstrap_task = '%s_%s' % (bootstrap_task, bootstrap_type)
+        instance.do(bootstrap_task)
 
 
 class PloyConfigureHostCmd(object):

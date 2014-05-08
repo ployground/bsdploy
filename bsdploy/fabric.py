@@ -189,6 +189,8 @@ def fetch_assets(**kwargs):
 
 
 def bootstrap(**kwargs):
+    """ bootstrap an instance booted into mfsbsd (http://mfsbsd.vx.sk)
+    """
     from fabric.api import env, put, run, settings, hide
     from mr.awsome.config import value_asbool
     import math
@@ -347,3 +349,19 @@ def bootstrap(**kwargs):
             run('reboot')
     print("The SSH fingerprint of the newly bootstrapped server is:")
     print(fingerprint)
+
+
+def bootstrap_daemonology():
+    """ Bootstrap an EC2 instance that has been booted into an AMI from http://www.daemonology.net/freebsd-on-ec2/
+    """
+
+    # the user for the image is `ec2-user`, there is no sudo, but we can su to root w/o password
+    with fab.prefix("su root -c "):
+        fab.put('etc/authorized_keys', '/tmp/authorized_keys')
+        fab.sudo('mkdir /root/.ssh')
+        fab.sudo('chmod 700 /root/.ssh')
+        fab.sudo('chmod 600 /tmp/authorized_keys')
+        fab.sudo('mv /tmp/authorized_keys /root/.ssh/')
+        fab.sudo('chown root /root/.ssh/authorized_keys')
+        fab.sudo('echo "PermitRootLogin without-password" >> /etc/ssh/sshd_config')
+        fab.sudo('/etc/rc.d/sshd restart')
