@@ -19,7 +19,7 @@ setup(
     install_requires=[
         'setuptools',
         'Fabric<1.8.3',
-        'ansible',
+        'ansible<1.6',
         'mr.awsome.ansible',
         'mr.awsome.ezjail',
         'mr.awsome.fabric',
