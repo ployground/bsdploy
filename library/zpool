@@ -37,6 +37,8 @@ class Zpool(object):
     def get_devices(self):
         devices = self.devices
         if not devices:
+            if not os.path.exists('/dev/gpt'):
+                return []
             return [
                 'gpt/%s' % x
                 for x in os.listdir('/dev/gpt')
