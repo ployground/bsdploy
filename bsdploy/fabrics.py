@@ -33,7 +33,7 @@ def get_bootstrap_files(env, ssh_keys=None):
 
     ploy_conf_path = join(env.server.master.main_config.path)
     default_template_path = join(ploy_path, 'bootstrap-files')
-    host_defined_path = env.server.master.instance.config.get('bootstrap-files')
+    host_defined_path = env.server.config.get('bootstrap-files')
     if host_defined_path is None:
         custom_template_path = abspath(join(ploy_conf_path, '..', 'deployment', 'bootstrap-files'))
     else:
