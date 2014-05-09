@@ -109,8 +109,7 @@ def get_hooks():
 
 def get_ansible_vars(server):
     result = {}
-    if server.master.sectiongroupname.startswith('ez-'):
-        result['ansible_python_interpreter'] = '/usr/local/bin/python2.7'
+    result['ansible_python_interpreter'] = '/usr/local/bin/python2.7'
     return result
 
 
