@@ -1,0 +1,12 @@
+---
+'make.conf':
+    remote: '/etc/make.conf'
+'pkg.conf':
+    remote: '/usr/local/etc/pkg.conf'
+'FreeBSD.conf':
+    directory: '/usr/local/etc/pkg/repos'
+    remote: '/usr/local/etc/pkg/repos/FreeBSD.conf'
+'pkg.txz':
+    url: 'http://pkg.freebsd.org/freebsd:9:x86:64/quarterly/Latest/pkg.txz'
+    directory: '/var/cache/pkg/All'
+    remote: '/var/cache/pkg/All/pkg.txz'
