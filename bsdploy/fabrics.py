@@ -356,12 +356,17 @@ def bootstrap_daemonology():
     """
 
     # the user for the image is `ec2-user`, there is no sudo, but we can su to root w/o password
-    with fab.prefix("su root -c "):
-        fab.put('etc/authorized_keys', '/tmp/authorized_keys')
-        fab.sudo('mkdir /root/.ssh')
-        fab.sudo('chmod 700 /root/.ssh')
-        fab.sudo('chmod 600 /tmp/authorized_keys')
-        fab.sudo('mv /tmp/authorized_keys /root/.ssh/')
-        fab.sudo('chown root /root/.ssh/authorized_keys')
-        fab.sudo('echo "PermitRootLogin without-password" >> /etc/ssh/sshd_config')
-        fab.sudo('/etc/rc.d/sshd restart')
+    from fabric import api as fab
+    original_host = fab.env.host_string
+    fab.env.host_string = 'ec2-user@%s' % fab.env.server.id
+    fab.run('whoami')
+    fab.put('etc/authorized_keys', '/tmp/authorized_keys')
+    fab.put(os.path.join(os.path.dirname(__file__), 'enable_root_login_on_daemonology.sh'), '/tmp/', mode='0775')
+    fab.run("""su root -c '/tmp/enable_root_login_on_daemonology.sh'""")
+
+    # revert back to root
+    fab.env.host_string = original_host
+    from time import sleep
+    # give sshd a chance to restart
+    sleep(2)
+    fab.run('rm /tmp/enable_root_login_on_daemonology.sh')
