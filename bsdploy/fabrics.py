@@ -358,8 +358,8 @@ def bootstrap_daemonology(**kwargs):
 
     # the user for the image is `ec2-user`, there is no sudo, but we can su to root w/o password
     from fabric.api import env, run, put
-    original_host = fab.env.host_string
-    env.host_string = 'ec2-user@%s' % fab.env.server.id
+    original_host = env.host_string
+    env.host_string = 'ec2-user@%s' % env.server.id
     put('etc/authorized_keys', '/tmp/authorized_keys')
     put(os.path.join(os.path.dirname(__file__), 'enable_root_login_on_daemonology.sh'), '/tmp/', mode='0775')
     run("""su root -c '/tmp/enable_root_login_on_daemonology.sh'""")
