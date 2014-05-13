@@ -23,6 +23,8 @@ class Zpool(object):
         self.version = self.module.params.pop('version')
         self.devices = self.module.params.pop('devices')
         self.raid_mode = self.module.params.pop('raid_mode')
+        # should zpool upgrade run after it has created the pool?
+        self.upgrade = self.module.params.pop('upgrade')
         self.geli = self.module.params.pop('geli')
         self.geli_passphrase_location = self.module.params.pop('geli_passphrase_location')
         self.cmd = self.module.get_bin_path('zpool', required=True)
@@ -146,6 +148,12 @@ class Zpool(object):
             self.module.fail_json(msg="Failed to create zpool with the following arguments:\n%s\n%s" % (' '.join(zpool_args), err))
         self.changed = True
         self.cleanup_data_devices(data_devices)
+        if self.upgrade:
+            upgrade_args = ['upgrade']
+            upgrade_args.extend(data_devices)
+            (rc, out, err) = self.zpool(*zpool_args)
+            if rc != 0:
+                self.module.fail_json(msg="Failed to upgrade zpool with the following arguments:\n%s\n%s" % (' '.join(zpool_args), err))
         return result
 
     def destroy(self):
@@ -174,6 +182,7 @@ MODULE_SPECS = dict(
         version=dict(default='28', type='str'),
         devices=dict(default=None, type='str'),
         raid_mode=dict(default='detect', type='str'),
+        upgrade=dict(default=False, type='bool'),
         geli=dict(default=False, type='bool'),
         geli_passphrase_location=dict(default='/root/geli-passphrase', type='str')),
     supports_check_mode=True)
