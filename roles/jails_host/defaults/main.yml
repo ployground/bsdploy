@@ -3,6 +3,7 @@ awsome_bootstrap_data_pool_name: "tank"
 awsome_bootstrap_raid_mode: "detect"
 awsome_bootstrap_data_pool_devices: ""
 awsome_bootstrap_geli: no
+awsome_bootstrap_zpool_version: 28
 awsome_ezjail_install_host: "ftp.freebsd.org"
 jails_dir: /usr/jails
 jails_zfs_root: tank/jails

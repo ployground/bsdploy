@@ -20,11 +20,10 @@ class Zpool(object):
         self.changed = False
         self.state = self.module.params.pop('state')
         self.name = self.module.params.pop('name')
+        # set to empty string to create latest supported version on host
         self.version = self.module.params.pop('version')
         self.devices = self.module.params.pop('devices')
         self.raid_mode = self.module.params.pop('raid_mode')
-        # should zpool upgrade run after it has created the pool?
-        self.upgrade = self.module.params.pop('upgrade')
         self.geli = self.module.params.pop('geli')
         self.geli_passphrase_location = self.module.params.pop('geli_passphrase_location')
         self.cmd = self.module.get_bin_path('zpool', required=True)
@@ -148,12 +147,6 @@ class Zpool(object):
             self.module.fail_json(msg="Failed to create zpool with the following arguments:\n%s\n%s" % (' '.join(zpool_args), err))
         self.changed = True
         self.cleanup_data_devices(data_devices)
-        if self.upgrade:
-            upgrade_args = ['upgrade']
-            upgrade_args.extend(data_devices)
-            (rc, out, err) = self.zpool(*zpool_args)
-            if rc != 0:
-                self.module.fail_json(msg="Failed to upgrade zpool with the following arguments:\n%s\n%s" % (' '.join(zpool_args), err))
         return result
 
     def destroy(self):

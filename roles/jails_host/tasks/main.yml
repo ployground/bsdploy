@@ -76,6 +76,7 @@
   zpool:
     name="{{ awsome_bootstrap_data_pool_name }}"
     geli="{{ awsome_bootstrap_geli|bool }}"
+    version="{{ awsome_bootstrap_zpool_version }}"
     devices="{{ awsome_bootstrap_data_pool_devices }}"
     raid_mode="{{ awsome_bootstrap_raid_mode }}"
   register: data_pool_result
