@@ -49,3 +49,24 @@ TODO
  - include poudriere support
  - eliminate need for proxycommand, proxyhost and hooks entries for jail configuration in ploy.conf
  - make the private network for the jails configurable (the hard coded 10.0.0.x is not always desirable)
+
+ Misc
+ ====
+
+ Miscellaneous notes that should eventually make their way into the proper documentation.
+
+ Selectively applying jailhost configuration
+ +++++++++++++++++++++++++++++++++++++++++++
+
+``ploy configure-jailhost`` applies the ``jails_host`` role (see ``roles/jails_host``.  if you don't want to apply it wholesale or want to re-apply certain tags of it, you can use a top-level playbook like so::
+
+    - hosts: my-jailhost
+      user: root
+      roles:
+        - { role: jails_host, tags: ['configure'] }
+
+i.e. to then only update the ipnat rules, do this::
+
+     bin/ploy playbook staging.yml -t configure -t ipnat_rules
+
+the 'trick' is to use multiple tags to narrow down the tasks to only what you need.
