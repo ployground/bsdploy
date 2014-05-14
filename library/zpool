@@ -175,7 +175,6 @@ MODULE_SPECS = dict(
         version=dict(default='28', type='str'),
         devices=dict(default=None, type='str'),
         raid_mode=dict(default='detect', type='str'),
-        upgrade=dict(default=False, type='bool'),
         geli=dict(default=False, type='bool'),
         geli_passphrase_location=dict(default='/root/geli-passphrase', type='str')),
     supports_check_mode=True)
