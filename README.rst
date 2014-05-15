@@ -43,11 +43,7 @@ TODO
 ====
 
  - documentation *cough*
- - make rc.conf a template (to support non-DHCP jailhost scenario)
- - allow for offline installation of ezjail
- - allow for offline installation of pkgng
  - include poudriere support
- - eliminate need for proxycommand, proxyhost and hooks entries for jail configuration in ploy.conf
  - make the private network for the jails configurable (the hard coded 10.0.0.x is not always desirable)
 
  Misc
