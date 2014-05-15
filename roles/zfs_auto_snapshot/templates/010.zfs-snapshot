@@ -1,0 +1,2 @@
+#!/bin/sh
+PATH=$PATH:/sbin:/usr/local/bin /usr/local/sbin/zfs-auto-snapshot -u {{ item.name }} {{ item.num_keep }}

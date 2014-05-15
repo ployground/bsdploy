@@ -20,6 +20,7 @@ class Zpool(object):
         self.changed = False
         self.state = self.module.params.pop('state')
         self.name = self.module.params.pop('name')
+        # set to empty string to create latest supported version on host
         self.version = self.module.params.pop('version')
         self.devices = self.module.params.pop('devices')
         self.raid_mode = self.module.params.pop('raid_mode')
@@ -37,6 +38,8 @@ class Zpool(object):
     def get_devices(self):
         devices = self.devices
         if not devices:
+            if not os.path.exists('/dev/gpt'):
+                return []
             return [
                 'gpt/%s' % x
                 for x in os.listdir('/dev/gpt')

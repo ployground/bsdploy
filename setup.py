@@ -20,10 +20,29 @@ setup(
         'setuptools',
         'Fabric<1.8.3',
         'ansible<1.6',
-        'mr.awsome.ansible',
-        'mr.awsome.ezjail',
-        'mr.awsome.fabric',
+        'mr.awsome.ansible>=1.0b2',
+        'mr.awsome.ezjail>=1.0b2',
+        'mr.awsome.fabric>=1.0b2',
     ],
+    extras_require={
+        'development': [
+            'webtest',
+            'Sphinx',
+            'repoze.sphinx.autointerface',
+            'flake8',
+            'jarn.mkrelease',
+            'pytest >= 2.4.2',
+            'py >= 1.4.17',
+            'pytest-flakes',
+            'pytest-pep8',
+            'pytest-cov',
+            'tox',
+            'mock',
+            'pyquery',
+            'mr.hermes',
+            'setuptools-git',
+        ],
+    },
     entry_points="""
         [console_scripts]
         ploy = bsdploy:ploy
