@@ -40,6 +40,13 @@ Examples
 
 To give it a spin, best `check out the example repository <https://github.com/tomster/ezjail-test-vm>`_.
 
+
+Development
+===========
+
+To develop ``bsdploy`` itself use the provided Makfile – running ``make`` will install a development version of itself and its direct dependencies (i.e. the ``mr.awsome.*`` packages).
+
+
 TODO
 ====
 
