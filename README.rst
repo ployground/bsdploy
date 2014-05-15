@@ -13,6 +13,7 @@ Features
  - ditto for **Fabric** – run fabric scripts with ``ploy do JAILNAME TASKNAME`` and have all your hosts and their variables at your disposal in ``fab.env``.
  - jails receive private IP addresses by default, so they are not reachable from the outside - for configuration access (i.e. applying ansible playbooks to them or running fabric scripts inside of them) bsdploy transparently configures SSH ProxyCommand based access.
  - Easily configure ``ipnat`` on the jail host to white-list access from the outside – this greatly reduces (sadly not eliminates) the chance of accidentally exposing services to the outside world that shouldn't be.
+ - **Amazon EC2** support – provision and configure jailhosts on EC2.
 
 With bsdploy you can create and configure one or more jail hosts with one or more jails inside them, all configured in one canonical ``ini`` style configuration file (by default in ``etc/ploy.conf)``::
 
