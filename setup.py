@@ -20,9 +20,9 @@ setup(
         'setuptools',
         'Fabric<1.8.3',
         'ansible<1.6',
-        'mr.awsome.ansible',
-        'mr.awsome.ezjail',
-        'mr.awsome.fabric',
+        'mr.awsome.ansible>=1.0b2',
+        'mr.awsome.ezjail>=1.0b2',
+        'mr.awsome.fabric>=1.0b2',
     ],
     entry_points="""
         [console_scripts]
