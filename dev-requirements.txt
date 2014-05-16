@@ -1,0 +1,11 @@
+Fabric==1.8.2
+Jinja2==2.7.2
+MarkupSafe==0.19
+PyYAML==3.11
+ansible==1.5.5
+ecdsa==0.11
+jarn.mkrelease==3.8
+lazy==1.1
+paramiko==1.13.0
+setuptools-git==1.0
+zc.buildout==2.2.1

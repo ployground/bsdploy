@@ -11,7 +11,7 @@ except ImportError:
 from . import ploy_path
 
 
-def get_bootstrap_files(env, ssh_keys=None):
+def get_bootstrap_files(env, ssh_keys=None, upload_authorized_keys=True, yaml_filename='files.yml'):
     """ we need some files to bootstrap the FreeBSD installation.
     Some...
         - need to be provided by the user (i.e. authorized_keys)
@@ -33,17 +33,18 @@ def get_bootstrap_files(env, ssh_keys=None):
 
     ploy_conf_path = join(env.server.master.main_config.path)
     default_template_path = join(ploy_path, 'bootstrap-files')
-    host_defined_path = env.server.master.instance.config.get('bootstrap-files')
+    host_defined_path = env.server.config.get('bootstrap-files')
     if host_defined_path is None:
         custom_template_path = abspath(join(ploy_conf_path, '..', 'deployment', 'bootstrap-files'))
     else:
         custom_template_path = abspath(join(ploy_conf_path, host_defined_path))
     download_path = abspath(join(ploy_conf_path, '..', 'downloads'))
     bootstrap_file_yamls = [
-        abspath(join(default_template_path, 'files.yml')),
-        abspath(join(custom_template_path, 'files.yml'))]
-    bootstrap_files = {
-        'authorized_keys': {
+        abspath(join(default_template_path, yaml_filename)),
+        abspath(join(custom_template_path, yaml_filename))]
+    bootstrap_files = dict()
+    if upload_authorized_keys:
+        bootstrap_files['authorized_keys'] = {
             'directory': '/mnt/root/.ssh',
             'directory_mode': '0600',
             'remote': '/mnt/root/.ssh/authorized_keys',
@@ -52,7 +53,7 @@ def get_bootstrap_files(env, ssh_keys=None):
                 '~/.ssh/identity.pub',
                 '~/.ssh/id_rsa.pub',
                 '~/.ssh/id_dsa.pub',
-                '~/.ssh/id_ecdsa.pub']}}
+                '~/.ssh/id_ecdsa.pub']}
     for bootstrap_file_yaml in bootstrap_file_yamls:
         if not exists(bootstrap_file_yaml):
             continue
@@ -351,17 +352,63 @@ def bootstrap(**kwargs):
     print(fingerprint)
 
 
-def bootstrap_daemonology():
+def bootstrap_daemonology(**kwargs):
     """ Bootstrap an EC2 instance that has been booted into an AMI from http://www.daemonology.net/freebsd-on-ec2/
     """
 
     # the user for the image is `ec2-user`, there is no sudo, but we can su to root w/o password
-    with fab.prefix("su root -c "):
-        fab.put('etc/authorized_keys', '/tmp/authorized_keys')
-        fab.sudo('mkdir /root/.ssh')
-        fab.sudo('chmod 700 /root/.ssh')
-        fab.sudo('chmod 600 /tmp/authorized_keys')
-        fab.sudo('mv /tmp/authorized_keys /root/.ssh/')
-        fab.sudo('chown root /root/.ssh/authorized_keys')
-        fab.sudo('echo "PermitRootLogin without-password" >> /etc/ssh/sshd_config')
-        fab.sudo('/etc/rc.d/sshd restart')
+    from fabric.api import env, run, put
+    original_host = env.host_string
+    env.host_string = 'ec2-user@%s' % env.server.id
+    put('etc/authorized_keys', '/tmp/authorized_keys')
+    put(os.path.join(os.path.dirname(__file__), 'enable_root_login_on_daemonology.sh'), '/tmp/', mode='0775')
+    run("""su root -c '/tmp/enable_root_login_on_daemonology.sh'""")
+
+    # revert back to root
+    env.host_string = original_host
+    from time import sleep
+    # give sshd a chance to restart
+    sleep(2)
+    run('rm /tmp/enable_root_login_on_daemonology.sh')
+    bootstrap_files = get_bootstrap_files(env,
+        ssh_keys=None,
+        upload_authorized_keys=False,
+        yaml_filename='daemonology-files.yml')
+
+    print("\nUsing these local files for bootstrapping:")
+    for info in bootstrap_files.values():
+        if 'remote' in info and exists(info['local']):
+            print('{local} -> {remote}'.format(**info))
+    print("\nThe following files will be downloaded on the host during bootstrap:")
+    for info in bootstrap_files.values():
+        if 'remote' in info and 'url' in info and not exists(info['local']):
+            print('{url} -> {remote}'.format(**info))
+    print
+    # allow overwrites from the commandline
+    env.server.config.update(kwargs)
+
+    for info in bootstrap_files.values():
+        if 'directory' not in info:
+            continue
+        cmd = 'mkdir -p "%s"' % info['directory']
+        if 'directory_mode' in info:
+            cmd = '%s && chmod %s "%s"' % (cmd, info['directory_mode'], info['directory'])
+        run(cmd, shell=False)
+
+    # upload bootstrap files
+    for info in bootstrap_files.values():
+        if 'remote' in info and exists(info['local']):
+            put(info['local'], info['remote'], mode=info.get('mode'))
+
+    # install pkg, the tarball is also used for the ezjail flavour in bootstrap_ezjail
+    if not exists(bootstrap_files['pkg.txz']['local']):
+        run('fetch -o {remote} {url}'.format(**bootstrap_files['pkg.txz']))
+    run('chmod 0600 {remote}'.format(**bootstrap_files['pkg.txz']))
+    run("tar -x -C / --exclude '+*' -f {remote}".format(**bootstrap_files['pkg.txz']))
+    # run pkg2ng for which the shared library path needs to be updated
+    run('/etc/rc.d/ldconfig start')
+    run('pkg2ng')
+    # we need to install python here, because there is no way to install it via
+    # ansible playbooks
+    run('pkg install python27')
+

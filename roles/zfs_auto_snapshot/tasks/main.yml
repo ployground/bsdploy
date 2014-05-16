@@ -4,15 +4,18 @@
 
 - name: Setup hourly zfs-auto-snapshot
   cron: name="hourly zfs-auto-snapshot"  special_time=hourly  job="PATH=$PATH:/sbin:/usr/local/bin /usr/local/sbin/zfs-auto-snapshot -u hourly  24"
-- name: Setup daily zfs-auto-snapshot
-  cron: name="daily zfs-auto-snapshot"   special_time=daily   job="PATH=$PATH:/sbin:/usr/local/bin /usr/local/sbin/zfs-auto-snapshot -u daily    7"
-- name: Setup weekly zfs-auto-snapshot
-  cron: name="weekly zfs-auto-snapshot"  special_time=weekly  job="PATH=$PATH:/sbin:/usr/local/bin /usr/local/sbin/zfs-auto-snapshot -u weekly   4"
-- name: Setup monthly zfs-auto-snapshot
-  cron: name="monthly zfs-auto-snapshot" special_time=monthly job="PATH=$PATH:/sbin:/usr/local/bin /usr/local/sbin/zfs-auto-snapshot -u monthly 12"
+- name: "Setup {{ item.name }} zfs-auto-snapshot"
+  template:
+    src: 010.zfs-snapshot
+    dest: "/etc/periodic/{{ item.name }}/010.zfs-snapshot"
+  with_items:
+    - { name: daily, num_keep: 7 }
+    - { name: weekly, num_keep: 4 }
+    - { name: monthly, num_keep: 12 }
 
-- name: Ensure python package without version number is installed
-  pkgng: name=python state=present
-
-- name: Install snapshot backup script
-  copy: src=zfs_snap_backup/zfs_snap_backup dest=/usr/local/bin/zfs_snap_backup mode=0755
+- name: Cleanup old daily cron zfs snapshot
+  cron: name="daily zfs-auto-snapshot" state=absent
+- name: Cleanup old weekly cron zfs snapshot
+  cron: name="weekly zfs-auto-snapshot" state=absent
+- name: Cleanup old monthly cron zfs snapshot
+  cron: name="monthly zfs-auto-snapshot" state=absent
