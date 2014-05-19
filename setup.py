@@ -20,6 +20,7 @@ setup(
         'setuptools',
         'Fabric<1.8.3',
         'ansible<1.6',
+        'mr.awsome>=1.0rc3',
         'mr.awsome.ansible>=1.0b2',
         'mr.awsome.ezjail>=1.0b2',
         'mr.awsome.fabric>=1.0b2',
