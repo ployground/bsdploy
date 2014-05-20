@@ -60,8 +60,9 @@ TODO
 
  Miscellaneous notes that should eventually make their way into the proper documentation.
 
+
  Selectively applying jailhost configuration
- +++++++++++++++++++++++++++++++++++++++++++
+ -------------------------------------------
 
 ``ploy configure-jailhost`` applies the ``jails_host`` role (see ``roles/jails_host``.  if you don't want to apply it wholesale or want to re-apply certain tags of it, you can use a top-level playbook like so::
 
