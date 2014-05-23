@@ -82,4 +82,4 @@ TODO
  [ ] eliminate need for proxyhost in ploy.conf
  [x] eliminate need for hooks entries for jail configuration in ploy.conf
  [x] make the private network for the jails configurable (the hard coded 10.0.0.x is not always desirable)
- [ ] inject ``ansible_python_interpreter`` (so playbooks don't have to set it themselves)
+ [x] inject ``ansible_python_interpreter`` (so playbooks don't have to set it themselves)
