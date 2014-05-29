@@ -48,6 +48,7 @@ setup(
         [console_scripts]
         ploy = bsdploy:ploy
         ploy-ssh = bsdploy:ploy_ssh
+        ploy-download = download:run
         [ansible_paths]
         ploy = bsdploy:ansible_paths
         [mr.awsome.plugins]
