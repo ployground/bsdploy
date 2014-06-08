@@ -124,10 +124,10 @@ plugin = dict(
 def ploy(configname=None, **kw):  # pragma: no cover
     if configname is None:
         configname = 'ploy.conf'
-    return aws(configname=configname, **kw)
+    return aws(configname=configname, progname='ploy', **kw)
 
 
 def ploy_ssh(configname=None, **kw):  # pragma: no cover
     if configname is None:
         configname = 'ploy.conf'
-    return aws_ssh(configname=configname, **kw)
+    return aws_ssh(configname=configname, progname='ploy', **kw)
