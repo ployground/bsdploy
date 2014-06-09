@@ -2,7 +2,10 @@ Fabric==1.8.2
 Jinja2==2.7.2
 MarkupSafe==0.19
 PyYAML==3.11
+Pygments==1.6
+Sphinx==1.2.2
 ansible==1.5.5
+docutils==0.11
 ecdsa==0.11
 jarn.mkrelease==3.8
 lazy==1.1
