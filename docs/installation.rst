@@ -30,8 +30,9 @@ To follow along the latest version of bsdploy you will need the same requirement
 
 This will check out copies of bsdploy's immediate dependencies (``mr.awsome`` and friends) and create the ploy* executables inside ``bin``. You can either add the ``bin`` directory to your path or symlink them into somewhere that's already on your path.
 
-When keeping your checkout up-to-date it is usually a good idea to update the ``mr.awsome`` packages (located inside ``src``), as well. The best way to do so is to use the provided ``develop`` command like so::
+When keeping your checkout up-to-date it is usually a good idea to update the ``mr.awsome`` packages (located inside ``src``), as well. The best way to do so is to use the provided ``develop`` command after updating the bsdploy repository itself like so::
 
+	git pull
 	bin/develop up -v
 
 The ``-v`` flag will show any git messages that arise during the update.
