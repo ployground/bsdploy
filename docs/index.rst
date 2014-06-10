@@ -1,16 +1,15 @@
-.. bsdploy documentation master file, created by
-   sphinx-quickstart on Mon Jun  9 17:48:25 2014.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Welcome to bsdploy's documentation!
+bsdploy – FreeBSD jail provisioning
 ===================================
 
+bsdploy is a tool to deploy `FreeBSD <http://www.freebsd.org>`_ `jails <http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/jails-intro.html>`_.
+
 Contents:
+---------
 
 .. toctree::
    :maxdepth: 2
 
+   installation
 
 
 Indices and tables
