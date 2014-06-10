@@ -41,10 +41,18 @@ Examples
 To give it a spin, best `check out the example repository <https://github.com/tomster/ezjail-test-vm>`_.
 
 
+Full documentation
+==================
+
+The full documentation is [hosted at RTD](http://bsdploy.readthedocs.org/) or you can peek at the identical contents here under ``docs/``.
+
+
 Development
 ===========
 
 To develop ``bsdploy`` itself use the provided Makfile – running ``make`` will install a development version of itself and its direct dependencies (i.e. the ``mr.awsome.*`` packages).
+
+For more details, [check the documentation](http://bsdploy.readthedocs.org/en/latest/installation.html#installing-from-github).
 
 
  Misc
