@@ -20,7 +20,7 @@ setup(
         'setuptools',
         'mr.awsome>=1.0rc5',
         'mr.awsome.ansible>=1.0b3',
-        'mr.awsome.ezjail>=1.0b5',
+        'mr.awsome.ezjail>=1.0b6',
         'mr.awsome.fabric>=1.0b3',
     ],
     extras_require={
