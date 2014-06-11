@@ -1,4 +1,5 @@
 ---
 - name: Create dhclient-exit-hooks
-  copy: src=dhclient-exit-hooks dest=/etc/dhclient-exit-hooks
+  template: src=dhclient-exit-hooks dest=/etc/dhclient-exit-hooks
   notify: renew dhcp lease
+  tags: dhcp_host

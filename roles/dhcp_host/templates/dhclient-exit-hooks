@@ -2,6 +2,7 @@
 case "$reason" in
         BOUND|RENEW|REBIND|REBOOT)
                 # if we get a new ip, we add it to sshd_config and reload
+                [ "$interface" != "" -a "$interface" != "{{ dhcp_host_sshd_interface }}" ] && exit 0
                 grep -v "^ListenAddress" /etc/ssh/sshd_config > /etc/ssh/sshd_config.dhclientbase
                 cp /etc/ssh/sshd_config.dhclientbase /etc/ssh/sshd_config
                 echo "ListenAddress $new_ip_address" >> /etc/ssh/sshd_config
