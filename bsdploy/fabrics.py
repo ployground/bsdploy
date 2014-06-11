@@ -189,7 +189,7 @@ def fetch_assets(**kwargs):
             items.extend(_fetch_packages(env, asset['local'], packages))
 
 
-def bootstrap(**kwargs):
+def bootstrap_mfsbsd(**kwargs):
     """ bootstrap an instance booted into mfsbsd (http://mfsbsd.vx.sk)
     """
     from fabric.api import env, put, run, settings, hide
@@ -370,7 +370,8 @@ def bootstrap_daemonology(**kwargs):
     # give sshd a chance to restart
     sleep(2)
     run('rm /tmp/enable_root_login_on_daemonology.sh')
-    bootstrap_files = get_bootstrap_files(env,
+    bootstrap_files = get_bootstrap_files(
+        env,
         ssh_keys=None,
         upload_authorized_keys=False,
         yaml_filename='daemonology-files.yml')
@@ -411,4 +412,3 @@ def bootstrap_daemonology(**kwargs):
     # we need to install python here, because there is no way to install it via
     # ansible playbooks
     run('pkg install python27')
-
