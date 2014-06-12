@@ -1,4 +1,4 @@
-bsdploy – FreeBSD jail provisioning
+BSDploy – FreeBSD jail provisioning
 ===================================
 
 BSDploy is a comprehensive tool to **provision**, **configure** and **maintain** `FreeBSD <http://www.freebsd.org>`_ `jail hosts and jails <http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/jails-intro.html>`_.
