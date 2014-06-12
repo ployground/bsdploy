@@ -25,7 +25,6 @@ setup(
     ],
     extras_require={
         'development': [
-            'webtest',
             'Sphinx',
             'repoze.sphinx.autointerface',
             'flake8',
@@ -37,8 +36,6 @@ setup(
             'pytest-cov',
             'tox',
             'mock',
-            'pyquery',
-            'mr.hermes',
             'setuptools-git',
         ],
     },
