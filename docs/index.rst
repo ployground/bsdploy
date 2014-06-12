@@ -1,28 +1,29 @@
 bsdploy – FreeBSD jail provisioning
 ===================================
 
-BSDploy is a tool to deploy `FreeBSD <http://www.freebsd.org>`_ `jails <http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/jails-intro.html>`_.
-
-Not wanting to re-invent the wheel, under the hood it uses `mr.awsome <https://pypi.python.org/pypi/mr.awsome>`_ for provisioning, `ansible <http://ansible.cc>`_ for configuration and `Fabric <http://fabfile.org>`_ for maintenance.
+BSDploy is a comprehensive tool to **provision**, **configure** and **maintaining** `FreeBSD <http://www.freebsd.org>`_ `jail hosts and jails <http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/jails-intro.html>`_.
 
 
-Features
---------
+Main Features
+-------------
 
-- configure multiple hosts and jails in one canonical ini-file
+- **bootstrap** complete jail hosts from scratch
 
-- bootstrap complete jail hosts from scratch - both virtual machines, as well as physical ones. ``bsdploy`` will take care of installing FreeBSD for you, including configuration of `ZFS pools <https://wiki.freebsd.org/ZFS>`_ and even encrypts them using `GELI <http://www.freebsd.org/doc/handbook/disks-encrypting.html>`_.
+- configure `ZFS pools and filesystems <https://wiki.freebsd.org/ZFS>`_ with `whole-disk-encryption <http://www.freebsd.org/doc/handbook/disks-encrypting.html>`_
 
-- create new jails simply by adding two or more lines to your configuration file and running ``ploy start`` – bsdploy will take care of configuring the required IP address on the host
+-  out-of-the-box support for `Virtualbox <https://www.virtualbox.org>`_ and `Amazon EC2 <http://aws.amazon.com>`_.
 
-- **ansible support** – no more mucking about with host files: all hosts and their variables defined in ``ploy.conf`` are automatically exposed to ansible. Run them with ``ploy playbook path/to/playbook.yml``.
+- create new jails by adding two or more lines to your configuration file and running ``ploy start``
 
-- ditto for **Fabric** – run fabric scripts with ``ploy do JAILNAME TASKNAME`` and have all your hosts and their variables at your disposal in ``fab.env``.
+- **declarative configuration** – all hosts and their properties defined in ``ploy.conf`` are automatically exposed to `Ansible <http://ansible.cc>`_. Run existing playbooks with ``ploy playbook`` or directly assign roles in ``ploy.conf`` and apply them using ``ploy configure``.
 
-- jails receive private IP addresses by default, so they are not reachable from the outside - for configuration access (i.e. applying ansible playbooks to them or running fabric scripts inside of them) bsdploy transparently configures SSH ProxyCommand based access.
+- **imperative maintenance**  – run `Fabric <http://fabfile.org>`_ scripts with ``ploy do JAILNAME TASKNAME`` and have all of the hosts and their variables at your disposal in ``fab.env``.
 
-- Easily configure ``ipnat`` on the jail host to white-list access from the outside – this greatly reduces the chance of accidentally exposing services to the outside world that shouldn't be.
-- **Amazon EC2** support – provision and configure jailhosts on EC2.
+
+Best of both worlds
+*******************
+
+Those last two items bear repeating: it turns out, that combining a declarative approach to set up the initial state of a system combined with an imperative approach to provide maintenance operations on that state works really well. And since the imperative scripts have the luxury of running against a well-defined context you can keep them short and concise without worrying about all those edge cases.
 
 
 Contents:
