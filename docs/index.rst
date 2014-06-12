@@ -29,7 +29,7 @@ Those last two items bear repeating: it turns out, that combining a declarative 
 Under the hood
 **************
 
-Since BSDploy's scope is quite ambitious it naturally does not attempt do all of the work on its own. In fact, BSDPloy is just a fairly thin, slightly opinonated wrapper around existing, excellent tools. In addition to the above mentioned Ansible and Fabric, it uses `ezjail <http://erdgeist.org/arts/software/ezjail/>`_ on the host to manage the jails and numerous members of the `mr.awsome family <http://mrawsome.readthedocs.org/en/latest/>`_ for pretty much everything else.
+Since BSDploy's scope is quite ambitious it naturally does not attempt do all of the work on its own. In fact, BSDPloy is just a fairly thin, slightly opinionated wrapper around existing, excellent tools. In addition to the above mentioned Ansible and Fabric, it uses `ezjail <http://erdgeist.org/arts/software/ezjail/>`_ on the host to manage the jails and numerous members of the `mr.awsome family <http://mrawsome.readthedocs.org/en/latest/>`_ for pretty much everything else.
 
 
 Server requirements
