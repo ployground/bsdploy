@@ -81,7 +81,9 @@ To bootstrap the jailhost, we need to define it first. This is done with an ``ez
 	[ez-master:jailhost]
 	instance = ploy-demo
 
-Now we can tell BSDploy to bootstrap the virtualbox VM as a jailhost::
+This creates an ezjail jailhost (``ez-master``) named ``jailhost`` (doh!) and tells BSDploy that it lives / should live inside the provisioning instance named ``ploy-demo`` (our freshly created virtual machine).
+
+But since none of this has happened yet, we need to tell BSDploy to make it so, like this::
 
 	ploy bootstrap
 
