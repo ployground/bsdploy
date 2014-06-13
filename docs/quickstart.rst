@@ -100,6 +100,10 @@ Before we can continue you need to add that fingerprint to the jailhost configur
 	instance = ploy-demo
 	fingerprint = f3:51:c2:2a:94:c3:06:0e:02:e0:87:51:73:f0:dc:6f
 
+
+Host Configuration
+------------------
+
 Now we can configure the vanilla installation. This step is performed internally using ansible playbooks, which are divided into different socalled *roles*. For the tutorial we will need the DHCP role (since virtualbox provides DHCP to the VM), the main jailhost role and in addition we want to show off BSDploy's default ZFS layout, so add the following lines to the jailhost configuration to make it look like so::
 
 	[ez-master:jailhost]
@@ -109,6 +113,12 @@ Now we can configure the vanilla installation. This step is performed internally
 	    dhcp_host
 	    jails_host
 	    data_zfs_layout
+
+Currently, ``mr.awsome.ansible`` *requires* us to provide a path to our own playbooks, even, if we don't have any yet, so for now, we need to add the following lines to ``ploy.conf``, as well::
+
+	[ansible]
+	playbooks-directory = ..
+
 
 With this information, BSDploy can set to work::
 

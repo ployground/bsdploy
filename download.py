@@ -19,6 +19,9 @@ def run(*args, **kwargs):
     url = sys.argv[1]
     sha = sys.argv[2]
     path = sys.argv[3]
+    if os.path.isdir(path):
+        import urlparse
+        path = os.path.join(path, urlparse.urlparse(url).path.split('/')[-1])
     if os.path.exists(path):
         if not check(path, sha):
             os.remove(path)
