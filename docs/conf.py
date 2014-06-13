@@ -46,7 +46,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'bsdploy'
+project = u'BSDploy'
 copyright = u'2014, Tom Lazar'
 
 # The version info for the project you're documenting, acts as replacement for
