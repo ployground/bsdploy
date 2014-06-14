@@ -116,12 +116,6 @@ Now we can configure the vanilla installation. This step is performed internally
 	    jails_host
 	    data_zfs_layout
 
-Currently, ``mr.awsome.ansible`` *requires* us to provide a path to our own playbooks, even, if we don't have any yet, so for now, we need to add the following lines to ``ploy.conf``, as well::
-
-	[ansible]
-	playbooks-directory = ..
-
-
 With this information, BSDploy can set to work::
 
 	ploy configure ploy-demo
