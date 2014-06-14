@@ -26,6 +26,9 @@ def get_bootstrap_files(env, ssh_keys=None, upload_authorized_keys=True, yaml_fi
     own version in a ``bootstrap-files`` folder. The location of this folder can either be explicitly provided
     via the ``bootstrap-files`` key in the host definition of the config file or it defaults to ``deployment/bootstrap-files``.
 
+    User provided files can be rendered as Jinja2 templates, by providing ``use_jinja: True`` in the YAML file.
+    They will be rendered with the server configuration dictionary as context.
+
     If the file is not found there, we revert to the default
     files that are part of bsdploy. If the file cannot be found there either we either error out or for authorized_keys
     we look in ``~/.ssh/identity.pub``.
@@ -193,6 +196,7 @@ def bootstrap_mfsbsd(**kwargs):
     """ bootstrap an instance booted into mfsbsd (http://mfsbsd.vx.sk)
     """
     from fabric.api import env, put, run, settings, hide
+    from fabric.contrib.files import upload_template
     from mr.awsome.config import value_asbool
     import math
     env.shell = '/bin/sh -c'
@@ -208,7 +212,9 @@ def bootstrap_mfsbsd(**kwargs):
     print("\nUsing these local files for bootstrapping:")
     for info in bootstrap_files.values():
         if 'remote' in info and exists(info['local']):
-            print('{local} -> {remote}'.format(**info))
+            if 'use_jinja' not in info:
+                info['use_jinja'] = False
+            print('{local} -(template:{use_jinja})-> {remote}'.format(**info))
     print("\nThe following files will be downloaded on the host during bootstrap:")
     for info in bootstrap_files.values():
         if 'remote' in info and 'url' in info and not exists(info['local']):
@@ -263,9 +269,24 @@ def bootstrap_mfsbsd(**kwargs):
         first_interface = None
     if not yesno("\nContinuing will destroy the existing data on the following devices:\n    %s\n\nContinue?" % ' '.join(devices)):
         return
-    if first_interface is not None:
-        ifconfig = 'ifconfig_%s' % first_interface
-        for line in open(bootstrap_files['rc.conf']['local']):
+
+    template_context = env.server.config.copy()
+    template_context.update(devices=sysctl_devices,
+        interfaces=real_interfaces,
+        hostname=env.server.id)
+
+    if bootstrap_files['rc.conf'].get('use_jinja'):
+        from jinja2 import Template
+        template = Template(''.join(open(bootstrap_files['rc.conf']['local']).readlines()))
+        rc_conf_lines = template.render(**template_context).split('\n')
+    else:
+        rc_conf_lines = open(bootstrap_files['rc.conf']['local'], 'r')
+
+    for interface in [first_interface, env.server.config.get('ansible-dhcp_host_sshd_interface')]:
+        if interface is None:
+            continue
+        ifconfig = 'ifconfig_%s' % interface
+        for line in rc_conf_lines:
             if line.strip().startswith(ifconfig):
                 break
         else:
@@ -323,7 +344,16 @@ def bootstrap_mfsbsd(**kwargs):
     # upload bootstrap files
     for info in bootstrap_files.values():
         if 'remote' in info and exists(info['local']):
-            put(info['local'], info['remote'], mode=info.get('mode'))
+            if info.get('use_jinja'):
+                template_dir, template_name = os.path.split(info['local'])
+                upload_template(template_name,
+                    info['remote'],
+                    context=template_context,
+                    use_jinja=True,
+                    template_dir=template_dir,
+                    mode=info.get('mode'))
+            else:
+                put(info['local'], info['remote'], mode=info.get('mode'))
 
     # install pkg, the tarball is also used for the ezjail flavour in bootstrap_ezjail
     if not exists(bootstrap_files['pkg.txz']['local']):

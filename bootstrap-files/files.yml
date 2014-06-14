@@ -1,6 +1,7 @@
 ---
 'rc.conf':
     remote: '/mnt/etc/rc.conf'
+    use_jinja: True
 'make.conf':
     remote: '/mnt/etc/make.conf'
 'pkg.conf':
