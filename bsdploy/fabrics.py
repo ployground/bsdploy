@@ -270,10 +270,10 @@ def bootstrap_mfsbsd(**kwargs):
     if not yesno("\nContinuing will destroy the existing data on the following devices:\n    %s\n\nContinue?" % ' '.join(devices)):
         return
 
-    template_context = env.server.config.copy()
-    template_context.update(devices=sysctl_devices,
+    template_context = dict(devices=sysctl_devices,
         interfaces=real_interfaces,
         hostname=env.server.id)
+    template_context.update(env.server.config)
 
     if bootstrap_files['rc.conf'].get('use_jinja'):
         from jinja2 import Template
