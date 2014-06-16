@@ -1,7 +1,7 @@
 Quickstart
 ==========
 
-This quickstart is intending to provide the shortest possible path from an empty project directory to a running jail inside a provisioned host. 
+This quickstart intends to provide the shortest possible path from an empty project directory to a running jail inside a provisioned host. 
 
 It takes several shortcuts on its way but it should give you a good idea about how BSDploy works and leave you with a running instance that you can use as a stepping stone for further exploration, i.e. following along the tutorial.
 
