@@ -20,9 +20,9 @@ setup(
         'PyYAML',
         'jinja2',
         'setuptools',
-        'mr.awsome>=1.0rc7',
-        'mr.awsome.ansible>=1.0b4',
-        'mr.awsome.ezjail>=1.0b6',
+        'mr.awsome>=1.0rc8',
+        'mr.awsome.ansible>=1.0b5',
+        'mr.awsome.ezjail>=1.0b7',
         'mr.awsome.fabric>=1.0b3',
     ],
     extras_require={
