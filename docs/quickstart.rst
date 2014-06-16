@@ -190,8 +190,8 @@ But there aren't any jails configured yet::
 Let's change that...
 
 
-Configuring a jail
-------------------
+Creating a jail
+---------------
 
 Add the following lines to ``etc/ploy.conf``::
 
@@ -220,4 +220,30 @@ Ok, we have a running jail, listening on a private IP – how do we communicate 
 
 Now you can log into the jail via ``ploy``, just like with the host::
 
-	ploy ssh demo_jail
+	# ploy ssh demo_jail
+	FreeBSD 9.2-RELEASE (GENERIC) #6 r255896M: Wed Oct  9 01:45:07 CEST 2013
+
+	Gehe nicht über Los.
+	root@demo_jail:~ # 
+
+But frankly, that's not very interesting. As a final step of this introduction, let's configure it to act as a simple webserver using an ansible playbook.
+
+
+Configuring a jail
+------------------
+
+Like with the jailhost, we could assign roles to our demo jail, but another way is to create a playbook with the same name. If such a playbook exists, BSDploy will use that when you call ``configure``. So, create a file named ``demo_jail.yml`` with the following content::
+
+	---
+	- hosts: demo_jail
+	- vars:
+	    wwwuser: www
+
+	  tasks:
+
+	  - name: install nginx
+	    pkgng: name=nginx state=present
+
+and apply it::
+
+	ploy configure demo_jail
