@@ -235,13 +235,12 @@ Like with the jailhost, we could assign roles to our demo jail, but another way 
 
 	---
 	- hosts: demo_jail
-	- vars:
+	  vars:
 	    wwwuser: www
 
 	  tasks:
-
-	  - name: install nginx
-	    pkgng: name=nginx state=present
+	    - name: install nginx
+	      pkgng: name=nginx state=present
 
 and apply it::
 
