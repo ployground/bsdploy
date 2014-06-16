@@ -17,6 +17,8 @@ setup(
     zip_safe=False,
     packages=['bsdploy'],
     install_requires=[
+        'PyYAML',
+        'jinja2',
         'setuptools',
         'mr.awsome>=1.0rc7',
         'mr.awsome.ansible>=1.0b4',
