@@ -14,14 +14,14 @@ The process consists of:
 - and finally creating a 'hello world' jail inside of it.
 
 
-Virtualbox
-----------
+Using Virtualbox
+----------------
 
 To give us the luxury of running against a well-defined context, this quickstart uses `virtualbox <https://www.virtualbox.org>`_, a free, open source PC virtualization. If you don't have it installed on your system, head over to the `downloads section <https://www.virtualbox.org/wiki/Downloads>`_ and install it for your platform. We'll wait! If you can't be bothered, following along anyway should still be useful, though.
 
 
-Get assets
-----------
+Getting the FreeBSD installer
+-----------------------------
 
 BSDploy has the notion of an environment, which is just fancy talk for a directory with specific conventions. Let's create one::
 
@@ -73,8 +73,8 @@ Now we can start it up::
 This should fire up virtualbox and boot a VirtualBOX VM into mfsBSD.
 
 
-Bootstrapping
--------------
+Bootstrapping the host
+----------------------
 
 To bootstrap the jailhost, we need to define it first. This is done with an ``ez-master`` entry in ``ploy.conf``. So add this::
 
@@ -134,8 +134,8 @@ A few things to note:
 In other words, there's still work to do, so let's log out and continue...
 
 
-Host Configuration
-------------------
+Configuring the host
+--------------------
 
 Now we can configure the vanilla installation. This step is performed internally using `ansible playbooks <http://docs.ansible.com/playbooks_intro.html>`_, which are divided into different so-called *roles*. For the tutorial we will need the DHCP role (since virtualbox provides DHCP to the VM), the main jailhost role and in addition we want to show off BSDploy's default ZFS layout, so add the following lines to the jailhost configuration to make it look like so::
 
