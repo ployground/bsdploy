@@ -257,7 +257,7 @@ Port forwarding
 
 Port forwarding from the host to jails is implemented using ``ipnat`` and BSDploy offers explicit support for configuring it.
 
-To do so, create a file named ``host_vars/jailhost``::
+To do so, create a file named ``host_vars/jailhost.yml``::
 
 	mkdir host_vars
 
