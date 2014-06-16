@@ -137,7 +137,7 @@ In other words, there's still work to do, so let's log out and continue...
 Configuring the host
 --------------------
 
-Now we can configure the vanilla installation. This step is performed internally using `ansible playbooks <http://docs.ansible.com/playbooks_intro.html>`_, which are divided into different so-called *roles*. For the tutorial we will need the DHCP role (since virtualbox provides DHCP to the VM), the main jailhost role and in addition we want to show off BSDploy's default ZFS layout, so add the following lines to the jailhost configuration to make it look like so::
+Now we can configure the vanilla installation. This step is performed internally using `ansible playbooks <http://docs.ansible.com/playbooks_intro.html>`_, which are divided into different so-called *roles*. For the tutorial we will need the DHCP role (since virtualbox provides DHCP to the VM) and the main jailhost role so add the following lines to the jailhost configuration to make it look like so::
 
 	[ez-master:jailhost]
 	instance = ploy-demo
@@ -145,7 +145,6 @@ Now we can configure the vanilla installation. This step is performed internally
 	roles =
 	    dhcp_host
 	    jails_host
-	    data_zfs_layout
 
 With this information, BSDploy can set to work::
 
