@@ -269,7 +269,8 @@ with the following content::
 	    - "# http forward for demo jail:"
 	    - "rdr {{ ipnat_rules_interface }} {{ ipnat_rules_address }}/32 port 80 -> {{ hostvars['demo_jail']['awsome_ip'] }} port 80"
 
-To activate the rules, re-apply the jail host configuration. ansible will figure out, that it needs to update them (and only those) and then restart the network::
+To activate the rules, re-apply the jail host configuration.
+Ansible will figure out, that it needs to update them (and only those) and then restart the network::
 
 	ploy configure jailhost
 
