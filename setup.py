@@ -4,7 +4,7 @@ import os
 here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.rst')).read()
 
-version = "0.1a4"
+version = "0.1a5"
 
 setup(
     version=version,
