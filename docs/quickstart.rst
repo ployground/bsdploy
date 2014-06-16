@@ -271,7 +271,7 @@ with the following content::
 
 To activate the rules, re-apply the jail host configuration. ansible will figure out, that it needs to update them (and only those) and then restart the network::
 
-	ploy confgigure jailhost
+	ploy configure jailhost
 
 Since the demo is running inside a host that got its IP address via DHCP we will need to find that out before we can access it in the browser.
 
