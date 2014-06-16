@@ -1,7 +1,10 @@
 import argparse
+import sys
+import logging
 from mr.awsome import aws, aws_ssh
 from os import path
 
+log = logging.getLogger('bsdploy')
 
 # register our own library and roles paths into ansible
 ploy_path = path.abspath(path.join(path.dirname(__file__), '../'))
@@ -53,7 +56,8 @@ def augment_instance(instance):
                 'fabfile_%s.py' % bootstrap_type)
             instance.config['fabfile'] = fabfile
         if not has_playbook(instance):
-            instance.config['roles'] = 'dhcp_host jails_host'
+            log.error("FATAL: '{instance}' does has neither roles nor a playbook specified (In case of doubt, use 'roles = jails_host'.)".format(**instance.config))
+            sys.exit(1)
     else:
         # for jails
         if 'startup_script' not in instance.config:
