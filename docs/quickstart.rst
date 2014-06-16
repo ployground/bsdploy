@@ -102,11 +102,42 @@ Before we can continue you need to add that fingerprint to the jailhost configur
 	instance = ploy-demo
 	fingerprint = f3:51:c2:2a:94:c3:06:0e:02:e0:87:51:73:f0:dc:6f
 
+To make sure that everything has worked so far, let's take a look at the host by logging into it via SSH. ``bsdploy`` provides a command for that, too::
+
+	ploy ssh jailhost
+	FreeBSD 9.2-RELEASE (GENERIC) #6 r255896M: Wed Oct  9 01:45:07 CEST 2013
+	[...]
+
+Let's take a quick look::
+
+	root@jailhost:~ # pkg info
+	gettext-0.18.3.1_1             GNU gettext package
+	libiconv-1.14_3                Character set conversion library
+	python27-2.7.6_4               Interpreted object-oriented programming language
+	root@jailhost:~ # zpool list
+	NAME     SIZE  ALLOC   FREE    CAP  DEDUP  HEALTH  ALTROOT
+	system  19.9G   584M  19.3G     2%  1.00x  ONLINE  -
+	root@jailhost:~ # zfs list
+	NAME              USED  AVAIL  REFER  MOUNTPOINT
+	system            584M  19.0G    31K  none
+	system/root       583M  19.0G   533M  /
+	system/root/tmp    37K  19.0G    37K  /tmp
+	system/root/var  50.6M  19.0G  50.6M  /var
+
+A few things to note:
+
+- ``pkg`` is installed and configured
+- ``python`` has been installed
+- there is one zpool which contains the system
+- not much else
+
+In other words, there's still work to do, so let's log out and continue...
+
 
 Host Configuration
 ------------------
 
-Now we can configure the vanilla installation. This step is performed internally using ansible playbooks, which are divided into different socalled *roles*. For the tutorial we will need the DHCP role (since virtualbox provides DHCP to the VM), the main jailhost role and in addition we want to show off BSDploy's default ZFS layout, so add the following lines to the jailhost configuration to make it look like so::
+Now we can configure the vanilla installation. This step is performed internally using `ansible playbooks <http://docs.ansible.com/playbooks_intro.html>`_, which are divided into different so-called *roles*. For the tutorial we will need the DHCP role (since virtualbox provides DHCP to the VM), the main jailhost role and in addition we want to show off BSDploy's default ZFS layout, so add the following lines to the jailhost configuration to make it look like so::
 
 	[ez-master:jailhost]
 	instance = ploy-demo
@@ -119,3 +150,74 @@ Now we can configure the vanilla installation. This step is performed internally
 With this information, BSDploy can set to work::
 
 	ploy configure ploy-demo
+
+Let's log in once more and take another look::
+
+	ploy ssh jailhost
+	[...]
+
+Package-wise nothing much has changed – only ``ezjail`` has been installed. BSDploy tries hard, to keep the jailhost clean::
+
+	root@jailhost:~ # pkg info
+	ezjail-3.4.1                   Framework to easily create, manipulate, and run FreeBSD jails
+	gettext-0.18.3.1_1             GNU gettext package
+	libiconv-1.14_3                Character set conversion library
+	python27-2.7.6_4               Interpreted object-oriented programming language
+
+There is now a second zpool called ``tank`` and ``ezjail`` has been configured to use it::
+
+	root@jailhost:~ # zpool list
+	NAME     SIZE  ALLOC   FREE    CAP  DEDUP  HEALTH  ALTROOT
+	system  19.9G   584M  19.3G     2%  1.00x  ONLINE  -
+	tank    78.5G   389M  78.1G     0%  1.00x  ONLINE  -
+	root@jailhost:~ # zfs list
+	NAME                  USED  AVAIL  REFER  MOUNTPOINT
+	system                584M  19.0G    31K  none
+	system/root           584M  19.0G   533M  /
+	system/root/tmp        38K  19.0G    38K  /tmp
+	system/root/var      50.7M  19.0G  50.7M  /var
+	tank                  389M  76.9G   144K  none
+	tank/jails            389M  76.9G  8.05M  /usr/jails
+	tank/jails/basejail   377M  76.9G   377M  /usr/jails/basejail
+	tank/jails/newjail   3.58M  76.9G  3.58M  /usr/jails/newjail
+
+But there aren't any jails configured yet::
+
+	root@jailhost:~ # ezjail-admin list
+	STA JID  IP              Hostname                       Root Directory
+	--- ---- --------------- ------------------------------ ------------------------
+
+Let's change that...
+
+
+Configuring a jail
+------------------
+
+Add the following lines to ``etc/ploy.conf``::
+
+
+	[ez-instance:demo_jail]
+	ip = 10.0.0.1
+
+and start the jail like so::
+
+	ploy start demo_jail
+
+Let's check on it first, by logging into the host::
+
+	ploy ssh jailhost
+	root@jailhost:~ # ezjail-admin list
+	STA JID  IP              Hostname                       Root Directory
+	--- ---- --------------- ------------------------------ ------------------------
+	ZR  1    10.0.0.1        demo_jail                      /usr/jails/demo_jail
+
+Ok, we have a running jail, listening on a private IP – how do we communicate with it? Basically, there are two options (besides giving it a public IP): either port forwarding from the host or using a SSH proxy command. For the tutorial we will chose the latter. Log out from the jailhost and add the following lines to ``ploy.conf`` so that the jail definition looks like this::
+
+	[ez-instance:demo_jail]
+	ip = 10.0.0.1
+	proxycommand = nohup ploy-ssh jailhost -W {ip}:22
+	proxyhost = jailhost
+
+Now you can log into the jail via ``ploy``, just like with the host::
+
+	ploy ssh demo_jail
