@@ -242,10 +242,48 @@ Like with the jailhost, we could assign roles to our demo jail, but another way 
 	      pkgng: name=nginx state=present
 	    - name: enable nginx at startup time
 	      lineinfile: dest=/etc/rc.conf state=present line='nginx_enable=YES' create=yes
-
 	    - name: make sure nginx is running or reloaded
 	      service: name=nginx state=restarted
 
 and apply it::
 
 	ploy configure demo_jail
+
+Ok, now we have a jail with a webserver running inside of it. How do we access it? Right, *port forwarding*...
+
+
+Port forwarding
+***************
+
+Port forwarding from the host to jails is implemented using ``ipnat`` and BSDploy offers explicit support for configuring it.
+
+To do so, create a file named ``host_vars/jailhost``::
+
+	mkdir host_vars
+
+with the following content::
+
+	ipnat_rules_interface: "{{ ansible_em0.device }}"
+	ipnat_rules_address: "{{ ansible_em0.ipv4[0].address }}"
+	ipnat_rules:
+	    - "# http forward for demo jail:"
+	    - "rdr {{ ipnat_rules_interface }} {{ ipnat_rules_address }}/32 port 80 -> {{ hostvars['demo_jail']['awsome_ip'] }} port 80"
+
+To activate the rules, re-apply the jail host configuration. ansible will figure out, that it needs to update them (and only those) and then restart the network::
+
+	ploy confgigure jailhost
+
+Since the demo is running inside a host that got its IP address via DHCP we will need to find that out before we can access it in the browser.
+
+To find out, which one was assigned run ``ifconfig`` like so::
+
+	ploy ssh jailhost 'ifconfig em0'
+	em0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> metric 0 mtu 1500
+		options=9b<RXCSUM,TXCSUM,VLAN_MTU,VLAN_HWTAGGING,VLAN_HWCSUM>
+		ether 08:00:27:87:2e:40
+		inet 192.168.56.108 netmask 0xffffff00 broadcast 192.168.56.255
+		nd6 options=29<PERFORMNUD,IFDISABLED,AUTO_LINKLOCAL>
+		media: Ethernet autoselect (1000baseT <full-duplex>)
+		status: active
+
+Visit the IP in your browser and you should be greeted with the default page of ``nginx``.
