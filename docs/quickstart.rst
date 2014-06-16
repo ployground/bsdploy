@@ -237,12 +237,14 @@ Like with the jailhost, we could assign roles to our demo jail, but another way 
 
 	---
 	- hosts: demo_jail
-	  vars:
-	    wwwuser: www
-
 	  tasks:
 	    - name: install nginx
 	      pkgng: name=nginx state=present
+	    - name: enable nginx at startup time
+	      lineinfile: dest=/etc/rc.conf state=present line='nginx_enable=YES' create=yes
+
+	    - name: make sure nginx is running or reloaded
+	      service: name=nginx state=restarted
 
 and apply it::
 
