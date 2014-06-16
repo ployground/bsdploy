@@ -149,7 +149,7 @@ Now we can configure the vanilla installation. This step is performed internally
 
 With this information, BSDploy can set to work::
 
-	ploy configure ploy-demo
+	ploy configure jailhost
 
 Let's log in once more and take another look::
 
