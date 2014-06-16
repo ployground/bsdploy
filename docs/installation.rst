@@ -24,7 +24,7 @@ In summary, do this::
 	virtualenv .
 	source bin/activate
 	pip install ansible
-	pip install bsdploy==1.0a4
+	pip install bsdploy==0.1a4
 
 
 Installing from github
