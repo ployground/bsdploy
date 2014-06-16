@@ -59,6 +59,8 @@ def augment_instance(instance):
         if 'startup_script' not in instance.config:
             instance.config['startup_script'] = path.join(
                 ploy_path, 'startup-ansible-jail')
+        if 'flavour' not in instance.config:
+            instance.config['flavour'] = 'base'
 
 
 def get_commands(aws):
