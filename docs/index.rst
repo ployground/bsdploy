@@ -3,7 +3,7 @@ BSDploy – FreeBSD jail provisioning
 
 BSDploy is a comprehensive tool to **provision**, **configure** and **maintain** `FreeBSD <http://www.freebsd.org>`_ `jail hosts and jails <http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/jails-intro.html>`_.
 
-.. warning:: BSDploy is currently still in beta. While it's not considered ready for production, it is now in feature freeze mode and you are encouraged to :doc:`give it a spin </quickstart>` and `report any issues <http://github.com/tomster/bsdploy/issues>`_ that you find, so it can move to a 1.0 release – thanks!.
+.. warning:: BSDploy is currently still in beta. While it's not considered ready for production, it is now in feature freeze mode and you are encouraged to :doc:`give it a spin </quickstart>` and `report any issues <http://github.com/tomster/bsdploy/issues>`_ that you find, so it can move to a 1.0 release – thanks!
 
 
 Main Features
