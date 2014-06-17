@@ -94,6 +94,7 @@ The following features already exist but still need to be documented:
 - Creating and restoring ZFS snapshots
 - poudriere support
 - Upgrading strategies
+- 'vagrant mode' (use - virtualized - jails as development environment)
 
 The following features don't exist yet but should eventually :)
 
@@ -103,3 +104,4 @@ The following features don't exist yet but should eventually :)
    - ?
 - support ``bootstrap-rc-XXX``
 - Licence
+- support vmware?
