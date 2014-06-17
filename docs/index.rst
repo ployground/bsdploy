@@ -53,6 +53,21 @@ Contents:
    narr/staging
 
 
+Contribute
+----------
+
+Code and issues are hosted at github:
+
+- Issue Tracker: http://github.com/tomster/bsdploy/issues
+- Source Code: http://github.com/tomster/bsdploy
+
+
+License
+-------
+
+The project is licensed under the Beerware license.
+
+
 TODO
 ----
 
@@ -86,3 +101,5 @@ The following features don't exist yet but should eventually :)
    - homebrew
    - freebsd ports + pkgng
    - ?
+- support ``bootstrap-rc-XXX``
+- Licence
