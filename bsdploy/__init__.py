@@ -93,7 +93,9 @@ def version():
         'bsdploy',
         'mr.awsome',
         'mr.awsome.ansible',
+        'mr.awsome.ec2',
         'mr.awsome.ezjail',
         'mr.awsome.fabric',
+        'mr.awsome.virtualbox',
         ]:
         print('%s: %s' % (package, get_distribution(package).version))

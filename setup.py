@@ -33,8 +33,10 @@ setup(
         'setuptools',
         'mr.awsome>=1.0rc8',
         'mr.awsome.ansible>=1.0b5',
+        'mr.awsome.ec2>=1.0b2',
         'mr.awsome.ezjail>=1.0b7',
         'mr.awsome.fabric>=1.0b3',
+        'mr.awsome.virtualbox>=1.0b1',
     ],
     extras_require={
         'development': [
