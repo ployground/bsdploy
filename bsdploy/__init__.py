@@ -1,4 +1,5 @@
 import argparse
+from pkg_resources import get_distribution
 from mr.awsome import aws, aws_ssh
 from os import path
 
@@ -73,6 +74,9 @@ plugin = dict(
 
 
 def ploy(configname=None, **kw):  # pragma: no cover
+    from sys import argv
+    if '-v' in argv:
+        return version()
     if configname is None:
         configname = 'ploy.conf'
     return aws(configname=configname, progname='ploy', **kw)
@@ -82,3 +86,14 @@ def ploy_ssh(configname=None, **kw):  # pragma: no cover
     if configname is None:
         configname = 'ploy.conf'
     return aws_ssh(configname=configname, progname='ploy', **kw)
+
+
+def version():
+    for package in [
+        'bsdploy',
+        'mr.awsome',
+        'mr.awsome.ansible',
+        'mr.awsome.ezjail',
+        'mr.awsome.fabric',
+        ]:
+        print('%s: %s' % (package, get_distribution(package).version))
