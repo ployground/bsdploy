@@ -4,16 +4,27 @@ import os
 here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.rst')).read()
 
-version = "0.1a5"
+version = "1.0b1"
 
 setup(
     version=version,
     description="A tool to provision, configure and maintain FreeBSD jails",
-    name="bsdploy",
+    name="BSDploy",
     author='Tom Lazar',
     author_email='tom@tomster.org',
     url='http://github.com/tomster/bsdploy',
     include_package_data=True,
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Environment :: Console',
+        'Intended Audience :: System Administrators',
+        'Operating System :: POSIX :: BSD :: FreeBSD',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 2 :: Only',
+        'Topic :: System :: Installation/Setup',
+        'Topic :: System :: Systems Administration',
+    ],
+    license='Beerware Licence',
     zip_safe=False,
     packages=['bsdploy'],
     install_requires=[
