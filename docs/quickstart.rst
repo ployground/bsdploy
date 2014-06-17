@@ -212,20 +212,16 @@ Let's check on it first, by logging into the host::
 	--- ---- --------------- ------------------------------ ------------------------
 	ZR  1    10.0.0.1        demo_jail                      /usr/jails/demo_jail
 
-Ok, we have a running jail, listening on a private IP – how do we communicate with it? Basically, there are two options (besides giving it a public IP): either port forwarding from the host or using a SSH proxy command. For the tutorial we will chose the latter. Log out from the jailhost and add the following lines to ``ploy.conf`` so that the jail definition looks like this::
-
-	[ez-instance:demo_jail]
-	ip = 10.0.0.1
-	proxycommand = nohup ploy-ssh jailhost -W {ip}:22
-	proxyhost = jailhost
-
-Now you can log into the jail via ``ploy``, just like with the host::
+Ok, we have a running jail, listening on a private IP – how do we communicate with it?
+Basically, there are two options (besides giving it a public IP): either port forwarding from the host or using a SSH proxy command.
+Rather conveniently mr.awsome.ezjail has defaults for the latter.
+Log out from the jailhost and run this::
 
 	# ploy ssh demo_jail
 	FreeBSD 9.2-RELEASE (GENERIC) #6 r255896M: Wed Oct  9 01:45:07 CEST 2013
 
 	Gehe nicht über Los.
-	root@demo_jail:~ # 
+	root@demo_jail:~ #
 
 But frankly, that's not very interesting. As a final step of this introduction, let's configure it to act as a simple webserver using an ansible playbook.
 
@@ -241,7 +237,7 @@ Like with the jailhost, we could assign roles to our demo jail, but another way 
 	    - name: install nginx
 	      pkgng: name=nginx state=present
 	    - name: enable nginx at startup time
-	      lineinfile: dest=/etc/rc.conf state=present line='nginx_enable=YES' create=yes
+	      lineinfile: dest=/etc/rc.conf regexp=^nginx_enable= line=nginx_enable=\"YES\"
 	    - name: make sure nginx is running or reloaded
 	      service: name=nginx state=restarted
 
@@ -257,7 +253,7 @@ Port forwarding
 
 Port forwarding from the host to jails is implemented using ``ipnat`` and BSDploy offers explicit support for configuring it.
 
-To do so, create a file named ``host_vars/jailhost``::
+To do so, create a file named ``host_vars/jailhost.yml``::
 
 	mkdir host_vars
 
@@ -266,9 +262,10 @@ with the following content::
 	ipnat_rules:
 	    - "rdr em0 {{ ansible_em0.ipv4[0].address }}/32 port 80 -> {{ hostvars['demo_jail']['awsome_ip'] }} port 80"
 
-To activate the rules, re-apply the jail host configuration. ansible will figure out, that it needs to update them (and only those) and then restart the network::
+To activate the rules, re-apply the jail host configuration.
+Ansible will figure out, that it needs to update them (and only those) and then restart the network::
 
-	ploy confgigure jailhost
+	ploy configure jailhost
 
 Since the demo is running inside a host that got its IP address via DHCP we will need to find that out before we can access it in the browser.
 
