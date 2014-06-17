@@ -9,7 +9,7 @@ version = "1.0b1"
 setup(
     version=version,
     description="A tool to provision, configure and maintain FreeBSD jails",
-    name="BSDploy",
+    name="bsdploy",
     author='Tom Lazar',
     author_email='tom@tomster.org',
     url='http://github.com/tomster/bsdploy',
