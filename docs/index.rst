@@ -50,6 +50,8 @@ Contents:
 
    installation
    quickstart
+   narr/staging
+
 
 
 Indices and tables
