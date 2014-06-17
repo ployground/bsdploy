@@ -19,7 +19,7 @@ The process consists of:
 Using Virtualbox
 ----------------
 
-To give us the luxury of running against a well-defined context, this quickstart uses `virtualbox <https://www.virtualbox.org>`_, a free, open source PC virtualization. If you don't have it installed on your system, head over to the `downloads section <https://www.virtualbox.org/wiki/Downloads>`_ and install it for your platform. We'll wait! If you can't be bothered, following along anyway should still be useful, though.
+To give us the luxury of running against a well-defined context, this quickstart uses `Virtualbox <https://www.virtualbox.org>`_, a free, open source PC virtualization platform. If you don't have it installed on your system, head over to their `downloads section <https://www.virtualbox.org/wiki/Downloads>`_ and install it for your platform. We'll wait! If you can't be bothered, following along anyway should still be useful, though.
 
 
 Getting the FreeBSD installer
@@ -38,14 +38,14 @@ BSDploy provides a small cross-platform helper for downloading assets via HTTP w
 	ploy-download http://mfsbsd.vx.sk/files/iso/9/amd64/mfsbsd-se-9.2-RELEASE-amd64.iso 4ef70dfd7b5255e36f2f7e1a5292c7a05019c8ce downloads/
 
 
-Configuring the virtual instance
---------------------------------
+Configuring the virtual machine
+-------------------------------
 
 Since BSDploy also handles provisioning, we can configure the virtualbox instance within the main configuration file. It is named ``ploy.conf`` and lives inside a top-level directory named ``etc`` by default::
 
 	mkdir etc
 
-..note: This is directory contains not only your configuration but also all other settings and assets that are specific to *your particular project*, i.e. oftentimes this directory is kept under separate version control, for safe-keeping of certificates, private keys etc.
+.. note:: This is directory contains not only your configuration but also all other settings and assets that are specific to *your particular project*, i.e. oftentimes this directory is kept under separate version control, for safe-keeping of certificates, private keys etc. – hence its existence.
 
 Inside it create a file named ``ploy.conf`` with the following contents::
 
@@ -98,7 +98,7 @@ After the installation has completed, note the final output, as it contains the 
 	The SSH fingerprint of the newly bootstrapped server is:
 	2048 f3:51:c2:2a:94:c3:06:0e:02:e0:87:51:73:f0:dc:6f  root@mfsbsd (RSA)
 
-Before we can continue you need to add that fingerprint to the jailhost configuration, as BSDploy refuses to connect to hosts it doesn't know its fingerprint (we find that a reasonable behavior), i.e. add the following line to ``ploy.conf`` so that your jailhost definition looks like so::
+Before we can continue you need to add that fingerprint to the jailhost configuration, as BSDploy refuses to connect to unknown hosts, i.e. add the following line to ``ploy.conf`` so that your jailhost definition looks like so::
 
 	[ez-master:jailhost]
 	instance = ploy-demo
@@ -110,7 +110,7 @@ To make sure that everything has worked so far, let's take a look at the host by
 	FreeBSD 9.2-RELEASE (GENERIC) #6 r255896M: Wed Oct  9 01:45:07 CEST 2013
 	[...]
 
-Let's take a quick look::
+Let's take a quick look around::
 
 	root@jailhost:~ # pkg info
 	gettext-0.18.3.1_1             GNU gettext package
@@ -139,7 +139,7 @@ In other words, there's still work to do, so let's log out and continue...
 Configuring the host
 --------------------
 
-Now we can configure the vanilla installation. This step is performed internally using `ansible playbooks <http://docs.ansible.com/playbooks_intro.html>`_, which are divided into different so-called *roles*. For the tutorial we will need the DHCP role (since virtualbox provides DHCP to the VM) and the main jailhost role so add the following lines to the jailhost configuration to make it look like so::
+Now we can configure the vanilla installation. This step is performed internally using `ansible playbooks <http://docs.ansible.com/playbooks_intro.html>`_, which are divided into different so-called *roles*. For the tutorial we will need the DHCP role (since Virtualbox provides DHCP to the VM) and the main jailhost role so add the following lines to the jailhost configuration to make it look like so::
 
 	[ez-master:jailhost]
 	instance = ploy-demo
@@ -157,7 +157,7 @@ Let's log in once more and take another look::
 	ploy ssh jailhost
 	[...]
 
-Package-wise nothing much has changed – only ``ezjail`` has been installed. BSDploy tries hard, to keep the jailhost clean::
+Package-wise nothing much has changed – only ``ezjail`` has been installed::
 
 	root@jailhost:~ # pkg info
 	ezjail-3.4.1                   Framework to easily create, manipulate, and run FreeBSD jails
@@ -263,11 +263,8 @@ To do so, create a file named ``host_vars/jailhost``::
 
 with the following content::
 
-	ipnat_rules_interface: "{{ ansible_em0.device }}"
-	ipnat_rules_address: "{{ ansible_em0.ipv4[0].address }}"
 	ipnat_rules:
-	    - "# http forward for demo jail:"
-	    - "rdr {{ ipnat_rules_interface }} {{ ipnat_rules_address }}/32 port 80 -> {{ hostvars['demo_jail']['awsome_ip'] }} port 80"
+	    - "rdr em0 {{ ansible_em0.ipv4[0].address }}/32 port 80 -> {{ hostvars['demo_jail']['awsome_ip'] }} port 80"
 
 To activate the rules, re-apply the jail host configuration. ansible will figure out, that it needs to update them (and only those) and then restart the network::
 
