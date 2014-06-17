@@ -53,6 +53,40 @@ Contents:
    narr/staging
 
 
+TODO
+----
+
+The following features already exist but still need to be documented:
+
+- provisioning + bootstrapping
+   - plain instances (a.k.a. 'iron')
+   - EC2 (daemonology based)
+   - hetzner (mfsBSD based)
+   - VirtualBox (mfsBSD based)
+   - pre-configured SSH server keys
+   - enabling full-disk encryption (GELI)
+- configuration
+- creating a jailhost
+- creating jails
+- jail access
+   - proxy command
+   - port forwarding
+   - public IP
+- ansible support
+- fabric support
+- combining ansible and fabric
+- ZFS management
+- Creating and restoring ZFS snapshots
+- poudriere support
+- Upgrading strategies
+
+The following features don't exist yet but should eventually :)
+
+- OS installers
+   - homebrew
+   - freebsd ports + pkgng
+   - ?
+
 
 Indices and tables
 ==================
