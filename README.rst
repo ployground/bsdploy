@@ -1,38 +1,51 @@
-BSDploy is a tool to deploy `FreeBSD <http://www.freebsd.org>`_ `jails <http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/jails-intro.html>`_.
+BSDploy – FreeBSD jail provisioning
+===================================
 
-Not wanting to re-invent the wheel, under the hood it uses `mr.awsome <https://pypi.python.org/pypi/mr.awsome>`_ for provisioning, `ansible <http://ansible.cc>`_ for configuration and `fabric <http://fabfile.org>`_ for maintenance.
+BSDploy is a comprehensive tool to **provision**, **configure** and **maintain** `FreeBSD <http://www.freebsd.org>`_ `jail hosts and jails <http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/jails-intro.html>`_.
 
 
-Features
-========
+Main Features
+-------------
 
-- configure multiple hosts and jails in one canonical ini-file
-- bootstrap complete jail hosts from scratch - both virtual machines, as well as physical ones. ``bsdploy`` will take care of installing FreeBSD for you, including configuration of `ZFS pools <https://wiki.freebsd.org/ZFS>`_ and even encrypts them using `GELI <http://www.freebsd.org/doc/handbook/disks-encrypting.html>`_.
-- create new jails simply by adding two or more lines to your configuration file and running ``ploy start`` – bsdploy will take care of configuring the required IP address on the host
-- **ansible support** – no more mucking about with host files: all hosts and their variables defined in ``ploy.conf`` are automatically exposed to ansible. Run them with ``ploy playbook path/to/playbook.yml``.
-- ditto for **Fabric** – run fabric scripts with ``ploy do JAILNAME TASKNAME`` and have all your hosts and their variables at your disposal in ``fab.env``.
-- jails receive private IP addresses by default, so they are not reachable from the outside - for configuration access (i.e. applying ansible playbooks to them or running fabric scripts inside of them) bsdploy transparently configures SSH ProxyCommand based access.
-- Easily configure ``ipnat`` on the jail host to white-list access from the outside – this greatly reduces the chance of accidentally exposing services to the outside world that shouldn't be.
-- **Amazon EC2** support – provision and configure jailhosts on EC2.
+- **bootstrap** complete jail hosts from scratch
 
-With bsdploy you can create and configure one or more jail hosts with one or more jails inside them, all configured in one canonical ``ini`` style configuration file (by default in ``etc/ploy.conf)``::
+- create new jails by adding two or more lines to your configuration file and running ``ploy start``
 
-    [ez-master:vm-master]
-    host = 127.0.0.1
-    port = 47022
+- **declarative configuration** – all hosts and their properties defined in ``ploy.conf`` are automatically exposed to `Ansible <http://ansible.cc>`_. Run existing playbooks with ``ploy playbook`` or directly assign roles in ``ploy.conf`` and apply them using ``ploy configure``.
 
-    [ez-instance:webserver]
-    ip = 10.0.0.2
-    fqdn = test.local
-    fabfile = deployment/webserver.py
+- **imperative maintenance**  – run `Fabric <http://fabfile.org>`_ scripts with ``ploy do JAILNAME TASKNAME`` and have all of the hosts and their variables at your disposal in ``fab.env``.
 
-    [ez-instance:database]
-    ip = 10.0.0.3
-    dbname = production
+- configure `ZFS pools and filesystems <https://wiki.freebsd.org/ZFS>`_ with `whole-disk-encryption <http://www.freebsd.org/doc/handbook/disks-encrypting.html>`_
 
-    [ez-instance:application]
-    ip = 10.0.0.4
-    version = 1.2.3
+-  out-of-the-box support for `Virtualbox <https://www.virtualbox.org>`_ and `Amazon EC2 <http://aws.amazon.com>`_.
+
+
+Best of both worlds
+*******************
+
+As it turns out, combining a declarative approach to set up the initial state of a system combined with an imperative approach to provide maintenance operations on that state works really well. And since the imperative scripts have the luxury of running against a well-defined context you can keep them short and concise without worrying about all those edge cases.
+
+
+Under the hood
+**************
+
+Since BSDploy's scope is quite ambitious it naturally does not attempt do all of the work on its own. In fact, BSDPloy is just a fairly thin, slightly opinionated wrapper around existing, excellent tools. In addition to the above mentioned Ansible and Fabric, it uses `ezjail <http://erdgeist.org/arts/software/ezjail/>`_ on the host to manage the jails and numerous members of the `mr.awsome family <http://mrawsome.readthedocs.org/en/latest/>`_ for pretty much everything else.
+
+
+Server requirements
+*******************
+
+A FreeBSD system that wants to be managed by BSDploy will need to have `ezjail <http://erdgeist.org/arts/software/ezjail/>`_ installed, as well as `Python <http://python.org>`_ and must have SSH access enabled (either for root or with ``sudo``).
+
+BSDPloy can take care of these requirements for you during bootstrapping but of course you can also use it to manage existing machines that meet those three requirements.
+
+BSDPloy currently only supports FreeBSD 9.2 (although in theory any 9.x should work) but not yet FreeBSD 10. But that is only a matter of time. We can't wait to use it on 10 ourselves :-)
+
+
+Client requirements
+*******************
+
+BSDploy and its dependencies are written in `Python <http://python.org>`_ and thus should run on pretty much any platform, although it's currently only been tested on Mac OS X and FreeBSD.
 
 
 Examples
@@ -44,7 +57,7 @@ To give it a spin, best `check out the example repository <https://github.com/to
 Full documentation
 ==================
 
-The full documentation is [hosted at RTD](http://bsdploy.readthedocs.org/) or you can peek at the identical contents here under ``docs/``.
+The full documentation is `hosted at RTD <http://docs.bsdploy.net>`_ or you can peek at the identical contents here under ``docs/``.
 
 
 Development
@@ -52,42 +65,4 @@ Development
 
 To develop ``bsdploy`` itself use the provided Makfile – running ``make`` will install a development version of itself and its direct dependencies (i.e. the ``mr.awsome.*`` packages).
 
-For more details, [check the documentation](http://bsdploy.readthedocs.org/en/latest/installation.html#installing-from-github).
-
-
-Misc
-====
-
-Miscellaneous notes that should eventually make their way into the proper documentation.
-
-
-Selectively applying jailhost configuration
--------------------------------------------
-
-``ploy configure-jailhost`` applies the ``jails_host`` role (see ``roles/jails_host``.  if you don't want to apply it wholesale or want to re-apply certain tags of it, you can use a top-level playbook like so::
-
-    - hosts: my-jailhost
-      user: root
-      roles:
-        - { role: jails_host, tags: ['configure'] }
-
-i.e. to then only update the ipnat rules, do this::
-
-     bin/ploy playbook staging.yml -t configure -t ipnat_rules
-
-the 'trick' is to use multiple tags to narrow down the tasks to only what you need.
-
-
-TODO
-====
-
- [ ] documentation *cough*
- [x] make rc.conf a template (to support non-DHCP jailhost scenario)
- [x] allow for offline installation of ezjail
- [x] allow for offline installation of pkgng
- [ ] include poudriere support
- [ ] eliminate need for proxycommandin ploy.conf
- [ ] eliminate need for proxyhost in ploy.conf
- [x] eliminate need for hooks entries for jail configuration in ploy.conf
- [x] make the private network for the jails configurable (the hard coded 10.0.0.x is not always desirable)
- [x] inject ``ansible_python_interpreter`` (so playbooks don't have to set it themselves)
+For more details, `check the documentation <http://bsdploy.readthedocs.org/en/latest/installation.html#installing-from-github>`_.
