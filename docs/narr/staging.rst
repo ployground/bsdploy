@@ -23,12 +23,12 @@ Here is an example ``base.conf``::
 	instance = provisioner
 	roles = jails_host
 
-	[ez-instance:webserver]
+	[instance:webserver]
 	master = jailhost
 	ip = 10.0.0.1
 
 
-	[ez-instance:appserver]
+	[instance:appserver]
 	master = jailhost
 	ip = 10.0.0.2
 
