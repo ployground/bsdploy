@@ -68,6 +68,7 @@ Code and issues are hosted at github:
 
 - Issue Tracker: http://github.com/tomster/bsdploy/issues
 - Source Code: http://github.com/tomster/bsdploy
+- IRC: the developers can be found on #bsdploy on freenode.net
 
 
 License
