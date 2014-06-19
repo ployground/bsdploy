@@ -3,6 +3,10 @@ BSDploy – FreeBSD jail provisioning
 
 BSDploy is a comprehensive tool to **provision**, **configure** and **maintain** `FreeBSD <http://www.freebsd.org>`_ `jail hosts and jails <http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/jails-intro.html>`_.
 
+Its main design goal is to lower the barrier to *repeatable jail setups*.
+
+Instead of performing updates on production hosts you are encouraged to update the *description* of your setup, test it against an identically configured staging scenario until it works as expected and then apply the updated configuration to production with confidence.
+
 .. warning:: BSDploy is currently still in beta. While it's not considered ready for production, it is now in feature freeze mode and you are encouraged to :doc:`give it a spin </quickstart>` and `report any issues <http://github.com/tomster/bsdploy/issues>`_ that you find, so it can move to a 1.0 release – thanks!
 
 
@@ -19,13 +23,17 @@ Main Features
 
 - configure `ZFS pools and filesystems <https://wiki.freebsd.org/ZFS>`_ with `whole-disk-encryption <http://www.freebsd.org/doc/handbook/disks-encrypting.html>`_
 
--  out-of-the-box support for `Virtualbox <https://www.virtualbox.org>`_ and `Amazon EC2 <http://aws.amazon.com>`_.
+-  out-of-the-box support for `Virtualbox <https://www.virtualbox.org>`_ and `Amazon EC2 <http://aws.amazon.com>`_ with a plugin-architecture to support more easily.
 
 
 Best of both worlds
 *******************
 
-As it turns out, combining a declarative approach to set up the initial state of a system combined with an imperative approach to provide maintenance operations on that state works really well. And since the imperative scripts have the luxury of running against a well-defined context you can keep them short and concise without worrying about all those edge cases.
+As it turns out, combining a declarative approach to set up the initial state of a system combined with an imperative approach to provide maintenance operations on that state works really well.
+
+Since the imperative scripts have the luxury of running against a well-defined context you can keep them short and concise without worrying about all those edge cases.
+
+And since the playbooks needn't concern themselves with performing updates or other tasks you don't have to litter them with states such as ``restarted`` or ``updated`` or with non-states such as ``shell` commands.
 
 
 Under the hood
