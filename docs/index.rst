@@ -66,6 +66,9 @@ Contents:
 
    installation
    quickstart
+   narr/provisioning
+   narr/provisioning-plain
+   narr/bootstrapping
    narr/staging
 
 
