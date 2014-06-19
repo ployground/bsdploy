@@ -33,7 +33,7 @@ As it turns out, combining a declarative approach to set up the initial state of
 
 Since the imperative scripts have the luxury of running against a well-defined context you can keep them short and concise without worrying about all those edge cases.
 
-And since the playbooks needn't concern themselves with performing updates or other tasks you don't have to litter them with states such as ``restarted`` or ``updated`` or with non-states such as ``shell` commands.
+And since the playbooks needn't concern themselves with performing updates or other tasks you don't have to litter them with states such as ``restarted`` or ``updated`` or with non-states such as ``shell`` commands.
 
 
 Under the hood
