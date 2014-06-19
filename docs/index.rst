@@ -70,6 +70,7 @@ Contents:
    narr/provisioning-plain
    narr/bootstrapping
    narr/staging
+   narr/updating
 
 
 Contribute
