@@ -5,3 +5,7 @@
 /lib/
 /share/
 /src/
+/.cache
+/.coverage
+/.tox
+

@@ -7,12 +7,20 @@ Sphinx==1.2.2
 ansible==1.6.3
 docutils==0.11
 ecdsa==0.11
+flake8
 jarn.mkrelease==3.8
 lazy==1.1
+mock
 paramiko==1.14.0
+py >= 1.4.17
 pycrypto==2.6.1
+pytest >= 2.4.2
+pytest-cov
+pytest-flakes
+pytest-pep8
 setuptools-git==1.0
 setuptools-hg==0.4
 setuptools-subversion==3.1
+tox
 wsgiref==0.1.2
 zc.buildout==2.2.1
