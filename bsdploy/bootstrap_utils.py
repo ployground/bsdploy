@@ -3,8 +3,7 @@ from fabric.api import run, env, settings, hide, with_settings, quiet
 
 @with_settings(quiet())
 def get_interfaces():
-    interfaces = run('ifconfig -l').strip()
-    return interfaces
+    return run('ifconfig -l').strip().split()
 
 
 @with_settings(quiet())

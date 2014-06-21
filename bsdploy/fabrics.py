@@ -200,7 +200,6 @@ def bootstrap_mfsbsd(**kwargs):
     from mr.awsome.config import value_asbool
     import math
     env.shell = '/bin/sh -c'
-
     ssh_keys = set([
         ('ssh_host_key', '-t rsa1 -b 1024'),
         ('ssh_host_rsa_key', '-t rsa'),
