@@ -1,4 +1,4 @@
-from fabric.api import run, env, settings, hide, with_settings, quiet
+from fabric.api import run, env, with_settings, quiet
 
 
 @with_settings(quiet())
@@ -14,11 +14,15 @@ def get_realmem():
     return 2 ** int(math.ceil(math.log(realmem, 2)))
 
 
+@with_settings(quiet())
 def get_devices():
-    with settings(hide('output')):
-        mounts = run('mount')
-        sysctl_devices = run('sysctl -n kern.disks').strip().split()
-        cd_device = env.server.config.get('bootstrap-cd-device', 'cd0')
+    """ computes the name of the disk devices that are suitable
+    installation targets by subtracting CDROM- and USB devices
+    from the list of total mounts.
+    """
+    mounts = run('mount')
+    sysctl_devices = run('sysctl -n kern.disks').strip().split()
+    cd_device = env.server.config.get('bootstrap-cd-device', 'cd0')
     if '/dev/{dev} on /rw/cdrom'.format(dev=cd_device) not in mounts:
         run('test -e /dev/{dev} && mount_cd9660 /dev/{dev} /cdrom || true'.format(dev=cd_device))
     usb_device = env.server.config.get('bootstrap-usb-device', 'da0a')
