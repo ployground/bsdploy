@@ -119,6 +119,12 @@
 - copy: src=pkg.conf dest=/usr/jails/flavours/base/usr/local/etc/pkg.conf owner=root group=wheel
 - template: src=FreeBSD.conf dest=/usr/jails/flavours/base/usr/local/etc/pkg/repos/FreeBSD.conf owner=root group=wheel
 
+
+#
+# configure base flavour
+# TODO: rename to ``bsdploy_base``
+#
+
 - name: rc.conf for base flavour
   copy: src=base_flavour_rc.conf dest=/usr/jails/flavours/base/etc/rc.conf owner=root group=wheel
 - name: sshd_config for base flavour
