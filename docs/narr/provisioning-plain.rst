@@ -20,6 +20,34 @@ Local hardware
 How to provision a FreeBSD compatible PC that you have physical access to.
 
 
+Download installer image
+************************
+
+First, you need to download the installer image and copy it onto a suitable medium, i.e. an USB stick.
+
+As mentioned in the quickstart, BSDploy provides a small cross-platform helper for downloading assets via HTTP which also checks the integrity of the downloaded file::
+
+	mkdir downloads
+	ploy-download http://mfsbsd.vx.sk/files/images/9/amd64/mfsbsd-se-9.2-RELEASE-amd64.img 9f354d30fe5859106c1cae9c334ea40852cb24aa downloads/
+
+
+Creating a bootable USB medium (Mac OSX)
+****************************************
+
+For the time being we only provide instructions for Mac OS X, sorry! If you run Linux you probably already know how to do this, anyway :-)
+
+- Run ``diskutil list`` to see which drives are currently in your system.
+- insert your medium
+- re-run ``diskutil list`` and notice which number it has been assigned (N)
+- run ``diskutil unmountDisk /dev/diskN``
+- run ```sudo dd if=downloads/mfsbsd-se-9.2-RELEASE-amd64.img of=/dev/diskN bs=1m``
+- run ``diskutil unmountDisk /dev/diskN``
+
+Insert the USB stick into the *target host* and boot from it. Log in as ``root`` using the pre-configured password ``mfsroot``. Either note the name of the ethernet interface and the IP address it has been given by running ``ifconfig`` or set them to the desired values in ``/etc/rc.conf`` if you do not have a DHCP environment.
+
+Run ``gpart list`` and note the device name of the hard drive(s). Enter this values into your ``ploy.conf``.
+
+
 Hetzner
 -------
 
