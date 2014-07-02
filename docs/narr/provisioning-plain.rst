@@ -1,15 +1,14 @@
 Plain instances
 ===============
 
-The most simple provider simply assumes an already existing instance. Here any configuration is purely descriptive. Unlike with the other providers we tell BSDploy how things are and it doesn't do anything about it.
+The most simple provider simply assumes an already existing host. Here any configuration is purely descriptive. Unlike with the other providers we tell BSDploy how things are and it doesn't do anything about it.
 
 For example::
 
-	[plain-instance:home-server]
+	[plain-instance:home-server-provisioner]
 	host = 10.0.1.2
-	fingerprint = 91:e7:4b:30:0d:b5:ea:b9:f9:eb:8a:a0:44:ab:bd:01
 
-At the very least you will need to provide a ``host`` (IP address or hostname) and its SSH ``fingerprint``.
+At the very least you will need to provide a ``host`` (IP address or hostname).
 
 Additionally, you can provide a non-default SSH ``port`` and a ``user`` to connect with (default is ``root``).
 
@@ -17,7 +16,7 @@ Additionally, you can provide a non-default SSH ``port`` and a ``user`` to conne
 Local hardware
 --------------
 
-How to provision a FreeBSD compatible PC that you have physical access to.
+The most common scenario for using a plain instance is physical hardware that you have access to and can boot from a custom installer medium.
 
 
 Download installer image
@@ -25,7 +24,7 @@ Download installer image
 
 First, you need to download the installer image and copy it onto a suitable medium, i.e. an USB stick.
 
-As mentioned in the quickstart, BSDploy provides a small cross-platform helper for downloading assets via HTTP which also checks the integrity of the downloaded file::
+As mentioned in the quickstart, BSDploy uses `mfsBSD <http://mfsbsd.vx.sk>`_ which is basically the official FreeBSD installer plus pre-configured SSH access. Also, it provides a small cross-platform helper for downloading assets via HTTP which also checks the integrity of the downloaded file::
 
 	mkdir downloads
 	ploy-download http://mfsbsd.vx.sk/files/images/9/amd64/mfsbsd-se-9.2-RELEASE-amd64.img 9f354d30fe5859106c1cae9c334ea40852cb24aa downloads/
@@ -42,10 +41,33 @@ For the time being we only provide instructions for Mac OS X, sorry! If you run 
 - run ``diskutil unmountDisk /dev/diskN``
 - run ```sudo dd if=downloads/mfsbsd-se-9.2-RELEASE-amd64.img of=/dev/diskN bs=1m``
 - run ``diskutil unmountDisk /dev/diskN``
+- now you can remove the stick and boot the target host from it
 
-Insert the USB stick into the *target host* and boot from it. Log in as ``root`` using the pre-configured password ``mfsroot``. Either note the name of the ethernet interface and the IP address it has been given by running ``ifconfig`` or set them to the desired values in ``/etc/rc.conf`` if you do not have a DHCP environment.
 
-Run ``gpart list`` and note the device name of the hard drive(s). Enter this values into your ``ploy.conf``.
+Booting into mfsBSD
+*******************
+
+Insert the USB stick into the *target host* and boot from it. Log in as ``root`` using the pre-configured password ``mfsroot``. Either note the name of the ethernet interface and the IP address it has been given by running ``ifconfig`` and (temporarily) set it in ``ploy.conf`` or configure them one-time to match your expectations.
+
+
+One-Time manual network configuration
++++++++++++++++++++++++++++++++++++++
+
+BSDploy needs to access the installer via SSH and it in turn will need to download assets from the internet during installation, so we need to configure the interface, the gateway, DNS and sshd.
+
+In the above mentioned example that could be::
+
+    ifconfig em0 netmask 255.255.255.0
+    route add default 10.0.1.1
+
+Since usually, the router also performs as DNS you would edit ``/etc/resolv.conf`` to look like so::
+
+    nameserver 10.0.1.1
+
+Finally restart sshd::
+
+    service sshd restart
+
 
 
 Hetzner
@@ -53,3 +75,8 @@ Hetzner
 
 How to provision a dedicated machine hosted at Hetzner using their rescue system.
 
+
+vmWare
+------
+
+Since BSDploy (currently) doesn't support automated provisioning of vmWare instances (like it does for VirtualBox) you will need to manually create a vmWare instance and then follow the steps above for 
