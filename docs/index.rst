@@ -60,17 +60,48 @@ Client requirements
 BSDploy and its dependencies are written in `Python <http://python.org>`_ and thus should run on pretty much any platform, although it's currently only been tested on Mac OS X and FreeBSD.
 
 
-Contents:
----------
+Dive in
+-------
 
 .. toctree::
    :maxdepth: 2
 
    installation
    quickstart
+
+
+Setup
+-----
+
+How to setup a host from scratch or make an existing one ready for BSDploy:
+
+.. toctree::
+   :maxdepth: 2
+
    narr/provisioning
    narr/provisioning-plain
+   narr/provisioning-virtualbox
    narr/bootstrapping
+   narr/configuration
+
+
+General usage
+-------------
+
+How to create an manage jails once the host is set up
+
+.. toctree::
+   :maxdepth: 2
+
+   narr/jails
+
+
+Special use cases
+-----------------
+
+.. toctree::
+   :maxdepth: 2
+
    narr/staging
    narr/updating
 

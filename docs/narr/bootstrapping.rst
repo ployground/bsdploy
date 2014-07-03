@@ -115,3 +115,4 @@ Or, if your configuration has more than one instance defined you need to provide
 
     ploy bootstrap ploy-demo
 
+Once this has run successfully, you can move on to the final setup step :doc:`Configuration <configuration>`.

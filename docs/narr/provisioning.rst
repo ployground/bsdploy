@@ -1,5 +1,5 @@
-Provisioning
-============
+Overview
+========
 
 The life cycle of a system managed by BSDploy is divided into three distinct segments::
 
