@@ -7,7 +7,7 @@ Its main design goal is to lower the barrier to *repeatable jail setups*.
 
 Instead of performing updates on production hosts you are encouraged to update the *description* of your setup, test it against an identically configured staging scenario until it works as expected and then apply the updated configuration to production with confidence.
 
-.. warning:: BSDploy is currently still in beta. While it's not considered ready for production, it is now in feature freeze mode and you are encouraged to :doc:`give it a spin </quickstart>` and `report any issues <http://github.com/tomster/bsdploy/issues>`_ that you find, so it can move to a 1.0 release – thanks!
+.. warning:: BSDploy is currently still in beta. While it's not considered ready for production, it is now in feature freeze mode and you are encouraged to :doc:`give it a spin </quickstart>` and `report any issues <http://github.com/ployground/bsdploy/issues>`_ that you find, so it can move to a 1.0 release – thanks!
 
 
 Main Features
@@ -111,7 +111,7 @@ Contribute
 
 Code and issues are hosted at github:
 
-- Issue Tracker: http://github.com/tomster/bsdploy/issues
+- Issue Tracker: http://github.com/ployground/bsdploy/issues
 - Source Code: http://github.com/tomster/bsdploy
 - IRC: the developers can be found on #bsdploy on freenode.net
 
