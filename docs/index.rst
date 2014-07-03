@@ -49,7 +49,7 @@ Server requirements
 
 A FreeBSD system that wants to be managed by BSDploy will need to have `ezjail <http://erdgeist.org/arts/software/ezjail/>`_ installed, as well as `Python <http://python.org>`_ and must have SSH access enabled (either for root or with ``sudo`` configured).
 
-.. note:: Strictly speaking, BSDploy only needs Python for the initial :doc:`configuration </narr/configuration>` of the jailhost. If you chose to perform that step yourself or use a pre-existing host, you won't need Python on the host, just ezjail.
+.. note:: Strictly speaking, BSDploy only needs Python for the initial :doc:`configuration </setup/configuration>` of the jailhost. If you chose to perform that step yourself or use a pre-existing host, you won't need Python on the host, just ezjail.
 
 BSDPloy can take care of these requirements for you during bootstrapping but of course you can also use it to manage existing machines that already meet them.
 
@@ -80,11 +80,11 @@ How to setup a host from scratch or make an existing one ready for BSDploy:
 .. toctree::
    :maxdepth: 2
 
-   narr/provisioning
-   narr/provisioning-plain
-   narr/provisioning-virtualbox
-   narr/bootstrapping
-   narr/configuration
+   setup/provisioning
+   setup/provisioning-plain
+   setup/provisioning-virtualbox
+   setup/bootstrapping
+   setup/configuration
 
 
 General usage
@@ -95,7 +95,7 @@ How to create an manage jails once the host is set up:
 .. toctree::
    :maxdepth: 2
 
-   narr/jails
+   usage/jails
 
 
 Special use cases
@@ -104,8 +104,8 @@ Special use cases
 .. toctree::
    :maxdepth: 2
 
-   narr/staging
-   narr/updating
+   advanced/staging
+   advanced/updating
 
 
 Contribute

@@ -68,7 +68,7 @@ Finally restart sshd::
 
     service sshd restart
 
-To verify that all is ready, ssh into the host as user ``root`` with the password ``mfsroot``. Once that works, log out again and you are ready to continue with :doc:`/narr/bootstrapping`.
+To verify that all is ready, ssh into the host as user ``root`` with the password ``mfsroot``. Once that works, log out again and you are ready to continue with :doc:`/setup/bootstrapping`.
 
 
 Hetzner
@@ -76,7 +76,7 @@ Hetzner
 
 The German ISP `Hetzner <http://www.hetzner.de>`_ provides dedicated servers with FreeBSD supprt. In a nutshell, boot the machine into their so-called *Rescue System* `using their robot <https://robot.your-server.de/server>`_ and choose *FreeBSD* as OS. The machine will boot into a modified version of mfsBSD.
 
-The web UI will then provide you with a one-time root password – make sure it works by SSHing into the host as ``root`` and you are ready for continuing with :doc:`/narr/bootstrapping`.
+The web UI will then provide you with a one-time root password – make sure it works by SSHing into the host as ``root`` and you are ready for continuing with :doc:`/setup/bootstrapping`.
 
 
 vmWare
@@ -87,4 +87,4 @@ Since BSDploy (currently) doesn't support automated provisioning of vmWare insta
     mkdir downloads
     ploy-download http://mfsbsd.vx.sk/files/iso/9/amd64/mfsbsd-se-9.2-RELEASE-amd64.iso 4ef70dfd7b5255e36f2f7e1a5292c7a05019c8ce downloads/
 
-Then create a new virtual machine, set the above image as boot device and continue with :doc:`/narr/bootstrapping`.
+Then create a new virtual machine, set the above image as boot device and continue with :doc:`/setup/bootstrapping`.

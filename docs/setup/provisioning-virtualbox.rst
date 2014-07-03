@@ -39,6 +39,6 @@ Unlike ``VBoxManage`` BSDploy does not provide an explicit create command, inste
 
     ploy start ploy-demo
 
-Since the network interface is configured via DHCP, we cannot know under which IP the VM will be available. Instead the above snippet configures portforwarding, so regardless of the IP it gets via DHCP, we will access the VM via SSH using the host ``localhost`` and (in the example) port ``44003``. Adjust these values to your needs and use them during :doc:`/narr/bootstrapping`.
+Since the network interface is configured via DHCP, we cannot know under which IP the VM will be available. Instead the above snippet configures portforwarding, so regardless of the IP it gets via DHCP, we will access the VM via SSH using the host ``localhost`` and (in the example) port ``44003``. Adjust these values to your needs and use them during :doc:`/setup/bootstrapping`.
 
 .. Note:: In addtion to starting a VM you can also use the ``stop`` and ``terminate`` commands..
