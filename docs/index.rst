@@ -23,7 +23,7 @@ Main Features
 
 - configure `ZFS pools and filesystems <https://wiki.freebsd.org/ZFS>`_ with `whole-disk-encryption <http://www.freebsd.org/doc/handbook/disks-encrypting.html>`_
 
--  out-of-the-box support for `Virtualbox <https://www.virtualbox.org>`_ and `Amazon EC2 <http://aws.amazon.com>`_ with a plugin-architecture to support more easily.
+-  out-of-the-box support for `VirtualBox <https://www.virtualbox.org>`_ and `Amazon EC2 <http://aws.amazon.com>`_ with a plugin-architecture to support more.
 
 
 Best of both worlds
@@ -33,21 +33,21 @@ Combining a declarative approach for setting up the initial state of a system co
 
 1. Since the imperative scripts have the luxury of running against a well-defined context, you can keep them short and concise without worrying about all those edge cases.
 
-2. And since the playbooks needn't concern themselves with performing updates or other tasks you don't have to litter them with awkward states such as ``restarted`` or ``updated`` or with non-states such as ``shell` commands.
+2. And since the playbooks needn't concern themselves with performing updates or other tasks you don't have to litter them with awkward states such as ``restarted`` or ``updated`` or – even worse – with non-states such as ``shell`` commands.
 
 
 Under the hood
 **************
 
-BSDploy's scope is quite ambitious, so naturally it does not attempt to do all of the work on its own. In fact, BSDPloy is just a fairly thin, slightly opinionated wrapper around existing, excellent tools.
+BSDploy's scope is quite ambitious, so naturally it does not attempt to do all of the work on its own. In fact, BSDPloy is just a fairly thin, slightly opinionated wrapper around existing excellent tools.
 
-In addition to the above mentioned Ansible and Fabric, it uses `ezjail <http://erdgeist.org/arts/software/ezjail/>`_ on the host to manage the jails and numerous members of the `ployground family <https://github.com/ployground/>`_ for pretty much everything else.
+In addition to the above mentioned Ansible and Fabric, it uses `ezjail <http://erdgeist.org/arts/software/ezjail/>`_ on the host to manage the jails and on the client numerous members of the `ployground family <https://github.com/ployground/>`_ for pretty much everything else.
 
 
 Server requirements
 *******************
 
-A FreeBSD system that wants to be managed by BSDploy will need to have `ezjail <http://erdgeist.org/arts/software/ezjail/>`_ installed, as well as `Python <http://python.org>`_ and must have SSH access enabled (either for root or with ``sudo``).
+A FreeBSD system that wants to be managed by BSDploy will need to have `ezjail <http://erdgeist.org/arts/software/ezjail/>`_ installed, as well as `Python <http://python.org>`_ and must have SSH access enabled (either for root or with ``sudo`` configured).
 
 .. note:: Strictly speaking, BSDploy only needs Python for the initial :doc:`configuration </narr/configuration>` of the jailhost. If you chose to perform that step yourself or use a pre-existing host, you won't need Python on the host, just ezjail.
 
