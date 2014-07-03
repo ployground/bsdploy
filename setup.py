@@ -12,7 +12,7 @@ setup(
     name="bsdploy",
     author='Tom Lazar',
     author_email='tom@tomster.org',
-    url='http://github.com/tomster/bsdploy',
+    url='http://github.com/ployground/bsdploy',
     include_package_data=True,
     classifiers=[
         'Development Status :: 4 - Beta',
