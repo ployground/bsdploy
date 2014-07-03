@@ -48,10 +48,8 @@ setup(
             'py >= 1.4.17',
             'pytest-flakes',
             'pytest-pep8',
-            'pytest-cov',
             'tox',
             'mock',
-            'setuptools-git',
         ],
     },
     entry_points="""

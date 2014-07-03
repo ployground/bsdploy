@@ -1,11 +1,15 @@
 /bin/
 /build/
+/develop-eggs/
 /dist/
 /include/
+/htmlcov/
 /lib/
 /share/
 /src/
 /.cache
 /.coverage
+/.installed.cfg
+/.mr.developer.cfg
 /.tox
 
