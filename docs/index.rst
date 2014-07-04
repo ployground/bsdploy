@@ -80,7 +80,7 @@ How to setup a host from scratch or make an existing one ready for BSDploy:
 .. toctree::
    :maxdepth: 2
 
-   setup/provisioning
+   setup/overview
    setup/provisioning-plain
    setup/provisioning-virtualbox
    setup/bootstrapping
