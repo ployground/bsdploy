@@ -1,29 +1,26 @@
-import argparse
-from pkg_resources import get_distribution
-from mr.awsome import aws, aws_ssh
 from os import path
+import argparse
+import pkg_resources
 
 
 # register our own library and roles paths into ansible
-ploy_path = path.abspath(path.join(path.dirname(__file__), '../'))
+ploy_path = pkg_resources.get_distribution("bsdploy").location
 
 ansible_paths = dict(
     roles=[path.join(ploy_path, 'roles')],
-    library=[path.join(ploy_path, 'library')]
-)
+    library=[path.join(ploy_path, 'library')])
 
 
 class PloyBootstrapCmd(object):
-
-    def __init__(self, aws):
-        self.aws = aws
+    def __init__(self, ctrl):
+        self.ctrl = ctrl
 
     def __call__(self, argv, help):
         """Bootstrap a jailhost that's been booted into MFSBsd."""
         parser = argparse.ArgumentParser(
-            prog="ploy bootstrap",
+            prog="%s bootstrap" % self.ctrl.progname,
             description=help)
-        masters = dict((master.id, master) for master in self.aws.get_masters('ezjail_admin'))
+        masters = dict((master.id, master) for master in self.ctrl.get_masters('ezjail_admin'))
         parser.add_argument(
             "master",
             nargs='?' if len(masters) == 1 else 1,
@@ -33,14 +30,14 @@ class PloyBootstrapCmd(object):
             default=masters.keys()[0] if len(masters) == 1 else None)
         args = parser.parse_args(argv)
         master = args.master if len(masters) == 1 else args.master[0]
-        instance = self.aws.instances[master]
+        instance = self.ctrl.instances[master]
         instance.hooks.before_bsdploy_bootstrap(instance)
         instance.do('bootstrap')
         instance.hooks.after_bsdploy_bootstrap(instance)
 
 
 def augment_instance(instance):
-    from mr.awsome_ansible import has_playbook
+    from ploy_ansible import has_playbook
     if not instance.master.sectiongroupname.startswith('ez-'):
         return
     if 'ansible_python_interpreter' not in instance.config:
@@ -64,37 +61,10 @@ def augment_instance(instance):
             instance.config['flavour'] = 'base'
 
 
-def get_commands(aws):
-    return [('bootstrap', PloyBootstrapCmd(aws))]
+def get_commands(ctrl):
+    return [('bootstrap', PloyBootstrapCmd(ctrl))]
 
 
 plugin = dict(
     augment_instance=augment_instance,
     get_commands=get_commands)
-
-
-def ploy(configname=None, **kw):  # pragma: no cover
-    from sys import argv
-    if '-v' in argv:
-        return version()
-    if configname is None:
-        configname = 'ploy.conf'
-    return aws(configname=configname, progname='ploy', **kw)
-
-
-def ploy_ssh(configname=None, **kw):  # pragma: no cover
-    if configname is None:
-        configname = 'ploy.conf'
-    return aws_ssh(configname=configname, progname='ploy', **kw)
-
-
-def version():
-    for package in [
-        'bsdploy',
-        'mr.awsome',
-        'mr.awsome.ansible',
-        'mr.awsome.ec2',
-        'mr.awsome.ezjail',
-        'mr.awsome.fabric',
-        'mr.awsome.virtualbox']:
-        print('%s: %s' % (package, get_distribution(package).version))

@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function
 import os
 import yaml
 import sys
-from mr.awsome.common import yesno
+from ploy.common import yesno
 from os.path import join, expanduser, exists, abspath, dirname
 try:
     from yaml import CSafeLoader as SafeLoader
@@ -27,16 +27,16 @@ def get_bootstrap_files(env, ssh_keys=None, upload_authorized_keys=True, yaml_fi
     via the ``bootstrap-files`` key in the host definition of the config file or it defaults to ``deployment/bootstrap-files``.
 
     User provided files can be rendered as Jinja2 templates, by providing ``use_jinja: True`` in the YAML file.
-    They will be rendered with the server configuration dictionary as context.
+    They will be rendered with the instance configuration dictionary as context.
 
     If the file is not found there, we revert to the default
     files that are part of bsdploy. If the file cannot be found there either we either error out or for authorized_keys
     we look in ``~/.ssh/identity.pub``.
     """
 
-    ploy_conf_path = join(env.server.master.main_config.path)
+    ploy_conf_path = join(env.instance.master.main_config.path)
     default_template_path = join(ploy_path, 'bootstrap-files')
-    host_defined_path = env.server.config.get('bootstrap-files')
+    host_defined_path = env.instance.config.get('bootstrap-files')
     if host_defined_path is None:
         custom_template_path = abspath(join(ploy_conf_path, '..', 'deployment', 'bootstrap-files'))
     else:
@@ -135,7 +135,7 @@ def _fetch_packages(env, packagesite, packages):
         print("ERROR: The lzma package couldn't be imported.")
         print("You most likely need to install pyliblzma in your virtualenv.")
         sys.exit(1)
-    ploy_conf_path = join(env.server.master.main_config.path)
+    ploy_conf_path = join(env.instance.master.main_config.path)
     download_path = abspath(join(ploy_conf_path, '..', 'downloads'))
     packageinfo = {}
     print("Loading package information from '%s'." % packagesite)
@@ -181,7 +181,7 @@ def fetch_assets(**kwargs):
     bootstrap_files = get_bootstrap_files(env)
     items = bootstrap_files.items()
     packages = set(
-        env.server.master.instance.config.get('bootstrap-packages', '').split())
+        env.instance.master.instance.config.get('bootstrap-packages', '').split())
     packages.update(['python27'])
     for filename, asset in items:
         if 'url' in asset:
@@ -197,7 +197,7 @@ def bootstrap_mfsbsd(**kwargs):
     """
     from fabric.api import env, put, run, settings, hide
     from fabric.contrib.files import upload_template
-    from mr.awsome.config import value_asbool
+    from ploy.config import value_asbool
     import math
     env.shell = '/bin/sh -c'
     ssh_keys = set([
@@ -220,14 +220,14 @@ def bootstrap_mfsbsd(**kwargs):
             print('{url} -> {remote}'.format(**info))
     print
     # default ssh settings for mfsbsd with possible overwrite by bootstrap-fingerprint
-    fingerprint = env.server.config.get(
+    fingerprint = env.instance.config.get(
         'bootstrap-fingerprint',
         '02:2e:b4:dd:c3:8a:b7:7b:ba:b2:4a:f0:ab:13:f4:2d')
-    env.server.config['fingerprint'] = fingerprint
-    env.server.config['password-fallback'] = True
-    env.server.config['password'] = 'mfsroot'
+    env.instance.config['fingerprint'] = fingerprint
+    env.instance.config['password-fallback'] = True
+    env.instance.config['password'] = 'mfsroot'
     # allow overwrites from the commandline
-    env.server.config.update(kwargs)
+    env.instance.config.update(kwargs)
     # gather infos
     with settings(hide('output')):
         mounts = run('mount')
@@ -236,13 +236,13 @@ def bootstrap_mfsbsd(**kwargs):
         realmem = float(realmem) / 1024 / 1024
         realmem = 2 ** int(math.ceil(math.log(realmem, 2)))
         interfaces = run('ifconfig -l').strip()
-    cd_device = env.server.config.get('bootstrap-cd-device', 'cd0')
+    cd_device = env.instance.config.get('bootstrap-cd-device', 'cd0')
     if '/dev/{dev} on /rw/cdrom'.format(dev=cd_device) not in mounts:
         run('test -e /dev/{dev} && mount_cd9660 /dev/{dev} /cdrom || true'.format(dev=cd_device))
-    usb_device = env.server.config.get('bootstrap-usb-device', 'da0a')
+    usb_device = env.instance.config.get('bootstrap-usb-device', 'da0a')
     if '/dev/{dev} on /rw/media'.format(dev=usb_device) not in mounts:
         run('test -e /dev/{dev} && mount -o ro /dev/{dev} /media || true'.format(dev=usb_device))
-    bsd_url = env.server.config.get('bootstrap-bsd-url')
+    bsd_url = env.instance.config.get('bootstrap-bsd-url')
     if not bsd_url:
         with settings(hide('output', 'warnings'), warn_only=True):
             result = run("find /cdrom/ /media/ -name 'base.txz' -exec dirname {} \;")
@@ -257,7 +257,7 @@ def bootstrap_mfsbsd(**kwargs):
         for install_device in install_devices:
             if install_device.startswith(sysctl_device):
                 devices.remove(sysctl_device)
-    devices = env.server.config.get('bootstrap-system-devices', ' '.join(devices)).split()
+    devices = env.instance.config.get('bootstrap-system-devices', ' '.join(devices)).split()
     print("\nFound the following disk devices on the system:\n    %s" % ' '.join(sysctl_devices))
     real_interfaces = [x for x in interfaces.split() if not x.startswith('lo')]
     if len(real_interfaces):
@@ -271,8 +271,8 @@ def bootstrap_mfsbsd(**kwargs):
 
     template_context = dict(devices=sysctl_devices,
         interfaces=real_interfaces,
-        hostname=env.server.id)
-    template_context.update(env.server.config)
+        hostname=env.instance.id)
+    template_context.update(env.instance.config)
 
     if bootstrap_files['rc.conf'].get('use_jinja'):
         from jinja2 import Template
@@ -281,7 +281,7 @@ def bootstrap_mfsbsd(**kwargs):
     else:
         rc_conf_lines = open(bootstrap_files['rc.conf']['local'], 'r')
 
-    for interface in [first_interface, env.server.config.get('ansible-dhcp_host_sshd_interface')]:
+    for interface in [first_interface, env.instance.config.get('ansible-dhcp_host_sshd_interface')]:
         if interface is None:
             continue
         ifconfig = 'ifconfig_%s' % interface
@@ -291,22 +291,22 @@ def bootstrap_mfsbsd(**kwargs):
         else:
             if not yesno("\nDidn't find an '%s' setting in rc.conf. You sure that you want to continue?" % ifconfig):
                 return
-    zfsinstall = env.server.config.get('bootstrap-zfsinstall')
+    zfsinstall = env.instance.config.get('bootstrap-zfsinstall')
     if zfsinstall:
-        put(abspath(join(env.server.master.main_config.path, zfsinstall)), '/root/bin/myzfsinstall', mode=0755)
+        put(abspath(join(env.instance.master.main_config.path, zfsinstall)), '/root/bin/myzfsinstall', mode=0755)
         zfsinstall = 'myzfsinstall'
     else:
         zfsinstall = 'zfsinstall'
     # install FreeBSD in ZFS root
     devices_args = ' '.join('-d %s' % x for x in devices)
-    system_pool_name = env.server.config.get('bootstrap-system-pool-name', 'system')
-    data_pool_name = env.server.config.get('bootstrap-data-pool-name', 'tank')
+    system_pool_name = env.instance.config.get('bootstrap-system-pool-name', 'system')
+    data_pool_name = env.instance.config.get('bootstrap-data-pool-name', 'tank')
     swap_arg = ''
-    swap_size = env.server.config.get('bootstrap-swap-size', '%iM' % (realmem * 2))
+    swap_size = env.instance.config.get('bootstrap-swap-size', '%iM' % (realmem * 2))
     if swap_size:
         swap_arg = '-s %s' % swap_size
     system_pool_arg = ''
-    system_pool_size = env.server.config.get('bootstrap-system-pool-size', '20G')
+    system_pool_size = env.instance.config.get('bootstrap-system-pool-size', '20G')
     if system_pool_size:
         system_pool_arg = '-z %s' % system_pool_size
     run('destroygeom {devices_args} -p {system_pool_name} -p {data_pool_name}'.format(
@@ -366,7 +366,7 @@ def bootstrap_mfsbsd(**kwargs):
     # ansible playbooks
     run('chroot /mnt pkg install python27')
     # set autoboot delay
-    autoboot_delay = env.server.config.get('bootstrap-autoboot-delay', '-1')
+    autoboot_delay = env.instance.config.get('bootstrap-autoboot-delay', '-1')
     run('echo autoboot_delay=%s >> /mnt/boot/loader.conf' % autoboot_delay)
     # ssh host keys
     for ssh_key, ssh_keygen_args in ssh_keys:
@@ -374,7 +374,7 @@ def bootstrap_mfsbsd(**kwargs):
             run("ssh-keygen %s -f /mnt/etc/ssh/%s -N ''" % (ssh_keygen_args, ssh_key))
     fingerprint = run("ssh-keygen -lf /mnt/etc/ssh/ssh_host_rsa_key")
     # reboot
-    if value_asbool(env.server.config.get('bootstrap-reboot', 'true')):
+    if value_asbool(env.instance.config.get('bootstrap-reboot', 'true')):
         with settings(hide('warnings'), warn_only=True):
             run('reboot')
     print("The SSH fingerprint of the newly bootstrapped server is:")
@@ -388,7 +388,7 @@ def bootstrap_daemonology(**kwargs):
     # the user for the image is `ec2-user`, there is no sudo, but we can su to root w/o password
     from fabric.api import env, run, put
     original_host = env.host_string
-    env.host_string = 'ec2-user@%s' % env.server.id
+    env.host_string = 'ec2-user@%s' % env.instance.id
     put('etc/authorized_keys', '/tmp/authorized_keys')
     put(os.path.join(os.path.dirname(__file__), 'enable_root_login_on_daemonology.sh'), '/tmp/', mode='0775')
     run("""su root -c '/tmp/enable_root_login_on_daemonology.sh'""")
@@ -415,7 +415,7 @@ def bootstrap_daemonology(**kwargs):
             print('{url} -> {remote}'.format(**info))
     print
     # allow overwrites from the commandline
-    env.server.config.update(kwargs)
+    env.instance.config.update(kwargs)
 
     for info in bootstrap_files.values():
         if 'directory' not in info:

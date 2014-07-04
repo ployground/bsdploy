@@ -29,7 +29,9 @@ As it turns out, combining a declarative approach to set up the initial state of
 Under the hood
 **************
 
-Since BSDploy's scope is quite ambitious it naturally does not attempt do all of the work on its own. In fact, BSDPloy is just a fairly thin, slightly opinionated wrapper around existing, excellent tools. In addition to the above mentioned Ansible and Fabric, it uses `ezjail <http://erdgeist.org/arts/software/ezjail/>`_ on the host to manage the jails and numerous members of the `mr.awsome family <http://mrawsome.readthedocs.org/en/latest/>`_ for pretty much everything else.
+Since BSDploy's scope is quite ambitious it naturally does not attempt do all of the work on its own.
+In fact, BSDPloy is just a fairly thin, slightly opinionated wrapper around existing, excellent tools.
+In addition to the above mentioned Ansible and Fabric, it uses `ezjail <http://erdgeist.org/arts/software/ezjail/>`_ on the host to manage the jails and numerous members of the `ploy family <http://ploy.readthedocs.org/en/latest/>`_ for pretty much everything else.
 
 
 Server requirements
@@ -63,6 +65,6 @@ The full documentation is `hosted at RTD <http://docs.bsdploy.net>`_ or you can 
 Development
 ===========
 
-To develop ``bsdploy`` itself use the provided Makfile – running ``make`` will install a development version of itself and its direct dependencies (i.e. the ``mr.awsome.*`` packages).
+To develop ``bsdploy`` itself use the provided Makfile – running ``make`` will install a development version of itself and its direct dependencies (i.e. the ``ploy`` packages).
 
 For more details, `check the documentation <http://bsdploy.readthedocs.org/en/latest/installation.html#installing-from-github>`_.

@@ -31,12 +31,11 @@ setup(
         'PyYAML',
         'jinja2',
         'setuptools',
-        'mr.awsome>=1.0rc8',
-        'mr.awsome.ansible>=1.0b5',
-        'mr.awsome.ec2>=1.0b2',
-        'mr.awsome.ezjail>=1.0b7',
-        'mr.awsome.fabric>=1.0b3',
-        'mr.awsome.virtualbox>=1.0b1',
+        'ploy>=1.0rc10',
+        'ploy_ansible>=1.0b6',
+        'ploy_ezjail>=1.0b8',
+        'ploy_fabric>=1.0b4',
+        'ploy_virtualbox>=1.0b2',
     ],
     extras_require={
         'development': [
@@ -52,11 +51,11 @@ setup(
     },
     entry_points="""
         [console_scripts]
-        ploy = bsdploy:ploy
-        ploy-ssh = bsdploy:ploy_ssh
-        ploy-download = download:run
+        ploy = ploy:ploy
+        ploy-ssh = ploy:ploy_ssh
+        ploy-download = bsdploy.download:run
         [ansible_paths]
-        ploy = bsdploy:ansible_paths
-        [mr.awsome.plugins]
-        ploy = bsdploy:plugin
+        bsdploy = bsdploy:ansible_paths
+        [ploy.plugins]
+        bsdploy = bsdploy:plugin
     """)

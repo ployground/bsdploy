@@ -34,6 +34,6 @@ def test_get_devices(run_mock, env_mock):
         'cd0 ada0\n',
         'mount_cd9660: /cdrom: No such file or directory\n',
         '']
-    env_mock.server = Mock()
-    env_mock.server.config = {'bootstrap-cd-device': 'cd0'}
+    env_mock.instance = Mock()
+    env_mock.instance.config = {'bootstrap-cd-device': 'cd0'}
     assert bu.get_devices() == set(['ada0'])
