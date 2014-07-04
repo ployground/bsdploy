@@ -22,20 +22,20 @@ Unlike with :doc:`plain instances <provisioning-plain>` the configuration doesn'
     [vb-disk:boot]
     size = 102400
 
-VirtualBox instances are configured using the ``vb-instance`` prefix and you can set parameters of the virtual machine by prefixing them with ``vm-``. For additional details on which parameters are available and what they mean, refer to documentation of the VirtualBox commandline tool `VBoxManage <http://www.virtualbox.org/manual/ch08.html>`_, in particualar for `VBoxManage createvm <http://www.virtualbox.org/manual/ch08.html#vboxmanage-createvm>`_ and `VBoxManage modifyvm <http://www.virtualbox.org/manual/ch08.html#vboxmanage-modifyvm>`_.
+VirtualBox instances are configured using the ``vb-instance`` prefix and you can set parameters of the virtual machine by prefixing them with ``vm-``. For additional details on which parameters are available and what they mean, refer to the documentation of the VirtualBox commandline tool `VBoxManage <http://www.virtualbox.org/manual/ch08.html>`_, in particualar for `VBoxManage createvm <http://www.virtualbox.org/manual/ch08.html#vboxmanage-createvm>`_ and `VBoxManage modifyvm <http://www.virtualbox.org/manual/ch08.html#vboxmanage-modifyvm>`_.
 
 In addition to the ``vb-instance`` you will need to configure at least one storage device using a ``vb-disk`` entry which is essentially a wrapper for `VBoxManage createhd <http://www.virtualbox.org/manual/ch08.html#vboxmanage-createvdi>`_.
 
-As you can see in the example above, you need to include the disk in the ``storage`` parameter of the ``vb-instance`` entry.
+As you can see in the example above, you need to include the disk in the ``storage`` parameter of the ``vb-instance`` entry in order to make it available for it.
 
-Also note, that we reference a mfsBSD boot image. Since VirtualBox won't find a bootable OS on the new drive it will attempt to boot into mfsBSD.
+Also note, that we reference a mfsBSD boot image. Since VirtualBox won't find a bootable OS on the new drive initially, it will attempt to boot into mfsBSD.
 
 To download the image, use ``ploy-download`` like so::
 
     mkdir downloads
     ploy-download http://mfsbsd.vx.sk/files/iso/9/amd64/mfsbsd-se-9.2-RELEASE-amd64.iso 4ef70dfd7b5255e36f2f7e1a5292c7a05019c8ce downloads/
 
-Unlike ``VBoxManage`` BSDploy does not provide an explicit create command, instead just start the instance and if it doesn't exist already, BSDploy will create it for you on-demand::
+Unlike ``VBoxManage`` BSDploy does not provide an explicit *create* command, instead just start the instance and if it doesn't exist already, BSDploy will create it for you on-demand::
 
     ploy start ploy-demo
 
