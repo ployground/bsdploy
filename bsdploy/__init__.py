@@ -1,7 +1,6 @@
 from os import path
 import argparse
 import logging
-import pkg_resources
 import sys
 
 
@@ -9,12 +8,11 @@ log = logging.getLogger("bsdploy")
 
 
 # register our own library and roles paths into ansible
-ploy_path = pkg_resources.get_distribution("bsdploy").location
 bsdploy_path = path.abspath(path.dirname(__file__))
 
 ansible_paths = dict(
-    roles=[path.join(ploy_path, 'roles')],
-    library=[path.join(ploy_path, 'library')])
+    roles=[path.join(bsdploy_path, 'roles')],
+    library=[path.join(bsdploy_path, 'library')])
 
 
 class PloyBootstrapCmd(object):

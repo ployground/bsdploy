@@ -3,6 +3,6 @@ include setup.py
 include tox.ini
 include bsdploy/*.sh
 include bsdploy/tests/*.py
-recursive-include bootstrap-files *
-recursive-include library *
-recursive-include roles *
+recursive-include bsdploy/bootstrap-files *
+recursive-include bsdploy/library *
+recursive-include bsdploy/roles *
