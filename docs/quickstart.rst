@@ -15,7 +15,7 @@ The process consists of:
 - and finally creating a 'hello world' jail inside of it.
 
 
-Using Virtualbox
+Using VirtualBox
 ----------------
 
 To give us the luxury of running against a well-defined context, this quickstart uses `VirtualBox <https://www.virtualbox.org>`_, a free, open source PC virtualization platform. If you don't have it installed on your system, head over to their `downloads section <https://www.virtualbox.org/wiki/Downloads>`_ and install it for your platform. We'll wait! If you can't be bothered, following along anyway should still be useful, though.
@@ -69,7 +69,7 @@ Now we can start it up::
 
 	ploy start ploy-demo
 
-This should fire up virtualbox and boot a VirtualBOX VM into mfsBSD.
+This should fire up virtualbox and boot a VirtualBox VM into mfsBSD.
 
 
 Bootstrapping the host
@@ -145,7 +145,7 @@ Now we can configure the vanilla installation. This step is performed internally
 	    dhcp_host
 	    jails_host
 
-With this information, BSDploy can set to work::
+With this information, BSDploy can get to work::
 
 	ploy configure jailhost
 
@@ -211,7 +211,9 @@ Let's check on it first, by logging into the host::
 
 Ok, we have a running jail, listening on a private IP – how do we communicate with it?
 Basically, there are two options (besides giving it a public IP): either port forwarding from the host or using a SSH proxy command.
-Rather conveniently ploy_ezjail has defaults for the latter.
+
+Rather conveniently `ploy_ezjail <https://github.com/ployground/ploy_ezjail>`_ has defaults for the latter.
+
 Log out from the jailhost and run this::
 
 	# ploy ssh demo_jail
@@ -220,13 +222,17 @@ Log out from the jailhost and run this::
 	Gehe nicht über Los.
 	root@demo_jail:~ #
 
-and there you are, inside the jail. But frankly, that's not very interesting. As a final step of this introduction, let's configure it to act as a simple webserver using an ansible playbook.
+and there you are, inside the jail.
+
+But frankly, that's not very interesting. As a final step of this introduction, let's configure it to act as a simple webserver using an ansible playbook.
 
 
 Configuring a jail
 ------------------
 
-Like with the jailhost, we could assign roles to our demo jail, but another way is to create a playbook with the same name. If such a playbook exists, BSDploy will use that when you call ``configure``. So, create a file named ``demo_jail.yml`` with the following content::
+Like with the jailhost, we could assign roles to our demo jail, but another way is to create a playbook with the same name. If such a playbook exists, BSDploy will use that when you call ``configure``. So, create a file named ``demo_jail.yml`` with the following content:
+
+.. code-block:: yaml
 
 	---
 	- hosts: demo_jail
@@ -260,7 +266,7 @@ with the following content::
 	    - "rdr em0 {{ ansible_em0.ipv4[0].address }}/32 port 80 -> {{ hostvars['demo_jail']['ploy_ip'] }} port 80"
 
 To activate the rules, re-apply the jail host configuration.
-Ansible will figure out, that it needs to update them (and only those) and then restart the network::
+Ansible will figure out, that it needs to update them (and only them) and then restart the network::
 
 	ploy configure jailhost
 

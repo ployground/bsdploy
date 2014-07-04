@@ -9,22 +9,27 @@ You can however install beta releases from PyPI or a bleeding edge development v
 Installing from PyPI
 --------------------
 
-The short version::
+Since BSDploy and its dependencies are written in Python, you can install them from the official Python Packaging Index (a.k.a. PyPI). 
+
+The short version:
+
+.. code-block:: console
+    :linenos:
 
 	virtualenv .
 	source bin/activate
 	pip install ansible
 	pip install bsdploy==1.0b1
 
-Since BSDploy and its dependencies are written in Python, you can install them from the official Python Packaging Index (a.k.a. PyPI). 
+(``1``) BSDploy has specific requirements in regards to Fabric and ansible (meaning, their latest version will not neccessarily work with the latest version of BSDploy until the latter is adjusted) it is therefore strongly recommended to install BSDploy into its own virtualenv.
 
 To do so, you will need Python and virtualenv installed on your system, i.e. on Mac OS X using ``homebrew`` you would install ``brew install pyenv-virtualenv``.
 
-BSDploy has specific requirements in regards to Fabric and ansible (meaning, their latest version will not neccessarily work with the latest version of BSDploy until the latter is adjusted) it is strongly recommended to install BSDploy into its own virtualenv.
+(``2``) To use the version installed inside this virtualenv it is  suggested to 'source' the python interpreter. This will add the ``bin`` directory of the virtualenv (temporarily) to your ``$PATH`` so you can use the binaries installed inside it just as if they were installed globally.
 
-To use the version installed inside this virtualenv it is furthermore suggested to 'source' the python interpreter. This will add the ``bin`` directory of the virtualenv (temporarily) to your ``$PATH`` so you can use the binaries installed inside it just as if they were installed globally.
+(``3``) Unfortunately, ansible's installer violates Python's sandbox limitations and therefore cannot be an automatic dependency of BSDploy, so we need to install it manually for now.
 
-Finally, because there is no stable release of BSDploy yet, you will need to specify the exact version, otherwise ``pip`` will refuse to install it.
+(``4``) Finally, because there is no stable release of BSDploy yet, you will need to specify the exact version, otherwise ``pip`` will refuse to install it.
 
 
 Installing from github

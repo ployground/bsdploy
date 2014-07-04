@@ -80,7 +80,7 @@ How to setup a host from scratch or make an existing one ready for BSDploy:
 .. toctree::
    :maxdepth: 2
 
-   setup/provisioning
+   setup/overview
    setup/provisioning-plain
    setup/provisioning-virtualbox
    setup/bootstrapping
@@ -132,8 +132,6 @@ The following features already exist but still need to be documented:
 - provisioning + bootstrapping
    - EC2 (daemonology based)
    - pre-configured SSH server keys
-   - enabling full-disk encryption (GELI)
-- configuration
 - creating a jailhost
 - creating jails
 - jail access
@@ -156,5 +154,4 @@ The following features don't exist yet but should eventually :)
    - freebsd ports + pkgng
    - ?
 - support ``bootstrap-rc-XXX``
-- Licence
-- support vmware?
+- support vmware explicitly (like virtualbox)?

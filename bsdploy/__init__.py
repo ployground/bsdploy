@@ -51,7 +51,7 @@ def augment_instance(instance):
                 'fabfile_%s.py' % bootstrap_type)
             instance.config['fabfile'] = fabfile
         if not has_playbook(instance):
-            instance.config['roles'] = 'dhcp_host jails_host'
+            instance.config['roles'] = 'jails_host'
     else:
         # for jails
         if 'startup_script' not in instance.config:
