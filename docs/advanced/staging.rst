@@ -11,7 +11,7 @@ But safe testing and experimenting is just one benefit, the real benefit comes i
 Extended configuration files
 ****************************
 
-To help you keep the staging and production environment as similar as possible we will use the ability of ``mr.awsome`` to inherit configuration files.
+To help you keep the staging and production environment as similar as possible we will use the ability of ``ploy`` to inherit configuration files.
 
 We define the general environment (one or more jail hosts and jails) in a ``base.conf`` and create two 'top-level' configuration files ``staging.conf`` and ``production.conf`` which each extend ``base.conf``.
 
@@ -91,6 +91,7 @@ Finally, configure the VirtualBox instance in staging to use a host-only adapter
 	vm-hostonlyadapter1 = vboxnet0
 	vm-nic2 = nat
 
-``mr.awsome.virtualbox`` will ensure that the virtual network ``vboxnet0`` exists (if it doesn't already). You can then use the fact that VirtualBox will set up a local network (default is ``192.168.56.xxx``) with a DHCP range from ``.100 - .200`` and assign your nic1 (``em0`` in our case) a static IP of, i.e. ``192.168.56.10`` which you then can use in the abovementioned xip.io domain name.
+``ploy_virtualbox`` will ensure that the virtual network ``vboxnet0`` exists (if it doesn't already).
+You can then use the fact that VirtualBox will set up a local network (default is ``192.168.56.xxx``) with a DHCP range from ``.100 - .200`` and assign your nic1 (``em0`` in our case) a static IP of, i.e. ``192.168.56.10`` which you then can use in the abovementioned xip.io domain name.
 
 The net result? Deploy to staging and test your web application's full stack (including https, rewriting etc.) in any browser under ``https://fancypants.com.192.168.56.10.xip.io`` in the knowledge that the only difference between that setup and your (eventual) production environment is a single suffix string.

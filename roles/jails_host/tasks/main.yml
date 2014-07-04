@@ -70,11 +70,11 @@
 
 - name: Setup data zpool
   zpool:
-    name="{{ awsome_bootstrap_data_pool_name }}"
-    geli="{{ awsome_bootstrap_geli|bool }}"
-    version="{{ awsome_bootstrap_zpool_version }}"
-    devices="{{ awsome_bootstrap_data_pool_devices }}"
-    raid_mode="{{ awsome_bootstrap_raid_mode }}"
+    name="{{ ploy_bootstrap_data_pool_name }}"
+    geli="{{ ploy_bootstrap_geli|bool }}"
+    version="{{ ploy_bootstrap_zpool_version }}"
+    devices="{{ ploy_bootstrap_data_pool_devices }}"
+    raid_mode="{{ ploy_bootstrap_raid_mode }}"
   register: data_pool_result
 
 - name: Setup rc.conf lines for data zpool
@@ -84,19 +84,19 @@
 
 - name: Set data zpool options
   zfs:
-    name="{{ awsome_bootstrap_data_pool_name }}"
+    name="{{ ploy_bootstrap_data_pool_name }}"
     state=present
     atime=off
     checksum=fletcher4
 
 - name: Jails ZFS file system
   zfs:
-    name="{{ awsome_bootstrap_data_pool_name }}/jails"
+    name="{{ ploy_bootstrap_data_pool_name }}/jails"
     state=present
     mountpoint=/usr/jails
 
 - name: Initialize ezjail (may take a while)
-  command: "ezjail-admin install -h {{ awsome_ezjail_install_host }} -r {{ awsome_ezjail_install_release|default(ansible_distribution_release) }} creates=/usr/jails/basejail"
+  command: "ezjail-admin install -h {{ ploy_ezjail_install_host }} -r {{ ploy_ezjail_install_release|default(ansible_distribution_release) }} creates=/usr/jails/basejail"
 
 - name: Download pkg.txz
   get_url: dest=/var/cache/pkg/All/pkg.txz url={{ pkg_txz_url }}

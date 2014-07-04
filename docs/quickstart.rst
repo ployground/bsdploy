@@ -211,6 +211,7 @@ Let's check on it first, by logging into the host::
 
 Ok, we have a running jail, listening on a private IP – how do we communicate with it?
 Basically, there are two options (besides giving it a public IP): either port forwarding from the host or using a SSH proxy command.
+
 Rather conveniently `ploy_ezjail <https://github.com/ployground/ploy_ezjail>`_ has defaults for the latter.
 
 Log out from the jailhost and run this::
@@ -262,7 +263,7 @@ To do so, create a file named ``host_vars/jailhost.yml``::
 with the following content::
 
 	ipnat_rules:
-	    - "rdr em0 {{ ansible_em0.ipv4[0].address }}/32 port 80 -> {{ hostvars['demo_jail']['awsome_ip'] }} port 80"
+	    - "rdr em0 {{ ansible_em0.ipv4[0].address }}/32 port 80 -> {{ hostvars['demo_jail']['ploy_ip'] }} port 80"
 
 To activate the rules, re-apply the jail host configuration.
 Ansible will figure out, that it needs to update them (and only them) and then restart the network::
