@@ -2,13 +2,13 @@ from __future__ import absolute_import, print_function
 import os
 import yaml
 import sys
+from bsdploy import bsdploy_path, ploy_path
 from ploy.common import yesno
 from os.path import join, expanduser, exists, abspath, dirname
 try:
     from yaml import CSafeLoader as SafeLoader
 except ImportError:
     from yaml import SafeLoader
-from . import ploy_path
 
 
 def get_bootstrap_files(env, ssh_keys=None, upload_authorized_keys=True, yaml_filename='files.yml'):
@@ -390,7 +390,7 @@ def bootstrap_daemonology(**kwargs):
     original_host = env.host_string
     env.host_string = 'ec2-user@%s' % env.instance.id
     put('etc/authorized_keys', '/tmp/authorized_keys')
-    put(os.path.join(os.path.dirname(__file__), 'enable_root_login_on_daemonology.sh'), '/tmp/', mode='0775')
+    put(os.path.join(bsdploy_path, 'enable_root_login_on_daemonology.sh'), '/tmp/', mode='0775')
     run("""su root -c '/tmp/enable_root_login_on_daemonology.sh'""")
 
     # revert back to root
