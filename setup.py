@@ -42,10 +42,8 @@ setup(
         'development': [
             'Sphinx',
             'repoze.sphinx.autointerface',
-            'flake8',
             'jarn.mkrelease',
             'pytest >= 2.4.2',
-            'py >= 1.4.17',
             'pytest-flakes',
             'pytest-pep8',
             'tox',
