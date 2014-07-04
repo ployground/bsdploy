@@ -9,12 +9,23 @@ Once the host has been successfully bootstrapped, we are left with a vanilla Fre
 But before we can create and manage jails, a few tasks still remain, in particular
 
 - installation and configuration of ``ezjail``
-- ZFS setup and layout
+- ZFS setup and layout, including optional encryption
 - jail specific network setup
 
 Unlike bootstrapping, this final step is implemented using ansible playbooks and has been divided into multiple roles, so all that is left for us is to apply the ``configure`` to the ``ez-master`` instance, i.e. like so::
 
 	ploy configure ploy-demo
+
+Among other things, this will create an additional zpool named ``tank`` (by default) which will be used to contain the jails.
+
+Full-Disk encryption with GELI
+------------------------------
+
+One of the many nice features of FreeBSD is its `modular, layered handling of disks (GEOM) <http://www.freebsd.org/doc/handbook/geom.html>`_. This allows to inject a crypto layer into your disk setup without that higher up levels (such as ZFS) need to be aware of it, which is exactly what BSDploy supports.
+
+If you add ``bootstrap-geli = yes`` to an ``ez-master`` entry, BSDploy will generate a passphrase, encrypt the GEOM provider for the ``tank`` zpool and write the passphrasse to ``'/root/geli-passphrase`` and configures the appropriate ``geli_*_flag`` entries in ``rc.conf`` so that it is used automatically during booting.
+
+The upshot is that when enabling GELI you still will have the same convenience as without encryption but can easily up the ante by removing the passphrase file (remember to keep it safe, though!). You will, however, need to attach the device manually after the system has booted and enter the passphrase.
 
 
 Additional host roles

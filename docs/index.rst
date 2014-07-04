@@ -132,7 +132,6 @@ The following features already exist but still need to be documented:
 - provisioning + bootstrapping
    - EC2 (daemonology based)
    - pre-configured SSH server keys
-   - enabling full-disk encryption (GELI)
 - creating a jailhost
 - creating jails
 - jail access
