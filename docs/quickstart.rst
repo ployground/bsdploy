@@ -3,15 +3,14 @@ Quickstart
 
 This quickstart provides the shortest possible path from an empty project directory to a running jail inside a provisioned host.
 
-It is designed to be followed along, with all required commands and configuration provided in a copy&paste friendly format.
+It is designed to be followed along, with all required commands and configuration provided in a copy & paste friendly format.
 
-It takes several shortcuts on its way but it should give you a good idea about how BSDploy works and leave you with a running instance that you can use as a stepping stone for further exploration, i.e. following along the tutorial.
+It takes several shortcuts on its way but it should give you a good idea about how BSDploy works and leave you with a running instance that you can use as a stepping stone for further exploration.
 
 The process consists of:
 
-- booting a host machine into a FreeBSD installer
-- then installing FreeBSD onto the host (**bootstrapping**)
-- rebooting into the freshly installed FreeBSD
+- creating a VirtualBox based host (**provisioning**)
+- then installing FreeBSD onto it (**bootstrapping**)
 - then **configuring** the vanilla installation to our needs
 - and finally creating a 'hello world' jail inside of it.
 
@@ -19,7 +18,7 @@ The process consists of:
 Using Virtualbox
 ----------------
 
-To give us the luxury of running against a well-defined context, this quickstart uses `Virtualbox <https://www.virtualbox.org>`_, a free, open source PC virtualization platform. If you don't have it installed on your system, head over to their `downloads section <https://www.virtualbox.org/wiki/Downloads>`_ and install it for your platform. We'll wait! If you can't be bothered, following along anyway should still be useful, though.
+To give us the luxury of running against a well-defined context, this quickstart uses `VirtualBox <https://www.virtualbox.org>`_, a free, open source PC virtualization platform. If you don't have it installed on your system, head over to their `downloads section <https://www.virtualbox.org/wiki/Downloads>`_ and install it for your platform. We'll wait! If you can't be bothered, following along anyway should still be useful, though.
 
 
 Getting the FreeBSD installer
@@ -44,8 +43,6 @@ Configuring the virtual machine
 Since BSDploy also handles provisioning, we can configure the virtualbox instance within the main configuration file. It is named ``ploy.conf`` and lives inside a top-level directory named ``etc`` by default::
 
 	mkdir etc
-
-.. note:: This is directory contains not only your configuration but also all other settings and assets that are specific to *your particular project*, i.e. oftentimes this directory is kept under separate version control, for safe-keeping of certificates, private keys etc. – hence its existence.
 
 Inside it create a file named ``ploy.conf`` with the following contents::
 
@@ -223,7 +220,7 @@ Log out from the jailhost and run this::
 	Gehe nicht über Los.
 	root@demo_jail:~ #
 
-But frankly, that's not very interesting. As a final step of this introduction, let's configure it to act as a simple webserver using an ansible playbook.
+and there you are, inside the jail. But frankly, that's not very interesting. As a final step of this introduction, let's configure it to act as a simple webserver using an ansible playbook.
 
 
 Configuring a jail

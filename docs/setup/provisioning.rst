@@ -1,5 +1,5 @@
-Provisioning
-============
+Overview
+========
 
 The life cycle of a system managed by BSDploy is divided into three distinct segments::
 
@@ -27,6 +27,6 @@ Conceptually, the provider of a jailhost is a separate entity from the jailhost 
 
 Here we define a VirtualBox instance (``vb-instance``) named ``provisioner`` and a so-called master named ``jailhost`` which in turn conains a jail instance named ``webserver``.
 
-This approach allows us to hide the specific details of a provider and also to replace it with another one, i.e. :doc:`in a staging scenario </narr/staging>` where a production provider such as a 'real' server or EC2 instance is replaced with a VirtualBox.
+This approach allows us to hide the specific details of a provider and also to replace it with another one, i.e. :doc:`in a staging scenario </advanced/staging>` where a production provider such as a 'real' server or EC2 instance is replaced with a VirtualBox.
 
 In the following we will document the entire provisioning process for each supported provider separately (eventhough there is a large amount of overlap), so you can simply pick the one that suits your setup and then continue with the configuration step which is then the same for all providers.

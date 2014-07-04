@@ -1,11 +1,11 @@
-Plain instances
-===============
+Provisioning plain instances
+============================
 
 The most simple provider simply assumes an already existing host. Here any configuration is purely descriptive. Unlike with the other providers we tell BSDploy how things are and it doesn't do anything about it.
 
 For example::
 
-	[plain-instance:home-server-provisioner]
+	[plain-instance:ploy-demo-provisioner]
 	host = 10.0.1.2
 
 At the very least you will need to provide a ``host`` (IP address or hostname).
@@ -68,15 +68,23 @@ Finally restart sshd::
 
     service sshd restart
 
+To verify that all is ready, ssh into the host as user ``root`` with the password ``mfsroot``. Once that works, log out again and you are ready to continue with :doc:`/setup/bootstrapping`.
 
 
 Hetzner
 -------
 
-How to provision a dedicated machine hosted at Hetzner using their rescue system.
+The German ISP `Hetzner <http://www.hetzner.de>`_ provides dedicated servers with FreeBSD supprt. In a nutshell, boot the machine into their so-called *Rescue System* `using their robot <https://robot.your-server.de/server>`_ and choose *FreeBSD* as OS. The machine will boot into a modified version of mfsBSD.
+
+The web UI will then provide you with a one-time root password – make sure it works by SSHing into the host as ``root`` and you are ready for continuing with :doc:`/setup/bootstrapping`.
 
 
 vmWare
 ------
 
-Since BSDploy (currently) doesn't support automated provisioning of vmWare instances (like it does for VirtualBox) you will need to manually create a vmWare instance and then follow the steps above for 
+Since BSDploy (currently) doesn't support automated provisioning of vmWare instances (like it does for VirtualBox) you will need to manually create a vmWare instance and then follow the steps above for it, except that instead of downloading the image referenced there you need one specifically for booting into a virtual machine, IOW download like so::
+
+    mkdir downloads
+    ploy-download http://mfsbsd.vx.sk/files/iso/9/amd64/mfsbsd-se-9.2-RELEASE-amd64.iso 4ef70dfd7b5255e36f2f7e1a5292c7a05019c8ce downloads/
+
+Then create a new virtual machine, set the above image as boot device and continue with :doc:`/setup/bootstrapping`.
