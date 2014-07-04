@@ -3,7 +3,7 @@ import os
 import pytest
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def cleanup_modules(request):
     import inspect
     import sys
@@ -39,7 +39,7 @@ def ctrl(ployconf, tempdir):
     return ctrl
 
 
-def test_bootstrap_command(ctrl, monkeypatch):
+def test_bootstrap_command(cleanup_modules, ctrl, monkeypatch):
     bootstrap = Mock()
     monkeypatch.setattr('bsdploy.fabrics.bootstrap_mfsbsd', bootstrap)
     ctrl(['./bin/ploy', 'bootstrap'])
