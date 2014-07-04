@@ -1,27 +1,27 @@
-from fabric.api import run, env, with_settings, quiet
+from fabric.api import run, env, settings, quiet
 
 
-@with_settings(quiet())
 def get_interfaces():
-    return run('ifconfig -l').strip().split()
+    with settings(quiet()):
+        return run('ifconfig -l').strip().split()
 
 
-@with_settings(quiet())
 def get_realmem():
     import math
-    realmem = run('sysctl -n hw.realmem').strip()
+    with settings(quiet()):
+        realmem = run('sysctl -n hw.realmem').strip()
     realmem = float(realmem) / 1024 / 1024
     return 2 ** int(math.ceil(math.log(realmem, 2)))
 
 
-@with_settings(quiet())
 def get_devices():
     """ computes the name of the disk devices that are suitable
     installation targets by subtracting CDROM- and USB devices
     from the list of total mounts.
     """
-    mounts = run('mount')
-    sysctl_devices = run('sysctl -n kern.disks').strip().split()
+    with settings(quiet()):
+        mounts = run('mount')
+        sysctl_devices = run('sysctl -n kern.disks').strip().split()
     cd_device = env.instance.config.get('bootstrap-cd-device', 'cd0')
     if '/dev/{dev} on /rw/cdrom'.format(dev=cd_device) not in mounts:
         run('test -e /dev/{dev} && mount_cd9660 /dev/{dev} /cdrom || true'.format(dev=cd_device))
