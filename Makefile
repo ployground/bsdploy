@@ -3,11 +3,15 @@
 
 develop: .installed.cfg
 
-.installed.cfg: bin/buildout buildout.cfg
+.installed.cfg: bin/buildout buildout.cfg bin/virtualenv
 	bin/buildout -v
 
 bin/buildout: bin/pip
 	bin/pip install zc.buildout
+
+# needed for tox
+bin/virtualenv: bin/pip
+	bin/pip install virtualenv
 
 bin/pip:
 	virtualenv .
