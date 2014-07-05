@@ -53,3 +53,53 @@ def test_bootstrap_ask_to_continue(bootstrap, capsys, run_mock, tempdir, yesno_m
         "    ada0",
         "",
         "Continue?"]
+
+
+def test_bootstrap(bootstrap, capsys, put_mock, run_mock, tempdir, yesno_mock):
+    format_info = dict(
+        bsdploy_path=bsdploy_path,
+        tempdir=tempdir.directory)
+    tempdir['etc/authorized_keys'].fill('id_dsa')
+    put_mock.expected = [
+        (("%(bsdploy_path)s/bootstrap-files/FreeBSD.conf" % format_info, '/mnt/usr/local/etc/pkg/repos/FreeBSD.conf'), {'mode': None}),
+        (("%(tempdir)s/etc/authorized_keys" % format_info, '/mnt/root/.ssh/authorized_keys'), {'mode': None}),
+        (("%(bsdploy_path)s/bootstrap-files/make.conf" % format_info, '/mnt/etc/make.conf'), {'mode': None}),
+        (("%(bsdploy_path)s/bootstrap-files/pkg.conf" % format_info, '/mnt/usr/local/etc/pkg.conf'), {'mode': None}),
+        # put from upload_template
+        ((), {'remote_path': '/mnt/etc/rc.conf', 'mirror_local_mode': False, 'use_sudo': False, 'local_path': object(), 'mode': None}),
+        (("%(bsdploy_path)s/bootstrap-files/sshd_config" % format_info, '/mnt/etc/ssh/sshd_config'), {'mode': None}),
+    ]
+    run_mock.expected = [
+        ("find /cdrom/ /media/ -name 'base.txz' -exec dirname {} \\;", {}, run_result('/cdrom/9.2-RELEASE-amd64', 0)),
+        ('sysctl -n hw.realmem', {}, '536805376'),
+        ('sysctl -n kern.disks', {}, 'ada0 cd0\n'),
+        ('ifconfig -l', {}, 'em0 lo0'),
+        ('mount', {}, default_mounts),
+        ('test -e /dev/cd0 && mount_cd9660 /dev/cd0 /cdrom || true', {}, '\n'),
+        ('test -e /dev/da0a && mount -o ro /dev/da0a /media || true', {}, '\n'),
+        ('destroygeom -d ada0 -p system -p tank', {}, ''),
+        ('zfsinstall -d ada0 -p system -V 28 -u /cdrom/9.2-RELEASE-amd64 -s 1024M -z 20G', {}, ''),
+        ('gpart add -t freebsd-zfs -l tank_ada0 ada0', {}, ''),
+        ('cp /etc/resolv.conf /mnt/etc/resolv.conf', {}, ''),
+        ('mkdir -p "/mnt/usr/local/etc/pkg/repos"', {'shell': False}, ''),
+        ('mkdir -p "/mnt/root/.ssh" && chmod 0600 "/mnt/root/.ssh"', {'shell': False}, ''),
+        ('mkdir -p "/mnt/var/cache/pkg/All"', {'shell': False}, ''),
+        # test calls from upload_template
+        ('test -d "$(echo /mnt/etc/rc.conf)"', {}, run_result('', 1)),
+        ('test -e "$(echo /mnt/etc/rc.conf)"', {}, run_result('', 1)),
+        ('fetch -o /mnt/var/cache/pkg/All/pkg.txz http://pkg.freebsd.org/freebsd:9:x86:64/quarterly/Latest/pkg.txz', {}, ''),
+        ('chmod 0600 /mnt/var/cache/pkg/All/pkg.txz', {}, ''),
+        ("tar -x -C /mnt --chroot --exclude '+*' -f /mnt/var/cache/pkg/All/pkg.txz", {}, ''),
+        ('chroot /mnt /etc/rc.d/ldconfig start', {}, ''),
+        ('chroot /mnt pkg2ng', {}, ''),
+        ('chroot /mnt pkg install python27', {}, ''),
+        ('echo autoboot_delay=-1 >> /mnt/boot/loader.conf', {}, ''),
+        ("ssh-keygen -t dsa -f /mnt/etc/ssh/ssh_host_dsa_key -N ''", {}, ''),
+        ("ssh-keygen -t ecdsa -f /mnt/etc/ssh/ssh_host_ecdsa_key -N ''", {}, ''),
+        ("ssh-keygen -t rsa1 -b 1024 -f /mnt/etc/ssh/ssh_host_key -N ''", {}, ''),
+        ("ssh-keygen -t rsa -f /mnt/etc/ssh/ssh_host_rsa_key -N ''", {}, ''),
+        ('ssh-keygen -lf /mnt/etc/ssh/ssh_host_rsa_key', {}, ''),
+        ('reboot', {}, '')]
+    yesno_mock.expected = [
+        ("\nContinuing will destroy the existing data on the following devices:\n    ada0\n\nContinue?", True)]
+    bootstrap()

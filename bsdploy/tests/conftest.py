@@ -23,6 +23,8 @@ class RunResult(str):
 def run_result(out, rc):
     result = RunResult(out)
     result.return_code = rc
+    result.succeeded = rc == 0
+    result.failed = rc != 0
     return result
 
 
@@ -44,6 +46,7 @@ def run_mock(fabric_integration, monkeypatch):
     run.expected = []
     monkeypatch.setattr('bsdploy.bootstrap_utils.run', run)
     monkeypatch.setattr('bsdploy.fabrics.run', run)
+    monkeypatch.setattr('fabric.contrib.files.run', run)
     return run
 
 
@@ -56,11 +59,18 @@ def put_mock(fabric_integration, monkeypatch):
             expected = put.expected.pop(0)
         except IndexError:  # pragma: nocover
             expected = ((), {})
-        assert (args, kw) == expected
+        eargs, ekw = expected
+        assert args == eargs
+        assert sorted(kw.keys()) == sorted(ekw.keys())
+        for k, v in kw.items():
+            if hasattr(v, 'read'):
+                continue
+            assert v == ekw[k], "kw['%s'](%r) != ekw['%s'](%r)" % (k, v, k, ekw[k])
 
     put.side_effect = _put
     put.expected = []
     monkeypatch.setattr('bsdploy.fabrics.put', put)
+    monkeypatch.setattr('fabric.contrib.files.put', put)
     return put
 
 

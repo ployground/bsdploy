@@ -203,7 +203,7 @@ def bootstrap_mfsbsd(**kwargs):
         run(cmd, shell=False)
 
     # upload bootstrap files
-    for filename, info in sorted(bu.bootstrap_files.values()):
+    for filename, info in sorted(bu.bootstrap_files.items()):
         if 'remote' in info and exists(info['local']):
             if info.get('use_jinja'):
                 template_dir, template_name = os.path.split(info['local'])
