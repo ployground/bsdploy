@@ -48,11 +48,12 @@ def run_mock(fabric_integration, monkeypatch):
 
 
 @pytest.fixture
-def env_mock(fabric_integration, monkeypatch):
+def env_mock(fabric_integration, monkeypatch, ployconf):
     from fabric.utils import _AttributeDict
     env = _AttributeDict()
     env.instance = Mock()
     env.instance.config = {}
+    env.instance.master.main_config.path = ployconf.directory
     monkeypatch.setattr('bsdploy.bootstrap_utils.env', env)
     monkeypatch.setattr('bsdploy.fabrics.env', env)
     return env

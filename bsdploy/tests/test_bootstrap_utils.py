@@ -1,10 +1,13 @@
 from bsdploy import bootstrap_utils
 from bsdploy.tests.conftest import default_mounts, run_result
+import os
 import pytest
 
 
 @pytest.fixture
-def bu(env_mock, run_mock):
+def bu(env_mock, environ_mock, run_mock, ployconf, tempdir):
+    ployconf.fill('')
+    environ_mock['HOME'] = tempdir.directory
     return bootstrap_utils.BootstrapUtils()
 
 
@@ -102,6 +105,54 @@ def test_bsd_url_not_found(bu, run_mock):
     assert bu.bsd_url is None
 
 
-def test_bsd_url_from_config(bu, run_mock, env_mock):
+def test_bsd_url_from_config(bu, env_mock):
     env_mock.instance.config = {'bootstrap-bsd-url': '/foo'}
     assert bu.bsd_url == '/foo'
+
+
+def test_bootstrap_files_no_ssh_keys(bu, capsys, tempdir):
+    format_info = dict(tempdir=tempdir.directory)
+    with pytest.raises(SystemExit) as e:
+        bu.bootstrap_files
+    assert e.value.code == 1
+    (out, err) = capsys.readouterr()
+    out_lines = out.splitlines()
+    assert out_lines == [
+        "Found no public key in %(tempdir)s/.ssh, you have to create '%(tempdir)s/etc/authorized_keys' manually" % format_info]
+
+
+def test_bootstrap_files_multiple_ssh_keys_but_none_used(bu, capsys, tempdir, yesno_mock):
+    format_info = dict(tempdir=tempdir.directory)
+    tempdir['.ssh/id_dsa.pub'].fill('id_dsa')
+    tempdir['.ssh/id_rsa.pub'].fill('id_rsa')
+    yesno_mock.expected = [
+        ("Should we generate it using the key in '%(tempdir)s/.ssh/id_dsa.pub'?" % format_info, False),
+        ("Should we generate it using the key in '%(tempdir)s/.ssh/id_rsa.pub'?" % format_info, False)]
+    with pytest.raises(SystemExit) as e:
+        bu.bootstrap_files()
+    assert e.value.code == 1
+    (out, err) = capsys.readouterr()
+    out_lines = out.splitlines()
+    assert out_lines == [
+        "The '%(tempdir)s/etc/authorized_keys' file is missing." % format_info,
+        "Should we generate it using the key in '%(tempdir)s/.ssh/id_dsa.pub'?" % format_info,
+        "Should we generate it using the key in '%(tempdir)s/.ssh/id_rsa.pub'?" % format_info]
+
+
+def test_bootstrap_files_multiple_ssh_keys_use_second(bu, capsys, run_mock, tempdir, yesno_mock):
+    format_info = dict(tempdir=tempdir.directory)
+    tempdir['.ssh/id_dsa.pub'].fill('id_dsa')
+    tempdir['.ssh/id_rsa.pub'].fill('id_rsa')
+    yesno_mock.expected = [
+        ("Should we generate it using the key in '%(tempdir)s/.ssh/id_dsa.pub'?" % format_info, False),
+        ("Should we generate it using the key in '%(tempdir)s/.ssh/id_rsa.pub'?" % format_info, True)]
+    bu.bootstrap_files
+    (out, err) = capsys.readouterr()
+    out_lines = out.splitlines()
+    assert out_lines == [
+        "The '%(tempdir)s/etc/authorized_keys' file is missing." % format_info,
+        "Should we generate it using the key in '%(tempdir)s/.ssh/id_dsa.pub'?" % format_info,
+        "Should we generate it using the key in '%(tempdir)s/.ssh/id_rsa.pub'?" % format_info]
+    assert os.path.exists(tempdir['etc/authorized_keys'].path)
+    with open(tempdir['etc/authorized_keys'].path) as f:
+        assert f.read() == 'id_rsa'
