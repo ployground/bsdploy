@@ -48,6 +48,23 @@ def run_mock(fabric_integration, monkeypatch):
 
 
 @pytest.fixture
+def put_mock(fabric_integration, monkeypatch):
+    put = Mock()
+
+    def _put(*args, **kw):
+        try:
+            expected = put.expected.pop(0)
+        except IndexError:  # pragma: nocover
+            expected = ((), {})
+        assert (args, kw) == expected
+
+    put.side_effect = _put
+    put.expected = []
+    monkeypatch.setattr('bsdploy.fabrics.put', put)
+    return put
+
+
+@pytest.fixture
 def env_mock(fabric_integration, monkeypatch, ployconf):
     from fabric.utils import _AttributeDict
     env = _AttributeDict()

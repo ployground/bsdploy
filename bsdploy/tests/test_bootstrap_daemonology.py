@@ -1,1 +1,36 @@
-from bsdploy.fabfile_daemonology import bootstrap  # noqa
+from bsdploy import bsdploy_path
+import pytest
+
+
+@pytest.fixture
+def bootstrap(env_mock, environ_mock, monkeypatch, put_mock, run_mock, tempdir, yesno_mock, ployconf):
+    from bsdploy.fabfile_daemonology import bootstrap
+    ployconf.fill('')
+    environ_mock['HOME'] = tempdir.directory
+    env_mock.host_string = 'jailhost'
+    monkeypatch.setattr('bsdploy.fabrics.sleep', lambda x: None)
+    return bootstrap
+
+
+def test_bootstrap(bootstrap, capsys, put_mock, run_mock, tempdir, yesno_mock):
+    format_info = dict(
+        bsdploy_path=bsdploy_path,
+        tempdir=tempdir.directory)
+    put_mock.expected = [
+        (('etc/authorized_keys', '/tmp/authorized_keys'), {}),
+        (("%(bsdploy_path)s/enable_root_login_on_daemonology.sh" % format_info, '/tmp/'), {'mode': '0775'}),
+        (("%(bsdploy_path)s/bootstrap-files/FreeBSD.conf" % format_info, '/usr/local/etc/pkg/repos/FreeBSD.conf'), {'mode': None}),
+        (("%(bsdploy_path)s/bootstrap-files/make.conf" % format_info, '/etc/make.conf'), {'mode': None}),
+        (("%(bsdploy_path)s/bootstrap-files/pkg.conf" % format_info, '/usr/local/etc/pkg.conf'), {'mode': None})]
+    run_mock.expected = [
+        ("su root -c '/tmp/enable_root_login_on_daemonology.sh'", {}, ''),
+        ('rm /tmp/enable_root_login_on_daemonology.sh', {}, ''),
+        ('mkdir -p "/usr/local/etc/pkg/repos"', {'shell': False}, ''),
+        ('mkdir -p "/var/cache/pkg/All"', {'shell': False}, ''),
+        ('fetch -o /var/cache/pkg/All/pkg.txz http://pkg.freebsd.org/freebsd:9:x86:64/quarterly/Latest/pkg.txz', {}, ''),
+        ('chmod 0600 /var/cache/pkg/All/pkg.txz', {}, ''),
+        ("tar -x -C / --exclude '+*' -f /var/cache/pkg/All/pkg.txz", {}, ''),
+        ('/etc/rc.d/ldconfig start', {}, ''),
+        ('pkg2ng', {}, ''),
+        ('pkg install python27', {}, '')]
+    bootstrap()

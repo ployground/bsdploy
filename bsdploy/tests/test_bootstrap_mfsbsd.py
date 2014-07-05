@@ -4,14 +4,14 @@ import pytest
 
 
 @pytest.fixture
-def bootstrap(env_mock, environ_mock, run_mock, tempdir, yesno_mock, ployconf):
+def bootstrap(env_mock, environ_mock, put_mock, run_mock, tempdir, yesno_mock, ployconf):
     from bsdploy.fabfile_mfsbsd import bootstrap
     ployconf.fill('')
     environ_mock['HOME'] = tempdir.directory
     return bootstrap
 
 
-def test_bootstrap(bootstrap, capsys, run_mock, tempdir, yesno_mock):
+def test_bootstrap_ask_to_continue(bootstrap, capsys, run_mock, tempdir, yesno_mock):
     format_info = dict(
         bsdploy_path=bsdploy_path,
         tempdir=tempdir.directory)

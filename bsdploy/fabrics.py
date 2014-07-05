@@ -9,6 +9,7 @@ from fabric.contrib.files import upload_template
 from ploy.common import yesno
 from ploy.config import value_asbool
 from os.path import join, exists, abspath, dirname
+from time import sleep
 try:  # pragma: nocover
     from yaml import CSafeLoader as SafeLoader
 except ImportError:  # pragma: nocover
@@ -66,7 +67,7 @@ def fetch_assets(**kwargs):
     If present on the control host they will be uploaded to the target host during bootstrapping.
     """
     from fabric.api import env, local
-    items = BootstrapUtils().bootstrap_files.items()
+    items = sorted(BootstrapUtils().bootstrap_files.items())
     packages = set(
         env.instance.master.instance.config.get('bootstrap-packages', '').split())
     packages.update(['python27'])
@@ -193,7 +194,7 @@ def bootstrap_mfsbsd(**kwargs):
         run('mount -t devfs devfs /mnt/dev')
     # setup bare essentials
     run('cp /etc/resolv.conf /mnt/etc/resolv.conf')
-    for info in bu.bootstrap_files.values():
+    for filename, info in sorted(bu.bootstrap_files.items()):
         if 'directory' not in info:
             continue
         cmd = 'mkdir -p "%s"' % info['directory']
@@ -202,7 +203,7 @@ def bootstrap_mfsbsd(**kwargs):
         run(cmd, shell=False)
 
     # upload bootstrap files
-    for info in bu.bootstrap_files.values():
+    for filename, info in sorted(bu.bootstrap_files.values()):
         if 'remote' in info and exists(info['local']):
             if info.get('use_jinja'):
                 template_dir, template_name = os.path.split(info['local'])
@@ -231,7 +232,7 @@ def bootstrap_mfsbsd(**kwargs):
     autoboot_delay = env.instance.config.get('bootstrap-autoboot-delay', '-1')
     run('echo autoboot_delay=%s >> /mnt/boot/loader.conf' % autoboot_delay)
     # ssh host keys
-    for ssh_key, ssh_keygen_args in bu.ssh_keys:
+    for ssh_key, ssh_keygen_args in sorted(bu.ssh_keys):
         if ssh_key not in bu.bootstrap_files:
             run("ssh-keygen %s -f /mnt/etc/ssh/%s -N ''" % (ssh_keygen_args, ssh_key))
     fingerprint = run("ssh-keygen -lf /mnt/etc/ssh/ssh_host_rsa_key")
@@ -254,7 +255,6 @@ def bootstrap_daemonology(**kwargs):
     run("""su root -c '/tmp/enable_root_login_on_daemonology.sh'""")
     # revert back to root
     env.host_string = original_host
-    from time import sleep
     # give sshd a chance to restart
     sleep(2)
     run('rm /tmp/enable_root_login_on_daemonology.sh')
@@ -269,7 +269,7 @@ def bootstrap_daemonology(**kwargs):
     # allow overwrites from the commandline
     env.instance.config.update(kwargs)
 
-    for info in bu.bootstrap_files.values():
+    for filename, info in sorted(bu.bootstrap_files.items()):
         if 'directory' not in info:
             continue
         cmd = 'mkdir -p "%s"' % info['directory']
@@ -278,7 +278,7 @@ def bootstrap_daemonology(**kwargs):
         run(cmd, shell=False)
 
     # upload bootstrap files
-    for info in bu.bootstrap_files.values():
+    for filename, info in sorted(bu.bootstrap_files.items()):
         if 'remote' in info and exists(info['local']):
             put(info['local'], info['remote'], mode=info.get('mode'))
 
