@@ -156,3 +156,29 @@ def test_bootstrap_files_multiple_ssh_keys_use_second(bu, capsys, run_mock, temp
     assert os.path.exists(tempdir['etc/authorized_keys'].path)
     with open(tempdir['etc/authorized_keys'].path) as f:
         assert f.read() == 'id_rsa'
+
+
+@pytest.fixture
+def local_mock(fabric_integration, monkeypatch):
+    from mock import Mock
+    local = Mock()
+
+    def _local(command):
+        try:
+            expected = local.expected.pop(0)
+        except IndexError:  # pragma: nocover
+            expected = '', '', ''
+        assert command == expected
+
+    local.side_effect = _local
+    local.expected = []
+    monkeypatch.setattr('bsdploy.bootstrap_utils.local', local)
+    return local
+
+
+def test_fetch_assets(bu, local_mock, tempdir):
+    format_info = dict(tempdir=tempdir.directory)
+    tempdir['etc/authorized_keys'].fill('id_dsa')
+    local_mock.expected = [
+        'wget -c -O "%(tempdir)s/downloads/pkg.txz" "http://pkg.freebsd.org/freebsd:9:x86:64/quarterly/Latest/pkg.txz"' % format_info]
+    bu.fetch_assets()

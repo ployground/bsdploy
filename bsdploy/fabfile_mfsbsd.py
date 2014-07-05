@@ -1,6 +1,5 @@
 # coding: utf-8
 from bsdploy.bootstrap_utils import BootstrapUtils
-from bsdploy.fabrics import fetch_assets  # noqa
 from fabric.api import env, hide, run, settings
 from ploy.common import yesno
 from ploy.config import value_asbool
@@ -117,3 +116,12 @@ def bootstrap(**kwargs):
             run('reboot')
     print("The SSH fingerprint of the newly bootstrapped server is:")
     print(fingerprint)
+
+
+def fetch_assets(**kwargs):
+    """ download bootstrap assets to control host.
+    If present on the control host they will be uploaded to the target host during bootstrapping.
+    """
+    # allow overwrites from the commandline
+    env.instance.config.update(kwargs)
+    BootstrapUtils().fetch_assets()

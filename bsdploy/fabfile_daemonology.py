@@ -1,7 +1,6 @@
 # coding: utf-8
 from bsdploy import bsdploy_path
 from bsdploy.bootstrap_utils import BootstrapUtils
-from bsdploy.fabrics import fetch_assets  # noqa
 from fabric.api import env, put, run
 from os.path import join
 from time import sleep
@@ -41,3 +40,12 @@ def bootstrap(**kwargs):
     # we need to install python here, because there is no way to install it via
     # ansible playbooks
     bu.install_pkg('/', chroot=False, packages=['python27'])
+
+
+def fetch_assets(**kwargs):
+    """ download bootstrap assets to control host.
+    If present on the control host they will be uploaded to the target host during bootstrapping.
+    """
+    # allow overwrites from the commandline
+    env.instance.config.update(kwargs)
+    BootstrapUtils().fetch_assets()

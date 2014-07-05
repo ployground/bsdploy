@@ -1,6 +1,6 @@
 from __future__ import print_function
 from bsdploy import bsdploy_path
-from fabric.api import env, put, quiet, run, settings
+from fabric.api import env, local, put, quiet, run, settings
 from fabric.contrib.files import upload_template
 from lazy import lazy
 from os.path import abspath, basename, dirname, expanduser, exists, join
@@ -324,3 +324,65 @@ class BootstrapUtils:
             return dest
         else:
             return 'zfsinstall'
+
+    def _fetch_packages(self, packagesite, packages):
+        import tarfile
+        try:
+            import lzma
+        except ImportError:
+            print("ERROR: The lzma package couldn't be imported.")
+            print("You most likely need to install pyliblzma in your virtualenv.")
+            sys.exit(1)
+        ploy_conf_path = join(env.instance.master.main_config.path)
+        download_path = abspath(join(ploy_conf_path, '..', 'downloads'))
+        packageinfo = {}
+        print("Loading package information from '%s'." % packagesite)
+        if SafeLoader.__name__ != 'CSafeLoader':
+            print("WARNING: The C extensions for PyYAML aren't installed.")
+            print("This can take quite a long while ...")
+        else:
+            print("This can take a while ...")
+        for line in tarfile.TarFile(fileobj=lzma.LZMAFile(packagesite)).extractfile('packagesite.yaml'):
+            info = yaml.load(line, Loader=SafeLoader)
+            packageinfo[info['name']] = dict(
+                path=info['path'],
+                arch=info['arch'],
+                deps=info.get('deps', {}).keys())
+        deps = set(packages)
+        seen = set()
+        items = []
+        while 1:
+            try:
+                dep = deps.pop()
+            except KeyError:
+                break
+            if dep in seen:
+                continue
+            info = packageinfo[dep]
+            deps.update(info['deps'])
+            path = '%s/latest/%s' % (info['arch'], info['path'])
+            items.append((
+                join('packages', path),
+                dict(
+                    url='http://pkg.freebsd.org/%s' % path,
+                    local=join(download_path, 'packages', path),
+                    remote=join('/mnt/var/cache/pkg/', info['path']))))
+            seen.add(dep)
+        return items
+
+    def fetch_assets(self):
+        """ download bootstrap assets to control host.
+        If present on the control host they will be uploaded to the target host during bootstrapping.
+        """
+        # allow overwrites from the commandline
+        packages = set(
+            env.instance.config.get('bootstrap-packages', '').split())
+        packages.update(['python27'])
+        cmd = env.instance.config.get('bootstrap-local-download-cmd', 'wget -c -O "{0.local}" "{0.url}"')
+        for filename, asset in sorted(self.bootstrap_files.items()):
+            if asset.url:
+                if not exists(dirname(asset.local)):
+                    os.makedirs(dirname(asset.local))
+                local(cmd.format(asset))
+            if filename == 'packagesite.txz':
+                self._fetch_packages(asset.local, packages)

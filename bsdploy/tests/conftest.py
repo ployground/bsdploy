@@ -81,7 +81,6 @@ def env_mock(fabric_integration, monkeypatch, ployconf):
     env.instance.config = {}
     env.instance.master.main_config.path = ployconf.directory
     monkeypatch.setattr('bsdploy.bootstrap_utils.env', env)
-    monkeypatch.setattr('bsdploy.fabrics.env', env)
     return env
 
 
