@@ -41,6 +41,7 @@ setup(
         'development': [
             'Sphinx',
             'repoze.sphinx.autointerface',
+            'coverage',
             'jarn.mkrelease',
             'pytest >= 2.4.2',
             'pytest-flakes',
