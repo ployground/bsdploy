@@ -1,21 +1,5 @@
-from mock import Mock
 import os
 import pytest
-
-
-@pytest.fixture
-def cleanup_modules(request):
-    import inspect
-    import sys
-    for modname, module in list(sys.modules.items()):
-        if module is None:
-            continue
-        for name, member in inspect.getmembers(module):
-            if not hasattr(member, '__class__'):
-                continue
-            if member.__class__.__module__.startswith('fabric'):
-                del sys.modules[modname]
-                break
 
 
 @pytest.fixture
@@ -39,11 +23,15 @@ def ctrl(ployconf, tempdir):
     return ctrl
 
 
-def test_bootstrap_command(cleanup_modules, ctrl, monkeypatch):
-    bootstrap = Mock()
-    monkeypatch.setattr('bsdploy.fabrics.bootstrap_mfsbsd', bootstrap)
+def test_bootstrap_command(capsys, ctrl, monkeypatch):
+    def do(self, *args, **kwargs):
+        print "do with %r, %r called!" % (args, kwargs)
+    monkeypatch.setattr('ploy_fabric.do', do)
     ctrl(['./bin/ploy', 'bootstrap'])
-    assert bootstrap.called
+    (out, err) = capsys.readouterr()
+    out_lines = out.splitlines()
+    assert out_lines == [
+        "do with ('bootstrap',), {} called!"]
 
 
 def test_augment_ezjail_master(ctrl, ployconf):

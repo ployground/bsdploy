@@ -45,7 +45,6 @@ def run_mock(fabric_integration, monkeypatch):
     run.side_effect = _run
     run.expected = []
     monkeypatch.setattr('bsdploy.bootstrap_utils.run', run)
-    monkeypatch.setattr('bsdploy.fabrics.run', run)
     monkeypatch.setattr('fabric.contrib.files.run', run)
     return run
 
@@ -69,7 +68,7 @@ def put_mock(fabric_integration, monkeypatch):
 
     put.side_effect = _put
     put.expected = []
-    monkeypatch.setattr('bsdploy.fabrics.put', put)
+    monkeypatch.setattr('bsdploy.bootstrap_utils.put', put)
     monkeypatch.setattr('fabric.contrib.files.put', put)
     return put
 
@@ -110,6 +109,5 @@ def yesno_mock(monkeypatch):
     yesno.side_effect = _yesno
     yesno.expected = []
     monkeypatch.setattr('bsdploy.bootstrap_utils.yesno', yesno)
-    monkeypatch.setattr('bsdploy.fabrics.yesno', yesno)
     monkeypatch.setattr('ploy.common.yesno', yesno)
     return yesno

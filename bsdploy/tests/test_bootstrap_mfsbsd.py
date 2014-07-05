@@ -4,10 +4,13 @@ import pytest
 
 
 @pytest.fixture
-def bootstrap(env_mock, environ_mock, put_mock, run_mock, tempdir, yesno_mock, ployconf):
+def bootstrap(env_mock, environ_mock, monkeypatch, put_mock, run_mock, tempdir, yesno_mock, ployconf):
     from bsdploy.fabfile_mfsbsd import bootstrap
     ployconf.fill('')
     environ_mock['HOME'] = tempdir.directory
+    monkeypatch.setattr('bsdploy.fabfile_mfsbsd.env', env_mock)
+    monkeypatch.setattr('bsdploy.fabfile_mfsbsd.run', run_mock)
+    monkeypatch.setattr('bsdploy.fabfile_mfsbsd.yesno', yesno_mock)
     return bootstrap
 
 

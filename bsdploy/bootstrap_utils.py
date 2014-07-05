@@ -1,7 +1,9 @@
+from __future__ import print_function
 from bsdploy import bsdploy_path
-from fabric.api import env, quiet, run, settings
+from fabric.api import env, put, quiet, run, settings
+from fabric.contrib.files import upload_template
 from lazy import lazy
-from os.path import join, expanduser, exists, abspath
+from os.path import abspath, basename, dirname, expanduser, exists, join
 from ploy.common import yesno
 try:  # pragma: nocover
     from yaml import CSafeLoader as SafeLoader
@@ -9,7 +11,66 @@ except ImportError:  # pragma: nocover
     from yaml import SafeLoader
 import os
 import sys
+import weakref
 import yaml
+
+
+class BootstrapFile(object):
+    def __init__(self, bu, filename, **kwargs):
+        self.bu = weakref.ref(bu)
+        self.filename = filename
+        self.info = kwargs
+        self.info.setdefault('use_jinja', False)
+
+    def __getattr__(self, name):
+        return self.info.get(name)
+
+    @property
+    def expected_path(self):
+        if 'expected_path' in self.info:
+            return self.info['expected_path']
+        elif 'url' in self.info:
+            return self.bu().download_path
+        else:
+            return self.bu().custom_template_path
+
+    @property
+    def raw_fallback(self):
+        paths = self.info.get('fallback', [])
+        if isinstance(paths, basestring):
+            paths = [paths]
+        return paths
+
+    @property
+    def existing_fallback(self):
+        paths = (expanduser(x) for x in self.raw_fallback)
+        return sorted([x for x in paths if exists(x)])
+
+    @property
+    def local(self):
+        local_path = join(self.expected_path, self.filename)
+        if self.raw_fallback:
+            return local_path
+        if not exists(local_path) and not self.url:
+            local_path = join(self.bu().default_template_path, self.filename)
+        if not exists(local_path) and not self.url:
+            return
+        return local_path
+
+    def check(self):
+        return exists(self.local) or self.url
+
+    @property
+    def to_be_fetched(self):
+        return 'remote' in self.info and self.url and not exists(self.local)
+
+    def read(self, context):
+        if self.use_jinja:
+            from jinja2 import Template
+            template = Template(open(self.local).read())
+            return template.render(**context)
+        else:
+            return open(self.local, 'r')
 
 
 class BootstrapUtils:
@@ -20,6 +81,26 @@ class BootstrapUtils:
         ('ssh_host_ecdsa_key', '-t ecdsa')])
     upload_authorized_keys = True
     bootstrap_files_yaml = 'files.yml'
+
+    @property
+    def ploy_conf_path(self):
+        return env.instance.master.main_config.path
+
+    @property
+    def default_template_path(self):
+        return join(bsdploy_path, 'bootstrap-files')
+
+    @property
+    def custom_template_path(self):
+        host_defined_path = env.instance.config.get('bootstrap-files')
+        if host_defined_path is None:
+            return abspath(join(self.ploy_conf_path, '..', 'deployment', 'bootstrap-files'))
+        else:
+            return abspath(join(self.ploy_conf_path, host_defined_path))
+
+    @property
+    def download_path(self):
+        return abspath(join(self.ploy_conf_path, '..', 'downloads'))
 
     @lazy
     def bootstrap_files(self):
@@ -44,29 +125,21 @@ class BootstrapUtils:
         files that are part of bsdploy. If the file cannot be found there either we either error out or for authorized_keys
         we look in ``~/.ssh/identity.pub``.
         """
-        ploy_conf_path = env.instance.master.main_config.path
-        default_template_path = join(bsdploy_path, 'bootstrap-files')
-        host_defined_path = env.instance.config.get('bootstrap-files')
-        if host_defined_path is None:
-            custom_template_path = abspath(join(ploy_conf_path, '..', 'deployment', 'bootstrap-files'))
-        else:
-            custom_template_path = abspath(join(ploy_conf_path, host_defined_path))
-        download_path = abspath(join(ploy_conf_path, '..', 'downloads'))
         bootstrap_file_yamls = [
-            abspath(join(default_template_path, self.bootstrap_files_yaml)),
-            abspath(join(custom_template_path, self.bootstrap_files_yaml))]
+            abspath(join(self.default_template_path, self.bootstrap_files_yaml)),
+            abspath(join(self.custom_template_path, self.bootstrap_files_yaml))]
         bootstrap_files = dict()
         if self.upload_authorized_keys:
-            bootstrap_files['authorized_keys'] = {
+            bootstrap_files['authorized_keys'] = BootstrapFile(self, 'authorized_keys', **{
                 'directory': '/mnt/root/.ssh',
                 'directory_mode': '0600',
                 'remote': '/mnt/root/.ssh/authorized_keys',
-                'expected_path': ploy_conf_path,
+                'expected_path': self.ploy_conf_path,
                 'fallback': [
                     '~/.ssh/identity.pub',
                     '~/.ssh/id_rsa.pub',
                     '~/.ssh/id_dsa.pub',
-                    '~/.ssh/id_ecdsa.pub']}
+                    '~/.ssh/id_ecdsa.pub']})
         for bootstrap_file_yaml in bootstrap_file_yamls:
             if not exists(bootstrap_file_yaml):
                 continue
@@ -74,31 +147,18 @@ class BootstrapUtils:
                 info = yaml.load(f, Loader=SafeLoader)
             if info is None:
                 continue
-            bootstrap_files.update(info)
+            for k, v in info.items():
+                bootstrap_files[k] = BootstrapFile(self, k, **v)
 
-        for filename, info in bootstrap_files.items():
-            if 'expected_path' in info:
-                expected_path = info['expected_path']
-            elif 'url' in info:
-                expected_path = download_path
-            else:
-                expected_path = custom_template_path
-
-            local_path = join(expected_path, filename)
-
-            if not exists(local_path) and 'fallback' in info:
-                local_paths = info['fallback']
-                if isinstance(local_paths, basestring):
-                    local_paths = [local_paths]
-                local_paths = (expanduser(x) for x in local_paths)
-                local_paths = [x for x in local_paths if exists(x)]
-                if not local_paths:
-                    print("Found no public key in %s, you have to create '%s' manually" % (expanduser('~/.ssh'), local_path))
+        for bf in bootstrap_files.values():
+            if not exists(bf.local) and bf.raw_fallback:
+                if not bf.existing_fallback:
+                    print("Found no public key in %s, you have to create '%s' manually" % (expanduser('~/.ssh'), bf.local))
                     sys.exit(1)
-                print("The '%s' file is missing." % local_path)
-                for path in sorted(local_paths):
+                print("The '%s' file is missing." % bf.local)
+                for path in bf.existing_fallback:
                     if yesno("Should we generate it using the key in '%s'?" % path):
-                        with open(local_path, 'wb') as out:
+                        with open(bf.local, 'wb') as out:
                             with open(path, 'rb') as f:
                                 out.write(f.read())
                         break
@@ -106,16 +166,11 @@ class BootstrapUtils:
                     # answered no to all options
                     sys.exit(1)
 
-            if not exists(local_path) and 'url' not in info:
-                local_path = join(default_template_path, filename)
-
-            if not exists(local_path) and 'url' not in info:
-                print('Cannot find %s' % local_path)
+            if not bf.check():
+                print('Cannot find %s' % bf.local)
                 sys.exit(1)
 
-            bootstrap_files[filename]['local'] = local_path
-
-        packages_path = join(download_path, 'packages')
+        packages_path = join(self.download_path, 'packages')
         if exists(packages_path):
             for dirpath, dirnames, filenames in os.walk(packages_path):
                 path = dirpath.split(packages_path)[1][1:]
@@ -128,7 +183,7 @@ class BootstrapUtils:
 
         if self.ssh_keys is not None:
             for ssh_key_name, ssh_key_options in list(self.ssh_keys):
-                ssh_key = join(custom_template_path, ssh_key_name)
+                ssh_key = join(self.custom_template_path, ssh_key_name)
                 if exists(ssh_key):
                     pub_key_name = '%s.pub' % ssh_key_name
                     pub_key = '%s.pub' % ssh_key
@@ -138,6 +193,55 @@ class BootstrapUtils:
                     bootstrap_files[ssh_key_name] = dict(local=ssh_key, remote='/mnt/etc/ssh/%s' % ssh_key_name, mode=0600)
                     bootstrap_files[pub_key_name] = dict(local=pub_key, remote='/mnt/etc/ssh/%s' % pub_key_name, mode=0644)
         return bootstrap_files
+
+    def print_bootstrap_files(self):
+        print("\nUsing these local files for bootstrapping:")
+        for filename, bf in sorted(self.bootstrap_files.items()):
+            if not bf.to_be_fetched:
+                print('{0.local} -(template:{0.use_jinja})-> {0.remote}'.format(bf))
+        print("\nThe following files will be downloaded on the host during bootstrap:")
+        for filename, bf in sorted(self.bootstrap_files.items()):
+            if bf.to_be_fetched:
+                print('{0.url} -> {0.remote}'.format(bf))
+        print()
+
+    def create_bootstrap_directories(self):
+        for filename, bf in sorted(self.bootstrap_files.items()):
+            if not bf.directory:
+                continue
+            cmd = 'mkdir -p "%s"' % bf.directory
+            if bf.directory_mode:
+                cmd = '%s && chmod %s "%s"' % (cmd, bf.directory_mode, bf.directory)
+            run(cmd, shell=False)
+
+    def upload_bootstrap_files(self, context={}):
+        for filename, bf in sorted(self.bootstrap_files.items()):
+            if bf.remote and exists(bf.local):
+                if bf.use_jinja:
+                    upload_template(
+                        basename(bf.local),
+                        bf.remote,
+                        context=context,
+                        use_jinja=True,
+                        template_dir=dirname(bf.local),
+                        mode=bf.mode)
+                else:
+                    put(bf.local, bf.remote, mode=bf.mode)
+
+    def install_pkg(self, root, chroot=None, packages=[]):
+        assert isinstance(chroot, bool)
+        pkg = self.bootstrap_files['pkg.txz']
+        if not exists(pkg.local):
+            run('fetch -o {0.remote} {0.url}'.format(pkg))
+        run('chmod 0600 {0.remote}'.format(pkg))
+        run("tar -x -C {root}{chroot} --exclude '+*' -f {0.remote}".format(
+            pkg, root=root, chroot=' --chroot' if chroot else ''))
+        chroot_prefix = 'chroot %s ' % root if chroot else ''
+        # run pkg2ng for which the shared library path needs to be updated
+        run(chroot_prefix + '/etc/rc.d/ldconfig start')
+        run(chroot_prefix + 'pkg2ng')
+        if packages:
+            run(chroot_prefix + 'pkg install %s' % ' '.join(packages))
 
     @lazy
     def mounts(self):
@@ -210,3 +314,13 @@ class BootstrapUtils:
                 if result.return_code == 0:
                     bsd_url = result.strip()
         return bsd_url
+
+    @lazy
+    def zfsinstall(self):
+        zfsinstall = env.instance.config.get('bootstrap-zfsinstall')
+        if zfsinstall:
+            dest = '/root/bin/bsdploy_zfsinstall'
+            put(abspath(join(self.ploy_conf_path, zfsinstall)), dest, mode=0755)
+            return dest
+        else:
+            return 'zfsinstall'

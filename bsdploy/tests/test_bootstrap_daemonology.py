@@ -8,7 +8,10 @@ def bootstrap(env_mock, environ_mock, monkeypatch, put_mock, run_mock, tempdir, 
     ployconf.fill('')
     environ_mock['HOME'] = tempdir.directory
     env_mock.host_string = 'jailhost'
-    monkeypatch.setattr('bsdploy.fabrics.sleep', lambda x: None)
+    monkeypatch.setattr('bsdploy.fabfile_daemonology.env', env_mock)
+    monkeypatch.setattr('bsdploy.fabfile_daemonology.put', put_mock)
+    monkeypatch.setattr('bsdploy.fabfile_daemonology.run', run_mock)
+    monkeypatch.setattr('bsdploy.fabfile_daemonology.sleep', lambda x: None)
     return bootstrap
 
 
