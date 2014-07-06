@@ -1,7 +1,7 @@
 Bootstrapping
 =============
 
-Bootstrapping in the context of BSDploy means installing FreeBSD onto a :doc:`previously provisioned host<provisioning>` and the smallest amount of configuration to make it ready for its final configuration.
+Bootstrapping in the context of BSDploy means installing FreeBSD onto a :doc:`previously provisioned host<overview>` and the smallest amount of configuration to make it ready for its final configuration.
 
 The Bootstrapping process assumes that the target host has been booted into a installer and can be reached via SSH under the configured address and that you have configured the appropriate bootstrapping type (currently either ``mfsbsd`` or ``daemonology``).
 
