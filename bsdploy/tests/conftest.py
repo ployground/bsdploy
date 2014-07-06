@@ -59,12 +59,16 @@ def put_mock(fabric_integration, monkeypatch):
         except IndexError:  # pragma: nocover
             expected = ((), {})
         eargs, ekw = expected
-        assert args == eargs
-        assert sorted(kw.keys()) == sorted(ekw.keys())
-        for k, v in kw.items():
-            if hasattr(v, 'read'):
+        assert len(args) == len(eargs)
+        for arg, earg in zip(args, eargs):
+            if earg is object:
                 continue
-            assert v == ekw[k], "kw['%s'](%r) != ekw['%s'](%r)" % (k, v, k, ekw[k])
+            assert arg == earg
+        assert sorted(kw.keys()) == sorted(ekw.keys())
+        for k in kw:
+            if ekw[k] is object:
+                continue
+            assert kw[k] == ekw[k], "kw['%s'](%r) != ekw['%s'](%r)" % (k, kw[k], k, ekw[k])
 
     put.side_effect = _put
     put.expected = []

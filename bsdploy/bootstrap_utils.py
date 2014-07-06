@@ -1,9 +1,12 @@
 from __future__ import print_function
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from StringIO import StringIO
 from bsdploy import bsdploy_path
 from fabric.api import env, local, put, quiet, run, settings
-from fabric.contrib.files import upload_template
 from lazy import lazy
-from os.path import abspath, basename, dirname, expanduser, exists, join
+from os.path import abspath, dirname, expanduser, exists, join
 from ploy.common import yesno
 try:  # pragma: nocover
     from yaml import CSafeLoader as SafeLoader
@@ -64,11 +67,16 @@ class BootstrapFile(object):
     def to_be_fetched(self):
         return 'remote' in self.info and self.url and not exists(self.local)
 
+    @lazy
+    def template_from_file(self):
+        from ploy_ansible import inject_ansible_paths
+        inject_ansible_paths()
+        from ansible.utils.template import template_from_file
+        return template_from_file
+
     def read(self, context):
         if self.use_jinja:
-            from jinja2 import Template
-            template = Template(open(self.local).read())
-            return template.render(**context)
+            return self.template_from_file(dirname(self.local), self.local, context)
         else:
             return open(self.local, 'r')
 
@@ -214,19 +222,14 @@ class BootstrapUtils:
                 cmd = '%s && chmod %s "%s"' % (cmd, bf.directory_mode, bf.directory)
             run(cmd, shell=False)
 
-    def upload_bootstrap_files(self, context={}):
+    def upload_bootstrap_files(self, context):
         for filename, bf in sorted(self.bootstrap_files.items()):
             if bf.remote and exists(bf.local):
                 if bf.use_jinja:
-                    upload_template(
-                        basename(bf.local),
-                        bf.remote,
-                        context=context,
-                        use_jinja=True,
-                        template_dir=dirname(bf.local),
-                        mode=bf.mode)
+                    local = StringIO(bf.read(context))
                 else:
-                    put(bf.local, bf.remote, mode=bf.mode)
+                    local = bf.local
+                put(local, bf.remote, mode=bf.mode)
 
     def install_pkg(self, root, chroot=None, packages=[]):
         assert isinstance(chroot, bool)
@@ -307,6 +310,8 @@ class BootstrapUtils:
 
     @lazy
     def bsd_url(self):
+        # make sure the devices are mounted
+        self.install_devices
         bsd_url = env.instance.config.get('bootstrap-bsd-url')
         if not bsd_url:
             with settings(quiet(), warn_only=True):

@@ -1,3 +1,5 @@
+from bsdploy import bsdploy_path
+import os
 import pytest
 
 
@@ -18,6 +20,25 @@ def ctrl(ployconf, tempdir):
     return ctrl
 
 
+def get_all_roles():
+    roles_path = os.path.join(bsdploy_path, 'roles')
+    roles = []
+    for item in os.listdir(roles_path):
+        if os.path.isdir(os.path.join(roles_path, item)):
+            roles.append(item)
+    return sorted(roles)
+
+
+def iter_tasks(plays):
+    for play in plays:
+        for task in play.tasks():
+            if task.meta:
+                if task.meta == 'flush_handlers':  # pragma: nocover - branch coverage only on failure
+                    continue
+                raise ValueError  # pragma: nocover - only on failure
+            yield play, task
+
+
 def test_roles(ctrl, monkeypatch):
     instance = ctrl.instances['jailhost']
     pb = instance.get_playbook()
@@ -25,13 +46,8 @@ def test_roles(ctrl, monkeypatch):
     monkeypatch.setattr('ansible.playbook.PlayBook._run_play', plays.append)
     pb.run()
     tasks = []
-    for play in plays:
-        for task in play.tasks():
-            if task.meta:
-                if task.meta == 'flush_handlers':
-                    continue
-                raise ValueError
-            tasks.append(task.name)
+    for play, task in iter_tasks(plays):
+        tasks.append(task.name)
     assert tasks == [
         'bind host sshd to primary ip',
         'Enable ntpd in rc.conf',
@@ -73,3 +89,40 @@ def test_roles(ctrl, monkeypatch):
         'sshd_config for base flavour',
         'motd for base flavour',
         'copy some settings from host to base flavour']
+
+
+def test_all_role_templates_tested(ctrl, monkeypatch, request):
+    instance = ctrl.instances['jailhost']
+    instance.config['roles'] = ' '.join(get_all_roles())
+    pb = instance.get_playbook()
+    plays = []
+    monkeypatch.setattr('ansible.playbook.PlayBook._run_play', plays.append)
+    pb.run()
+    # import after running to avoid module import issues
+    from ansible.utils import parse_kv, path_dwim_relative
+    templates = []
+    for play, task in iter_tasks(plays):
+        if task.module_name != 'template':
+            continue
+        module_args_dict = task.args
+        if not module_args_dict and task.module_args:
+            module_args_dict = parse_kv(task.module_args)
+        template_path = path_dwim_relative(
+            task.module_vars['_original_file'], 'templates',
+            module_args_dict['src'], play.basedir)
+        if not os.path.exists(template_path):  # pragma: nocover - only on failure
+            raise ValueError
+        name = module_args_dict['src'].lower()
+        for rep in ('-', '.'):
+            name = name.replace(rep, '_')
+        templates.append((
+            name,
+            dict(
+                path=task.module_vars.get('_original_file'),
+                role_name=task.role_name,
+                name=module_args_dict['src'], task_name=task.name)))
+    test_names = [x.name for x in request.session.items]
+    for name, info in templates:
+        test_name = 'test_%s_%s' % (info['role_name'], name)
+        if not any(x for x in test_names if x.startswith(test_name)):  # pragma: nocover - only on failure
+            pytest.fail("No test '{0}' for template '{name}' of task '{task_name}' in role '{role_name}' at '{path}'.".format(test_name, **info))

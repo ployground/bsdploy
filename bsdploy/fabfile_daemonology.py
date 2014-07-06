@@ -36,7 +36,7 @@ def bootstrap(**kwargs):
     bu.print_bootstrap_files()
 
     bu.create_bootstrap_directories()
-    bu.upload_bootstrap_files()
+    bu.upload_bootstrap_files({})
     # we need to install python here, because there is no way to install it via
     # ansible playbooks
     bu.install_pkg('/', chroot=False, packages=['python27'])

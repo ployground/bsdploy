@@ -1,3 +1,4 @@
+from ansible.errors import AnsibleUndefinedVariable
 from bsdploy import bootstrap_utils
 from bsdploy.tests.conftest import default_mounts, run_result
 import os
@@ -95,18 +96,28 @@ def test_devices_from_config(bu, run_mock, env_mock):
 
 def test_bsd_url(bu, run_mock):
     run_mock.expected = [
+        ('mount', {}, ''),
+        ('test -e /dev/cd0 && mount_cd9660 /dev/cd0 /cdrom || true', {}, '\n'),
+        ('test -e /dev/da0a && mount -o ro /dev/da0a /media || true', {}, '\n'),
         ("find /cdrom/ /media/ -name 'base.txz' -exec dirname {} \\;", {}, run_result('/cdrom/9.2-RELEASE-amd64', 0))]
     assert bu.bsd_url == '/cdrom/9.2-RELEASE-amd64'
 
 
 def test_bsd_url_not_found(bu, run_mock):
     run_mock.expected = [
+        ('mount', {}, ''),
+        ('test -e /dev/cd0 && mount_cd9660 /dev/cd0 /cdrom || true', {}, '\n'),
+        ('test -e /dev/da0a && mount -o ro /dev/da0a /media || true', {}, '\n'),
         ("find /cdrom/ /media/ -name 'base.txz' -exec dirname {} \\;", {}, run_result('', 1))]
     assert bu.bsd_url is None
 
 
-def test_bsd_url_from_config(bu, env_mock):
+def test_bsd_url_from_config(bu, env_mock, run_mock):
     env_mock.instance.config = {'bootstrap-bsd-url': '/foo'}
+    run_mock.expected = [
+        ('mount', {}, ''),
+        ('test -e /dev/cd0 && mount_cd9660 /dev/cd0 /cdrom || true', {}, '\n'),
+        ('test -e /dev/da0a && mount -o ro /dev/da0a /media || true', {}, '\n')]
     assert bu.bsd_url == '/foo'
 
 
@@ -156,6 +167,43 @@ def test_bootstrap_files_multiple_ssh_keys_use_second(bu, capsys, run_mock, temp
     assert os.path.exists(tempdir['etc/authorized_keys'].path)
     with open(tempdir['etc/authorized_keys'].path) as f:
         assert f.read() == 'id_rsa'
+
+
+def test_default_rc_conf(bu, tempdir):
+    tempdir['etc/authorized_keys'].fill('id_dsa')
+    bfs = bu.bootstrap_files
+    result = bfs['rc.conf'].read({
+        'hostname': 'foo',
+        'interfaces': []})
+    assert result == '\n'.join([
+        'hostname="foo"',
+        'sshd_enable="YES"',
+        'syslogd_flags="-ss"',
+        'zfs_enable="YES"',
+        ''])
+
+
+@pytest.mark.parametrize("input, context, expected", [
+    ('foo', {}, 'foo'),
+    ('{{ foo }}', {}, AnsibleUndefinedVariable),
+    ('{{ foo }}', {'foo': 'bar'}, 'bar'),
+    ('    {% for x in xs %}bar\nfoo_{{x}}\n{% endfor %}\n', {'xs': []}, '    \n'),
+    ('    {% for x in xs %}bar\nfoo_{{x}}\n{% endfor %}\n', {'xs': ['bar']}, '    bar\nfoo_bar\n'),
+    ('    {% for x in xs -%}\nfoo_{{x}}\n{% endfor %}\n', {'xs': ['bar']}, '    foo_bar\n'),
+    ('    {% for x in xs %}bar\n    foo_{{x}}\n{% endfor %}\n', {'xs': []}, '    \n'),
+    ('    {% for x in xs %}bar\n    foo_{{x}}\n{% endfor %}\n', {'xs': ['bar']}, '    bar\n    foo_bar\n'),
+    ('    {% for x in xs -%}\n    foo_{{x}}\n{% endfor %}\n', {'xs': ['bar']}, '    foo_bar\n'),
+])
+def test_bootstrap_files_template(bu, input, context, expected, tempdir):
+    tempdir['etc/authorized_keys'].fill('id_dsa')
+    tempdir['bootstrap-files/rc.conf'].fill(input)
+    bfs = bu.bootstrap_files
+    if isinstance(expected, basestring):
+        result = bfs['rc.conf'].read(context)
+        assert result == expected
+    else:
+        with pytest.raises(expected):
+            bfs['rc.conf'].read(context)
 
 
 @pytest.fixture
