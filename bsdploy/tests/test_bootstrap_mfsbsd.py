@@ -69,7 +69,7 @@ def test_bootstrap(bootstrap, capsys, put_mock, run_mock, tempdir, yesno_mock):
         (("%(bsdploy_path)s/bootstrap-files/make.conf" % format_info, '/mnt/etc/make.conf'), {'mode': None}),
         (("%(bsdploy_path)s/bootstrap-files/pkg.conf" % format_info, '/mnt/usr/local/etc/pkg.conf'), {'mode': None}),
         # put from upload_template
-        ((), {'remote_path': '/mnt/etc/rc.conf', 'mirror_local_mode': False, 'use_sudo': False, 'local_path': object(), 'mode': None}),
+        ((object, '/mnt/etc/rc.conf'), {'mode': None}),
         (("%(bsdploy_path)s/bootstrap-files/sshd_config" % format_info, '/mnt/etc/ssh/sshd_config'), {'mode': None}),
     ]
     run_mock.expected = [
@@ -87,9 +87,6 @@ def test_bootstrap(bootstrap, capsys, put_mock, run_mock, tempdir, yesno_mock):
         ('mkdir -p "/mnt/usr/local/etc/pkg/repos"', {'shell': False}, ''),
         ('mkdir -p "/mnt/root/.ssh" && chmod 0600 "/mnt/root/.ssh"', {'shell': False}, ''),
         ('mkdir -p "/mnt/var/cache/pkg/All"', {'shell': False}, ''),
-        # test calls from upload_template
-        ('test -d "$(echo /mnt/etc/rc.conf)"', {}, run_result('', 1)),
-        ('test -e "$(echo /mnt/etc/rc.conf)"', {}, run_result('', 1)),
         ('fetch -o /mnt/var/cache/pkg/All/pkg.txz http://pkg.freebsd.org/freebsd:9:x86:64/quarterly/Latest/pkg.txz', {}, ''),
         ('chmod 0600 /mnt/var/cache/pkg/All/pkg.txz', {}, ''),
         ("tar -x -C /mnt --chroot --exclude '+*' -f /mnt/var/cache/pkg/All/pkg.txz", {}, ''),
