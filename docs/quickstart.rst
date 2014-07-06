@@ -234,12 +234,12 @@ But frankly, that's not very interesting. As a final step of this introduction, 
 Configuring a jail
 ------------------
 
-Like with the jailhost, we could assign roles to our demo jail, but another way is to create a playbook with the same name. If such a playbook exists, BSDploy will use that when you call ``configure``. So, create a file named ``demo_jail.yml`` with the following content:
+Like with the jailhost, we could assign roles to our demo jail, but another way is to create a playbook with the same name. If such a playbook exists, BSDploy will use that when you call ``configure``. So, create a file named ``jailhost-demo_jail.yml`` with the following content:
 
 .. code-block:: yaml
 
 	---
-	- hosts: demo_jail
+	- hosts: jailhost-demo_jail
 	  tasks:
 	    - name: install nginx
 	      pkgng: name=nginx state=present
@@ -267,7 +267,7 @@ To do so, create a file named ``host_vars/jailhost.yml``::
 with the following content::
 
 	ipnat_rules:
-	    - "rdr em0 {{ ansible_em0.ipv4[0].address }}/32 port 80 -> {{ hostvars['demo_jail']['ploy_ip'] }} port 80"
+	    - "rdr em0 {{ ansible_em0.ipv4[0].address }}/32 port 80 -> {{ hostvars['jailhost-demo_jail']['ploy_ip'] }} port 80"
 
 To activate the rules, re-apply the jail host configuration.
 Ansible will figure out, that it needs to update them (and only them) and then restart the network::
