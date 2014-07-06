@@ -74,7 +74,7 @@ To verify that all is ready, ssh into the host as user ``root`` with the passwor
 Hetzner
 -------
 
-The German ISP `Hetzner <http://www.hetzner.de>`_ provides dedicated servers with FreeBSD supprt. In a nutshell, boot the machine into their so-called *Rescue System* `using their robot <https://robot.your-server.de/server>`_ and choose *FreeBSD* as OS. The machine will boot into a modified version of mfsBSD.
+The German ISP `Hetzner <http://www.hetzner.de>`_ provides dedicated servers with FreeBSD support. In a nutshell, boot the machine into their so-called *Rescue System* `using their robot <https://robot.your-server.de/server>`_ and choose *FreeBSD* as OS. The machine will boot into a modified version of mfsBSD.
 
 The web UI will then provide you with a one-time root password – make sure it works by SSHing into the host as ``root`` and you are ready for continuing with :doc:`/setup/bootstrapping`.
 
