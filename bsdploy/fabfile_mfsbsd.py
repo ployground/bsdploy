@@ -39,8 +39,6 @@ def bootstrap(**kwargs):
         print("\nFound the following network interfaces, now is your chance to update your rc.conf accordingly!\n    %s" % ' '.join(bu.phys_interfaces))
     else:
         print("\nWARNING! Found no suitable network interface!")
-    if not yesno("\nContinuing will destroy the existing data on the following devices:\n    %s\n\nContinue?" % ' '.join(bu.devices)):
-        return
 
     template_context = {}
     # first the config, so we don't get something essential overwritten
@@ -50,7 +48,11 @@ def bootstrap(**kwargs):
         interfaces=bu.phys_interfaces,
         hostname=env.instance.id)
 
-    rc_conf_lines = bu.bootstrap_files['rc.conf'].read(template_context).split('\n')
+    rc_conf = bu.bootstrap_files['rc.conf'].read(template_context)
+    if not rc_conf.endswith('\n'):
+        print("\nERROR! Your rc.conf doesn't end in a newline:\n==========\n%s<<<<<<<<<<\n" % rc_conf)
+        return
+    rc_conf_lines = rc_conf.split('\n')
 
     for interface in [bu.first_interface, env.instance.config.get('ansible-dhcp_host_sshd_interface')]:
         if interface is None:
@@ -62,6 +64,10 @@ def bootstrap(**kwargs):
         else:
             if not yesno("\nDidn't find an '%s' setting in rc.conf. You sure that you want to continue?" % ifconfig):
                 return
+
+    if not yesno("\nContinuing will destroy the existing data on the following devices:\n    %s\n\nContinue?" % ' '.join(bu.devices)):
+        return
+
     # install FreeBSD in ZFS root
     devices_args = ' '.join('-d %s' % x for x in bu.devices)
     system_pool_name = env.instance.config.get('bootstrap-system-pool-name', 'system')

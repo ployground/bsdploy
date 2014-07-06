@@ -58,7 +58,28 @@ def test_bootstrap_ask_to_continue(bootstrap, capsys, run_mock, tempdir, yesno_m
         "Continue?"]
 
 
-def test_bootstrap(bootstrap, capsys, put_mock, run_mock, tempdir, yesno_mock):
+def test_bootstrap_no_newline_at_end_of_rc_conf(bootstrap, capsys, run_mock, tempdir):
+    tempdir['etc/authorized_keys'].fill('id_dsa')
+    tempdir['bootstrap-files/rc.conf'].fill('foo')
+    run_mock.expected = [
+        ("find /cdrom/ /media/ -name 'base.txz' -exec dirname {} \\;", {}, run_result('/cdrom/9.2-RELEASE-amd64', 0)),
+        ('sysctl -n hw.realmem', {}, '536805376'),
+        ('sysctl -n kern.disks', {}, 'ada0 cd0\n'),
+        ('ifconfig -l', {}, 'em0 lo0'),
+        ('mount', {}, default_mounts),
+        ('test -e /dev/cd0 && mount_cd9660 /dev/cd0 /cdrom || true', {}, '\n'),
+        ('test -e /dev/da0a && mount -o ro /dev/da0a /media || true', {}, '\n')]
+    bootstrap()
+    (out, err) = capsys.readouterr()
+    out_lines = out.splitlines()
+    assert out_lines[-4:] == [
+        "ERROR! Your rc.conf doesn't end in a newline:",
+        '==========',
+        'foo<<<<<<<<<<',
+        '']
+
+
+def test_bootstrap(bootstrap, put_mock, run_mock, tempdir, yesno_mock):
     format_info = dict(
         bsdploy_path=bsdploy_path,
         tempdir=tempdir.directory)
