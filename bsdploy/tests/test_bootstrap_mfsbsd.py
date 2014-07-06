@@ -20,13 +20,13 @@ def test_bootstrap_ask_to_continue(bootstrap, capsys, run_mock, tempdir, yesno_m
         tempdir=tempdir.directory)
     tempdir['etc/authorized_keys'].fill('id_dsa')
     run_mock.expected = [
+        ('mount', {}, default_mounts),
+        ('test -e /dev/cd0 && mount_cd9660 /dev/cd0 /cdrom || true', {}, '\n'),
+        ('test -e /dev/da0a && mount -o ro /dev/da0a /media || true', {}, '\n'),
         ("find /cdrom/ /media/ -name 'base.txz' -exec dirname {} \\;", {}, run_result('/cdrom/9.2-RELEASE-amd64', 0)),
         ('sysctl -n hw.realmem', {}, '536805376'),
         ('sysctl -n kern.disks', {}, 'ada0 cd0\n'),
-        ('ifconfig -l', {}, 'em0 lo0'),
-        ('mount', {}, default_mounts),
-        ('test -e /dev/cd0 && mount_cd9660 /dev/cd0 /cdrom || true', {}, '\n'),
-        ('test -e /dev/da0a && mount -o ro /dev/da0a /media || true', {}, '\n')]
+        ('ifconfig -l', {}, 'em0 lo0')]
     yesno_mock.expected = [
         ("\nContinuing will destroy the existing data on the following devices:\n    ada0\n\nContinue?", False)]
     bootstrap()
@@ -62,13 +62,13 @@ def test_bootstrap_no_newline_at_end_of_rc_conf(bootstrap, capsys, run_mock, tem
     tempdir['etc/authorized_keys'].fill('id_dsa')
     tempdir['bootstrap-files/rc.conf'].fill('foo')
     run_mock.expected = [
+        ('mount', {}, default_mounts),
+        ('test -e /dev/cd0 && mount_cd9660 /dev/cd0 /cdrom || true', {}, '\n'),
+        ('test -e /dev/da0a && mount -o ro /dev/da0a /media || true', {}, '\n'),
         ("find /cdrom/ /media/ -name 'base.txz' -exec dirname {} \\;", {}, run_result('/cdrom/9.2-RELEASE-amd64', 0)),
         ('sysctl -n hw.realmem', {}, '536805376'),
         ('sysctl -n kern.disks', {}, 'ada0 cd0\n'),
-        ('ifconfig -l', {}, 'em0 lo0'),
-        ('mount', {}, default_mounts),
-        ('test -e /dev/cd0 && mount_cd9660 /dev/cd0 /cdrom || true', {}, '\n'),
-        ('test -e /dev/da0a && mount -o ro /dev/da0a /media || true', {}, '\n')]
+        ('ifconfig -l', {}, 'em0 lo0')]
     bootstrap()
     (out, err) = capsys.readouterr()
     out_lines = out.splitlines()
@@ -94,13 +94,13 @@ def test_bootstrap(bootstrap, put_mock, run_mock, tempdir, yesno_mock):
         (("%(bsdploy_path)s/bootstrap-files/sshd_config" % format_info, '/mnt/etc/ssh/sshd_config'), {'mode': None}),
     ]
     run_mock.expected = [
+        ('mount', {}, default_mounts),
+        ('test -e /dev/cd0 && mount_cd9660 /dev/cd0 /cdrom || true', {}, '\n'),
+        ('test -e /dev/da0a && mount -o ro /dev/da0a /media || true', {}, '\n'),
         ("find /cdrom/ /media/ -name 'base.txz' -exec dirname {} \\;", {}, run_result('/cdrom/9.2-RELEASE-amd64', 0)),
         ('sysctl -n hw.realmem', {}, '536805376'),
         ('sysctl -n kern.disks', {}, 'ada0 cd0\n'),
         ('ifconfig -l', {}, 'em0 lo0'),
-        ('mount', {}, default_mounts),
-        ('test -e /dev/cd0 && mount_cd9660 /dev/cd0 /cdrom || true', {}, '\n'),
-        ('test -e /dev/da0a && mount -o ro /dev/da0a /media || true', {}, '\n'),
         ('destroygeom -d ada0 -p system -p tank', {}, ''),
         ('zfsinstall -d ada0 -p system -V 28 -u /cdrom/9.2-RELEASE-amd64 -s 1024M -z 20G', {}, ''),
         ('gpart add -t freebsd-zfs -l tank_ada0 ada0', {}, ''),

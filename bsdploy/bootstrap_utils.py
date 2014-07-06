@@ -310,6 +310,8 @@ class BootstrapUtils:
 
     @lazy
     def bsd_url(self):
+        # make sure the devices are mounted
+        self.install_devices
         bsd_url = env.instance.config.get('bootstrap-bsd-url')
         if not bsd_url:
             with settings(quiet(), warn_only=True):

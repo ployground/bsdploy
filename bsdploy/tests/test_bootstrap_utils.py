@@ -96,18 +96,28 @@ def test_devices_from_config(bu, run_mock, env_mock):
 
 def test_bsd_url(bu, run_mock):
     run_mock.expected = [
+        ('mount', {}, ''),
+        ('test -e /dev/cd0 && mount_cd9660 /dev/cd0 /cdrom || true', {}, '\n'),
+        ('test -e /dev/da0a && mount -o ro /dev/da0a /media || true', {}, '\n'),
         ("find /cdrom/ /media/ -name 'base.txz' -exec dirname {} \\;", {}, run_result('/cdrom/9.2-RELEASE-amd64', 0))]
     assert bu.bsd_url == '/cdrom/9.2-RELEASE-amd64'
 
 
 def test_bsd_url_not_found(bu, run_mock):
     run_mock.expected = [
+        ('mount', {}, ''),
+        ('test -e /dev/cd0 && mount_cd9660 /dev/cd0 /cdrom || true', {}, '\n'),
+        ('test -e /dev/da0a && mount -o ro /dev/da0a /media || true', {}, '\n'),
         ("find /cdrom/ /media/ -name 'base.txz' -exec dirname {} \\;", {}, run_result('', 1))]
     assert bu.bsd_url is None
 
 
-def test_bsd_url_from_config(bu, env_mock):
+def test_bsd_url_from_config(bu, env_mock, run_mock):
     env_mock.instance.config = {'bootstrap-bsd-url': '/foo'}
+    run_mock.expected = [
+        ('mount', {}, ''),
+        ('test -e /dev/cd0 && mount_cd9660 /dev/cd0 /cdrom || true', {}, '\n'),
+        ('test -e /dev/da0a && mount -o ro /dev/da0a /media || true', {}, '\n')]
     assert bu.bsd_url == '/foo'
 
 
