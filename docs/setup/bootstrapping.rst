@@ -78,8 +78,6 @@ Bootstrap files
 
 During bootstrapping a certain number of files are copied onto the target host.
 
-.. warning:: Overriding the list of default files is an advanced feature. In most cases it is not needed. Also keep in mind that bootstrapping is only about getting the host ready for running BSDploy. Any additional files beyond that should be uploaded lateron via fabric and/or playbooks.
-
 Some of these files...
 
 - need to be provided by the user (i.e. ``authorized_keys``)
@@ -90,18 +88,13 @@ The list of files, their possible sources and their destination is encoded in a 
 
 .. literalinclude:: ../../bsdploy/bootstrap-files/files.yml
 
-For those which can be downloaded we check the ``downloads`` directory. If the file exists there
-(and if the checksum matches TODO!) we will upload it to the host. If not, we will fetch the file
-from the given URL from the host.
+.. warning:: Overriding the list of default files is an advanced feature and in most cases it is not needed. Also keep in mind that bootstrapping is only about getting the host ready for running BSDploy. Any additional files beyond that should be uploaded lateron via fabric and/or playbooks.
 
-For files that cannot be downloaded (authorized_keys, rc.conf etc.) we allow the user to provide their
-own version in a ``bootstrap-files`` folder. The location of this folder can either be explicitly provided
-via the ``bootstrap-files`` key in the host definition of the config file or it defaults to ``bootstrap-files``.
+It is however, quite common and useful to customize files that are part of the above list with custom versions *per host*.
 
-User provided files can be rendered as Jinja2 templates, by providing ``use_jinja: True`` in the YAML file.
-They will be rendered with the server configuration dictionary as context.
+For example, to create a custom ``rc.conf`` for a particular instance, create a ``bootstrap-files`` entry for it and point it to a directory in your project, usually ``../bootstrap-files/INSTANCENAME/`` and place your version of ``rc.conf`` inside there. Note, that by default this file is rendered as a template, your custom version will be, too.
 
-If the file is not found there, we revert to the default files that are part of bsdploy. If the file cannot be found there either we either error out or for authorized_keys we look in ``~/.ssh/identity.pub``.
+Any file listed in the YAML file found inside that directory will take precedence during bootstrapping, but any file *not* found in there will be uploaded from the default location instead.
 
 
 Bootstrap execution
