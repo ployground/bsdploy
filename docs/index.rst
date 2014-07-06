@@ -37,6 +37,7 @@ How to create an manage jails once the host is set up:
    :maxdepth: 2
 
    usage/jails
+   usage/ansible
 
 
 Special use cases
@@ -73,13 +74,9 @@ The following features already exist but still need to be documented:
 - provisioning + bootstrapping
    - EC2 (daemonology based)
    - pre-configured SSH server keys
-- creating a jailhost
-- creating jails
 - jail access
-   - proxy command
    - port forwarding
    - public IP
-- ansible support
 - fabric support
 - combining ansible and fabric
 - ZFS management
