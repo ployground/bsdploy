@@ -19,7 +19,7 @@ The short version:
 	virtualenv .
 	source bin/activate
 	pip install ansible
-	pip install bsdploy==1.0b1
+	pip install --pre bsdploy
 
 (``1``) BSDploy has specific requirements in regards to Fabric and ansible (meaning, their latest version will not neccessarily work with the latest version of BSDploy until the latter is adjusted) it is therefore strongly recommended to install BSDploy into its own virtualenv.
 
@@ -29,7 +29,7 @@ To do so, you will need Python and virtualenv installed on your system, i.e. on 
 
 (``3``) Unfortunately, ansible's installer violates Python's sandbox limitations and therefore cannot be an automatic dependency of BSDploy, so we need to install it manually for now.
 
-(``4``) Finally, because there is no stable release of BSDploy yet, you will need to specify the exact version, otherwise ``pip`` will refuse to install it.
+(``4``) Finally, because there is no stable release of BSDploy yet, you will need to ``--pre``, otherwise ``pip`` will refuse to install it.
 
 
 Installing from github
