@@ -17,19 +17,19 @@ Specifically:
 
 Conceptually, the provider of a jailhost is a separate entity from the jailhost itself, i.e. in a VirtualBox based setup you could have the following::
 
-	[vb-instance:virtualbox]
+	[vb-instance:ploy-demo]
 	vm-ostype = FreeBSD_64
 	[...]
 
-	[ez-master:ploy-demo]
-	instance = virtualbox
+	[ez-master:jailhost]
+	instance = ploy-demo
 	[...]
 
 	[instance:webserver]
-	master = ploy-demo
+	master = jailhost
 	[...]
 
-Here we define a VirtualBox instance (``vb-instance``) named ``virtualbox`` and a so-called master named ``ploy-demo`` which in turn contains a jail instance named ``webserver``.
+Here we define a VirtualBox instance (``vb-instance``) named ``ploy-demo`` and a so-called master named ``jailhost`` which in turn contains a jail instance named ``webserver``.
 
 This approach allows us to hide the specific details of a provider and also to replace it with another one, i.e. :doc:`in a staging scenario </advanced/staging>` where a production provider such as a 'real' server or EC2 instance is replaced with a VirtualBox.
 
@@ -37,9 +37,9 @@ In the following we will document the entire provisioning process for each suppo
 
 In a nutshell, though, given the previous example setup, what you need to do is this::
 
-	ploy start virtualbox
-	ploy bootstrap ploy-demo
-	ploy configure ploy-demo
+	ploy start ploy-demo
+	ploy bootstrap jailhost
+	ploy configure jailhost
 	ploy start webserver
 
 Basically, unless you want to use one of the specific provisioners such as EC2 or VirtualBox, just use a plain instance:
