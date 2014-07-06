@@ -7,9 +7,6 @@ Its main design goal is to lower the barrier to *repeatable jail setups*.
 
 Instead of performing updates on production hosts you are encouraged to update the *description* of your setup, test it against an identically configured staging scenario until it works as expected and then apply the updated configuration to production with confidence.
 
-.. warning:: BSDploy is currently still in beta. While it's not considered ready for production, it is now in feature freeze mode and you are encouraged to :doc:`give it a spin </quickstart>` and `report any issues <http://github.com/ployground/bsdploy/issues>`_ that you find, so it can move to a 1.0 release – thanks!
-
-
 Main Features
 -------------
 
@@ -49,7 +46,7 @@ Server requirements
 
 A FreeBSD system that wants to be managed by BSDploy will need to have `ezjail <http://erdgeist.org/arts/software/ezjail/>`_ installed, as well as `Python <http://python.org>`_ and must have SSH access enabled (either for root or with ``sudo`` configured).
 
-.. note:: Strictly speaking, BSDploy only needs Python for the initial :doc:`configuration </setup/configuration>` of the jailhost. If you chose to perform that step yourself or use a pre-existing host, you won't need Python on the host, just ezjail.
+Strictly speaking, BSDploy only needs Python for the initial configuration of the jailhost. If you chose to perform that step yourself or use a pre-existing host, you won't need Python on the host, just ezjail.
 
 BSDPloy can take care of these requirements for you during bootstrapping but of course you can also use it to manage existing machines that already meet them.
 
