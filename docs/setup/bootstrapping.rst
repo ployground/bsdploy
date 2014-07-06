@@ -66,7 +66,7 @@ But often times, the default template with a few additional custom lines will su
 
 Here's what the default ``rc.conf`` template looks like:
 
-.. literalinclude:: ../../bootstrap-files/rc.conf
+.. literalinclude:: ../../bsdploy/bootstrap-files/rc.conf
 
 This is achieved by providing ``boostrap-rc-xxxx`` key/values in the instance definition in ``ploy.conf``.
 
@@ -88,7 +88,7 @@ Some of these files...
 
 The list of files, their possible sources and their destination is encoded in a ``.yml`` file, the default of which is this
 
-.. literalinclude:: ../../bootstrap-files/files.yml
+.. literalinclude:: ../../bsdploy/bootstrap-files/files.yml
 
 For those which can be downloaded we check the ``downloads`` directory. If the file exists there
 (and if the checksum matches TODO!) we will upload it to the host. If not, we will fetch the file
