@@ -84,7 +84,7 @@ To bootstrap the jailhost, we need to define it first. This is done with an ``ez
 	[ez-master:jailhost]
 	instance = ploy-demo
 
-This creates an ezjail jailhost (``ez-master``) named ``jailhost`` (doh!) and tells BSDploy that it lives / should live inside the provisioning instance named ``ploy-demo`` (our freshly created virtual machine).
+This creates an ezjail jailhost (``ez-master``) named ``jailhost`` and tells BSDploy that it lives / should live inside the provisioning instance named ``ploy-demo`` (our freshly created virtual machine).
 
 But since none of this has happened yet, we need to tell BSDploy to make it so, like this::
 
@@ -270,9 +270,9 @@ with the following content::
 	    - "rdr em0 {{ ansible_em0.ipv4[0].address }}/32 port 80 -> {{ hostvars['jailhost-demo_jail']['ploy_ip'] }} port 80"
 
 To activate the rules, re-apply the jail host configuration.
-Ansible will figure out, that it needs to update them (and only them) and then restart the network::
+Ansible will figure out, that it needs to update them (and only them) and then restart the network. However, in practice running the entire configuration can take quite some time, so if you already know you only want to update some specific sub set of tasks you can pass in one or more tags. In this case for updating the ipnat rules::
 
-	ploy configure jailhost
+	ploy configure jailhost -t ipnat_rules
 
 Since the demo is running inside a host that got its IP address via DHCP we will need to find that out before we can access it in the browser.
 

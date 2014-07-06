@@ -27,15 +27,15 @@ To do so, you will need Python and virtualenv installed on your system, i.e. on 
 
 (``2``) To use the version installed inside this virtualenv it is  suggested to 'source' the python interpreter. This will add the ``bin`` directory of the virtualenv (temporarily) to your ``$PATH`` so you can use the binaries installed inside it just as if they were installed globally.
 
-(``3``) Unfortunately, ansible's installer violates Python's sandbox limitations and therefore cannot be an automatic dependency of BSDploy, so we need to install it manually for now.
+(``3``) Unfortunately, ansible's ``setup.py`` violates buildout's sandbox limitations and therefore cannot be an automatic dependency of BSDploy, so we need to install it manually for now.
 
-(``4``) Finally, because there is no stable release of BSDploy yet, you will need to ``--pre``, otherwise ``pip`` will refuse to install it.
+(``4``) Finally, because there is no stable release of BSDploy yet, you will need to add ``--pre``, otherwise ``pip`` will refuse to install it.
 
 
 Installing from github
 ----------------------
 
-To follow along the latest version of BSDploy you will need the same requirements as listed above plus, obviously, ``git``. Then::
+To follow along the latest version of BSDploy you need Python and virtualenv plus – obviously – ``git``. Then::
 
 	git clone https://github.com/ployground/bsdploy.git
 	cd bsdploy
