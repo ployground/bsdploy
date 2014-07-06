@@ -13,8 +13,8 @@ Since bootstrapping is specific to BSDploy we cannot configure it in the provisi
 
 I.e. in our example::
 
-    [ez-master:ploy-demo]
-    instance = ploy-demo-provisioner
+    [ez-master:jailhost]
+    instance = ploy-demo
 
 
 Required parameters
@@ -28,14 +28,14 @@ If you provide more than one device name, BSDploy will create a zpool mirror con
 
 There we can provide the name of the target device, so we get the following::
 
-    [ez-master:ploy-demo]
-    instance = ploy-demo-provisioner
+    [ez-master:jailhost]
+    instance = ploy-demo
     bootstrap-system-devices = ada0
 
 Or if we have more than one device::
 
-    [ez-master:ploy-demo]
-    instance = ploy-demo-provisioner
+    [ez-master:jailhost]
+    instance = ploy-demo
     bootstrap-system-devices =
         ada0
         ada1
@@ -113,6 +113,6 @@ With (all) those pre-requisites out of the way, the entire process boils down to
 
 Or, if your configuration has more than one instance defined you need to provide its name, i.e.::
 
-    ploy bootstrap ploy-demo
+    ploy bootstrap jailhost
 
 Once this has run successfully, you can move on to the final setup step :doc:`Configuration <configuration>`.

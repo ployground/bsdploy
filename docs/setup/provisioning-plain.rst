@@ -5,7 +5,7 @@ The most simple provider simply assumes an already existing host. Here any confi
 
 For example::
 
-	[plain-instance:ploy-demo-provisioner]
+	[plain-instance:ploy-demo]
 	host = 10.0.1.2
 
 At the very least you will need to provide a ``host`` (IP address or hostname).
