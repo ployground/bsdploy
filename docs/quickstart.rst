@@ -20,6 +20,10 @@ Using VirtualBox
 
 To give us the luxury of running against a well-defined context, this quickstart uses `VirtualBox <https://www.virtualbox.org>`_, a free, open source PC virtualization platform. If you don't have it installed on your system, head over to their `downloads section <https://www.virtualbox.org/wiki/Downloads>`_ and install it for your platform. We'll wait! If you can't be bothered, following along anyway should still be useful, though.
 
+Since VirtualBox support is optional and BSDploy is fairly modular, you will need to install ``ploy_virtualbox`` to follow this quickstart like so::
+
+	pip install ploy_virtualbox
+
 
 Getting the FreeBSD installer
 -----------------------------
