@@ -31,7 +31,7 @@ setup(
         'PyYAML',
         'jinja2',
         'setuptools',
-        'ploy>=1.0rc10',
+        'ploy>=1.0rc11',
         'ploy_ansible>=1.0b6',
         'ploy_ezjail>=1.0b8',
         'ploy_fabric>=1.0b4',
@@ -41,6 +41,7 @@ setup(
         'development': [
             'Sphinx',
             'repoze.sphinx.autointerface',
+            'coverage',
             'jarn.mkrelease',
             'pytest >= 2.4.2',
             'pytest-flakes',

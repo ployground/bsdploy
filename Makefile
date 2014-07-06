@@ -3,8 +3,12 @@
 
 develop: .installed.cfg
 
-.installed.cfg: bin/buildout buildout.cfg bin/virtualenv
+.installed.cfg: bin/ansible bin/buildout buildout.cfg bin/virtualenv
 	bin/buildout -v
+
+# needed for tests
+bin/ansible: bin/pip
+	bin/pip install ansible
 
 bin/buildout: bin/pip
 	bin/pip install zc.buildout
