@@ -61,3 +61,8 @@ Client requirements
 
 BSDploy and its dependencies are written in `Python <http://python.org>`_ and thus should run on pretty much any platform, although it's currently only been tested on Mac OS X and FreeBSD.
 
+
+Full documentation
+------------------
+
+The full documentation is `hosted at RTD <http://docs.bsdploy.net>`_.
