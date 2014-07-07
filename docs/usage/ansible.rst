@@ -1,7 +1,7 @@
 Ansible integration
 ===================
 
-Not only does BSDploy use `ansible playbooks <http://docs.ansible.com/playbooks.html>`_ internally to configure jail hosts, but you can use it to configure jails, too, of course.
+Not only does BSDploy use `ansible playbooks <http://docs.ansible.com/playbooks.html>`_ internally to configure jail hosts (via the `ploy_ansible <https://github.com/ployground/ploy_ansible>`_ plugin), but you can use it to configure jails, too, of course.
 
 .. note:: An important difference between using ansible *as is* and via BSDploy is that unlike ansible, BSDploy does not require (or indeed support) what ansible refers to as an `inventory file <http://docs.ansible.com/intro_inventory.html>`_ – all hosts are defined within ploy's configuration file.
 
