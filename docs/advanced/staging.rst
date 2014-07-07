@@ -15,7 +15,7 @@ To help you keep the staging and production environment as similar as possible w
 
 We define the general environment (one or more jail hosts and jails) in a ``base.conf`` and create two 'top-level' configuration files ``staging.conf`` and ``production.conf`` which each extend ``base.conf``.
 
-During deployment we specify the top-level configuration file via ``ploy -c xxx.conf``. A variation of this is to name the staging configuration file ``ploy.conf`` which then acts as default. This has the advantage that during development of the environment you need'nt bother with explicitly providing a configuration file and that when moving to production you need to make the extra, explicit step of (now) providing a configuration file, thus minimizing the danger of accidentally deploying something onto production.
+During deployment we specify the top-level configuration file via' ``ploy -c xxx.conf``. A variation of this is to name the staging configuration file ``ploy.conf`` which then acts as default. This has the advantage that during development of the environment you needn't bother with explicitly providing a configuration file and that when moving to production you need to make the extra, explicit step of (now) providing a configuration file, thus minimizing the danger of accidentally deploying something onto production.
 
 Here is an example ``base.conf``::
 
