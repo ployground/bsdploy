@@ -3,6 +3,7 @@ import os
 
 here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.rst')).read()
+CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
 
 version = "1.0b2"
 
@@ -25,10 +26,10 @@ except ImportError:
     install_requires.append('ansible')
 
 
-setup(
+setup(name="bsdploy",
     version=version,
     description="A tool to provision, configure and maintain FreeBSD jails",
-    name="bsdploy",
+    long_description=README + '\n\n\nChanges\n=======\n\n' + CHANGES,
     author='Tom Lazar',
     author_email='tom@tomster.org',
     url='http://github.com/ployground/bsdploy',
