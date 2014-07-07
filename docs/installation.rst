@@ -22,9 +22,12 @@ The short version:
 
 (``1``) BSDploy has specific requirements in regards to Fabric and ansible (meaning, their latest version will not neccessarily work with the latest version of BSDploy until the latter is adjusted) it is therefore strongly recommended to install BSDploy into its own virtualenv.
 
-To do so, you will need Python and virtualenv installed on your system, i.e. on Mac OS X using ``homebrew`` you would install ``brew install pyenv-virtualenv``.
+To do so, you will need Python and virtualenv installed on your system, i.e. 
 
-(``2``) To use the version installed inside this virtualenv it is  suggested to 'source' the python interpreter. This will add the ``bin`` directory of the virtualenv (temporarily) to your ``$PATH`` so you can use the binaries installed inside it just as if they were installed globally.
+- on **Mac OS X** using ``homebrew`` you would install ``brew install pyenv-virtualenv``.
+- on **FreeBSD** using ``pgk`` you would ``pkg install py27-virtualenv``
+
+(``2``) To use the version installed inside this virtualenv it is  suggested to 'source' the python interpreter. This will add the ``bin`` directory of the virtualenv (temporarily) to your ``$PATH`` so you can use the binaries installed inside it just as if they were installed globally. Note, that the default ``activate`` works for bash, if you're using ``tcsh`` (the default on FreeBSD you will have to ``source bin/activate.csh``)
 
 (``3``) Because there is no stable release of BSDploy yet, you will need to add ``--pre``, otherwise ``pip`` will refuse to install it.
 
