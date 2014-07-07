@@ -6,6 +6,25 @@ README = open(os.path.join(here, 'README.rst')).read()
 
 version = "1.0b2-dev"
 
+install_requires = [
+    'PyYAML',
+    'jinja2',
+    'setuptools',
+    'ploy>=1.0rc11',
+    'ploy_ansible>=1.0b6',
+    'ploy_ezjail>=1.0b8',
+    'ploy_fabric>=1.0b4',
+    'ploy_virtualbox>=1.0b2',
+]
+
+# workaround for installing via buildout, as ansible
+# violates its sandbox limitations
+try:
+    import ansible  # noqa
+except ImportError:
+    install_requires.append('ansible')
+
+
 setup(
     version=version,
     description="A tool to provision, configure and maintain FreeBSD jails",
@@ -27,16 +46,7 @@ setup(
     license='Beerware Licence',
     zip_safe=False,
     packages=['bsdploy'],
-    install_requires=[
-        'PyYAML',
-        'jinja2',
-        'setuptools',
-        'ploy>=1.0rc11',
-        'ploy_ansible>=1.0b6',
-        'ploy_ezjail>=1.0b8',
-        'ploy_fabric>=1.0b4',
-        'ploy_virtualbox>=1.0b2',
-    ],
+    install_requires=install_requires,
     extras_require={
         'development': [
             'Sphinx',
