@@ -15,7 +15,6 @@ install_requires = [
     'ploy_ansible>=1.0b6',
     'ploy_ezjail>=1.0b8',
     'ploy_fabric>=1.0b4',
-    'ploy_virtualbox>=1.0b2',
 ]
 
 # workaround for installing via buildout, as ansible

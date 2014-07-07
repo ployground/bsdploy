@@ -1,3 +1,9 @@
+1.b3 - unreleased
+=================
+
+- make ``ploy_virtualbox`` an optional dependency
+
+
 1.b2 - 2014-07-07
 =================
 
