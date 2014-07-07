@@ -48,6 +48,18 @@ Role assignment works just as you've probably guessed it by now: by using a ``ro
 .. note:: Assignment of roles and assignment of playbooks are mutually exclusive. If you try to do both, BSDploy will raise an error.
 
 
+Tags
+----
+
+When applying a playbook or roles via the ``configure`` command you can select only certain tags of them to be executed by adding the ``-t`` parameter, i.e. like so::
+
+	ploy configure webserver -t config
+
+To select multiple tags, pass them in comma-separated. Note that in this case you must make sure you don't add any whitespace, i.e.::
+
+	ploy configure webserver -t config,cert
+
+
 Directory structure
 -------------------
 
