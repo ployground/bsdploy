@@ -1,11 +1,15 @@
-1.b3 - unreleased
-=================
+1.0b4 - unreleased
+==================
+
+
+1.0b3 - 2014-07-07
+==================
 
 - make ``ploy_virtualbox`` an optional dependency
 
 
-1.b2 - 2014-07-07
-=================
+1.0b2 - 2014-07-07
+==================
 
 - migrate from ``mr.awsome*`` dependencies to ``ploy*``
 - various bugfixes
