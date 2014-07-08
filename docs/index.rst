@@ -39,6 +39,7 @@ How to create an manage jails once the host is set up:
    usage/jails
    usage/ansible
    usage/fabric
+   usage/ansible-with-fabric
 
 
 Special use cases
