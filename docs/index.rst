@@ -79,8 +79,6 @@ The following features already exist but still need to be documented:
 - jail access
    - port forwarding
    - public IP
-- fabric support
-- combining ansible and fabric
 - ZFS management
 - Creating and restoring ZFS snapshots
 - poudriere support
