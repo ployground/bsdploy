@@ -46,7 +46,7 @@ Applying the playbook will then create the application directory as expected:
     TASK: [ensure the www data directory exists] ********************************** 
     changed: [jailhost-webserver]
 
-Now let's create fabric task that uploads the contents of that website::
+Now let's create a fabric task that uploads the contents of that website::
 
     def upload_website():
         ansible_vars = fab.env.instance.get_ansible_variables()
