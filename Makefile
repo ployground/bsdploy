@@ -23,4 +23,7 @@ bin/pip:
 clean:
 	git clean -dxxf
 
-.PHONY: clean
+docs:
+	make -C docs html
+
+.PHONY: clean docs
