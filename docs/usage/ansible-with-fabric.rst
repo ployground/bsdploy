@@ -13,12 +13,12 @@ Sharing variables between playbooks and fabric scripts
 
 For such a collaboration both fabric and ansible need to know *where* all of this should take place, for instance. I.e. fabric has to know the location of the directory that the playbook has created.
 
-You can either define variables directly in ``ploy.conf`` or in ``group_vars/all.yml``.
+You can either define variables directly in ``ploy.conf`` or in group or host variables such as ``group_vars/all.yml`` or ``group_vars/webserver.yml``.
 
 To create key/value pairs in ``ploy.conf`` that are visible to ansible, you must prefix them with ``ansible-``.
 
 
-For example, you could create an entry in ploy.conf like so
+For example, you could create an entry in ploy.conf like so::
 
     [instance:webserver]
     ...
