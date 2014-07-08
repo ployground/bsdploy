@@ -18,18 +18,24 @@ You can either define variables directly in ``ploy.conf`` or in group or host va
 To create key/value pairs in ``ploy.conf`` that are visible to ansible, you must prefix them with ``ansible-``.
 
 
-For example, you could create an entry in ploy.conf like so::
+For example, you could create an entry in ploy.conf like so:
+
+.. code-block:: ini
 
     [instance:webserver]
     ...
     ansible-frontend_path = /opt/foo
 
-And then use the following snippet in a playbook::
+And then use the following snippet in a playbook:
+
+.. code-block:: yaml
 
     - name: ensure the www data directory exists
       file: path={{frontend_path}} state=directory mode=775
 
-Applying the playbook will then create the application directory as expected::
+Applying the playbook will then create the application directory as expected:
+
+.. code-block:: console
 
     ploy configure webserver
     PLAY [jailhost-webserver] ***************************************************** 
@@ -48,7 +54,9 @@ Now let's create fabric task that uploads the contents of that website::
 
 Notice, how we're accessing the ansible variables via Fabrics' ``env`` where ``ploy_fabrics`` has conveniently placed a ploy instance of our host.
 
-Let's run that::
+Let's run that:
+
+.. code-block:: console
 
     # ploy do webserver upload_website
     [root@jailhost-webserver] put: dist/index.html -> /opt/foo/index.html
