@@ -42,10 +42,28 @@ Fabfile execution
 
 You can execute a task defined in that file by calling ``do``, i.e.::
 
-    # ploy do webserver info
-    [root@jailhost-webserver] run: uname -a
-    [root@jailhost-webserver] out: FreeBSD webserver 9.2-RELEASE FreeBSD 9.2-RELEASE #6 r255896M: Wed Oct  9 01:45:07 CEST 2013     root@mfsbsd:/usr/obj/usr/src/sys/GENERIC  amd64
-    [root@jailhost-webserver] out: 
+    # ploy do webserver service 
+    [root@jailhost-webserver] run: service nginx status
+    [root@jailhost-webserver] out: nginx is running as pid 1563.
+
+Fabric has a `relatively obtuse syntax for passing in arguments <http://docs.fabfile.org/en/latest/usage/fab.html#per-task-arguments>`_ because it supports passing to multiple hosts in a single call.
+
+To alleviate this, ``ploy_fabric`` adds a simpler method in its ``do`` command, since that only always targets a single host.
+
+So, in our example, to restart the webserver you could do this::
+
+    # ploy do webserver service action=restart
+    [root@jailhost-webserver] run: service nginx restart
+    [root@jailhost-webserver] out: Performing sanity check on nginx configuration:
+    [root@jailhost-webserver] out: nginx: the configuration file /usr/local/etc/nginx/nginx.conf syntax is ok
+    [root@jailhost-webserver] out: nginx: configuration file /usr/local/etc/nginx/nginx.conf test is successful
+    [root@jailhost-webserver] out: Stopping nginx.
+    [root@jailhost-webserver] out: Waiting for PIDS: 1563.
+    [root@jailhost-webserver] out: Performing sanity check on nginx configuration:
+    [root@jailhost-webserver] out: nginx: the configuration file /usr/local/etc/nginx/nginx.conf syntax is ok
+    [root@jailhost-webserver] out: nginx: configuration file /usr/local/etc/nginx/nginx.conf test is successful
+    [root@jailhost-webserver] out: Starting nginx.
+
 
 You can also list all available tasks with the ``-l`` parameter::
 
