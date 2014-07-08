@@ -11,10 +11,10 @@ install_requires = [
     'PyYAML',
     'jinja2',
     'setuptools',
-    'ploy>=1.0rc11',
-    'ploy_ansible>=1.0b6',
-    'ploy_ezjail>=1.0b8',
-    'ploy_fabric>=1.0b4',
+    'ploy>=1.0rc13',
+    'ploy_ansible>=1.0b7',
+    'ploy_ezjail>=1.0b9',
+    'ploy_fabric>=1.0b5',
 ]
 
 # workaround for installing via buildout, as ansible
