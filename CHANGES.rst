@@ -1,4 +1,4 @@
-1.0b4 - unreleased
+1.0b4 - 2014-07-08
 ==================
 
 - remove custom ``ploy`` and ``ploy-ssh`` console scripts.
