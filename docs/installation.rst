@@ -16,9 +16,9 @@ The short version:
 .. code-block:: console
     :linenos:
 
-	virtualenv .
-	source bin/activate
-	pip install --pre bsdploy
+    virtualenv .
+    source bin/activate
+    pip install --pre bsdploy
 
 (``1``) BSDploy has specific requirements in regards to Fabric and ansible (meaning, their latest version will not neccessarily work with the latest version of BSDploy until the latter is adjusted) it is therefore strongly recommended to install BSDploy into its own virtualenv.
 
@@ -37,17 +37,17 @@ Installing from github
 
 To follow along the latest version of BSDploy you need Python and virtualenv plus – obviously – ``git``. Then::
 
-	git clone https://github.com/ployground/bsdploy.git
-	cd bsdploy
-	make
+    git clone https://github.com/ployground/bsdploy.git
+    cd bsdploy
+    make
 
 This will check out copies of BSDploy's immediate dependencies (``ploy`` and friends) and create the ploy* executables inside ``bin``. You can either add the ``bin`` directory to your path or symlink them into somewhere that's already on your path, but as described above, it is recommended to source the ``virtualenv`` to have a 'global' installation of BSDploy::
 
-	source bin/activate
+    source bin/activate
 
 When keeping your checkout up-to-date it is usually a good idea to update the ``ploy`` packages (located inside ``src``), as well. The best way to do so is to use the provided ``develop`` command after updating the bsdploy repository itself like so::
 
-	git pull
-	bin/develop up -v
+    git pull
+    bin/develop up -v
 
 The ``-v`` flag will show any git messages that arise during the update.
