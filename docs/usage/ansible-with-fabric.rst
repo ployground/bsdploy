@@ -28,7 +28,6 @@ And then use the following snippet in a playbook::
 
     - name: ensure the www data directory exists
       file: path={{frontend_path}} state=directory mode=775
-      tags: data
 
 Applying the playbook will then create the application directory as expected::
 
