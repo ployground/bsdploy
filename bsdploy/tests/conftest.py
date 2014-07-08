@@ -1,5 +1,9 @@
 from mock import Mock
+from ploy.tests.conftest import ployconf, tempdir
 import pytest
+
+
+(ployconf, tempdir)  # shutup pyflakes
 
 
 default_mounts = '\n'.join([
