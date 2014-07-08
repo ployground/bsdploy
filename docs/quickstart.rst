@@ -14,6 +14,7 @@ The process consists of:
 - then **configuring** the vanilla installation to our needs
 - and finally creating a 'hello world' jail inside of it.
 
+.. note:: Before you begin with this tutorial, make sure you have :doc:`installed bsdploy </installation>`.
 
 Using VirtualBox
 ----------------
