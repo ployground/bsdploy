@@ -235,7 +235,7 @@ But frankly, that's not very interesting. As a final step of this introduction, 
 Configuring a jail
 ------------------
 
-Like with the jailhost, we could assign roles to our demo jail, but another way is to create a playbook with the same name. If such a playbook exists, BSDploy will use that when you call ``configure``. So, create a file named ``jailhost-demo_jail.yml`` with the following content:
+Like with the jailhost, we could assign roles to our demo jail, but another way is to create a playbook with the same name. If such a playbook exists, BSDploy will use that when you call ``configure``. So, create a top-level file named ``jailhost-demo_jail.yml`` with the following content:
 
 .. code-block:: yaml
 
