@@ -58,7 +58,7 @@ Contribute
 Code and issues are hosted at github:
 
 - Issue Tracker: http://github.com/ployground/bsdploy/issues
-- Source Code: http://github.com/tomster/bsdploy
+- Source Code: http://github.com/ployground/bsdploy
 - IRC: the developers can be found on #bsdploy on freenode.net
 
 
