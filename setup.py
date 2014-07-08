@@ -25,7 +25,8 @@ except ImportError:
     install_requires.append('ansible')
 
 
-setup(name="bsdploy",
+setup(
+    name="bsdploy",
     version=version,
     description="A tool to provision, configure and maintain FreeBSD jails",
     long_description=README + '\n\n\nChanges\n=======\n\n' + CHANGES,
