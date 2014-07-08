@@ -1,6 +1,8 @@
 1.0b4 - unreleased
 ==================
 
+- remove custom ``ploy`` and ``ploy-ssh`` console scripts.
+
 
 1.0b3 - 2014-07-07
 ==================

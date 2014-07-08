@@ -62,8 +62,6 @@ setup(name="bsdploy",
     },
     entry_points="""
         [console_scripts]
-        ploy = ploy:ploy
-        ploy-ssh = ploy:ploy_ssh
         ploy-download = bsdploy.download:run
         [ansible_paths]
         bsdploy = bsdploy:ansible_paths
