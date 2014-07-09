@@ -7,10 +7,11 @@ Its main design goal is to lower the barrier to *repeatable jail setups*.
 
 Instead of performing updates on production hosts you are encouraged to update the *description* of your setup, test it against an identically configured staging scenario until it works as expected and then apply the updated configuration to production with confidence.
 
+
 Main Features
 -------------
 
-- **bootstrap** complete jail hosts from scratch
+- **provision** complete jail hosts from scratch
 
 - create new jails by adding two or more lines to your configuration file and running ``ploy start``
 
@@ -23,8 +24,32 @@ Main Features
 -  **modular provisioning** with plugins for `VirtualBox <https://www.virtualbox.org>`_ and `Amazon EC2 <http://aws.amazon.com>`_ and an architecture to support more.
 
 
+How it works
+------------
+
+BSDploy takes the shape of a commandline tool by the name of ``ploy`` which is installed on a so-called *control host* (usually a laptop or desktop machine) with which you then control one or more *target hosts*. The only two things installed on target hosts by BSDploy are Python and ``ezjail`` – everything else stays on the control host.
+
+
+Example Session
+---------------
+
+Here's what an abbreviated bootstrapping session of a simple website inside a jail on an Amazon EC2 instance could look like::
+
+    # ploy start ec-instance
+    [...]
+    # ploy bootstrap jailhost
+    [...]
+    # ploy configure jailhost
+    [...]
+    # ploy start webserver
+    [...]
+    # ploy configure webserver
+    [...]
+    # ploy do webserver upload_website
+
+
 Best of both worlds
-*******************
+-------------------
 
 Combining a declarative approach for setting up the initial state of a system combined with an imperative approach for providing maintenance operations on that state has significant advantages:
 
@@ -34,7 +59,7 @@ Combining a declarative approach for setting up the initial state of a system co
 
 
 Under the hood
-**************
+--------------
 
 BSDploy's scope is quite ambitious, so naturally it does not attempt to do all of the work on its own. In fact, BSDPloy is just a fairly thin, slightly opinionated wrapper around existing excellent tools.
 
