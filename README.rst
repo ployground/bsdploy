@@ -13,11 +13,11 @@ Main Features
 
 - **provision** complete jail hosts from scratch
 
-- create new jails by adding two or more lines to your configuration file and running ``ploy start``
+- **describe** one or more jail hosts and their jails in a canonical configuration
 
-- **declarative configuration** – all hosts and their properties defined in ``ploy.conf`` are automatically exposed to `Ansible <http://ansible.cc>`_. Run existing playbooks with ``ploy playbook`` or directly assign roles in ``ploy.conf`` and apply them using ``ploy configure``.
+- **declarative configuration** – apply `Ansible <http://ansible.cc>`_ playbooks to hosts and jails
 
-- **imperative maintenance**  – run `Fabric <http://fabfile.org>`_ scripts with ``ploy do JAILNAME TASKNAME`` and have all of the hosts and their variables at your disposal in ``fab.env``.
+- **imperative maintenance**  – run `Fabric <http://fabfile.org>`_ scripts against hosts and jails
 
 - configure `ZFS pools and filesystems <https://wiki.freebsd.org/ZFS>`_ with `whole-disk-encryption <http://www.freebsd.org/doc/handbook/disks-encrypting.html>`_
 
@@ -27,7 +27,7 @@ Main Features
 How it works
 ------------
 
-BSDploy takes the shape of a commandline tool by the name of ``ploy`` which is installed on a so-called *control host* (usually a laptop or desktop machine) with which you then control one or more *target hosts*. The only two things installed on target hosts by BSDploy are Python and ``ezjail`` – everything else stays on the control host.
+BSDploy takes the shape of a commandline tool by the name of ``ploy`` which is installed on a so-called *control host* (typically your laptop or desktop machine) with which you then control one or more *target hosts*. The only two things installed on target hosts by BSDploy are Python and ``ezjail`` – everything else stays on the control host.
 
 
 Example Session
