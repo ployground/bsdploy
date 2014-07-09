@@ -1,15 +1,39 @@
-Installation
-============
+Client requirements
+===================
 
-Since BSDploy is still in development, there are currently no packaged versions (i.e. homebrew, pkgng, aptitude etc.) available yet.
+BSDploy and its dependencies are written in `Python <http://python.org>`_ and thus should run on pretty much any platform, although it's currently only been tested on Mac OS X and FreeBSD.
+
+
+Server requirements
+===================
+
+A FreeBSD system that wants to be managed by BSDploy will need to have `ezjail <http://erdgeist.org/arts/software/ezjail/>`_ installed, as well as `Python <http://python.org>`_ and must have SSH access enabled (either for root or with ``sudo`` configured).
+
+Strictly speaking, BSDploy only needs Python for the initial configuration of the jailhost. If you chose to perform that step yourself or use a pre-existing host, you won't need Python on the host, just ezjail.
+
+BSDPloy can take care of these requirements for you during bootstrapping but of course you can also use it to manage existing machines that already meet them.
+
+BSDploy currently only supports FreeBSD 9.2 (although in theory any 9.x should work) but not yet FreeBSD 10. But that is only a matter of time. We can't wait to use it on 10 ourselves :-)
+
+
+Client Installation
+===================
+
+Since BSDploy is still early in development, there is currently only a packaged version for FreeBSD but no others such as i.e. homebrew, aptitude etc.) available yet.
 
 You can however install beta releases from PyPI or a bleeding edge development version from github.
+
+
+Installing on FreeBSD
+---------------------
+
+BSDploy is available from FreeBSD ports as ``sysutils/bsdploy``, for details `check it at FreshPorts <http://www.freshports.org/sysutils/bsdploy/>`_.
 
 
 Installing from PyPI
 --------------------
 
-Since BSDploy and its dependencies are written in Python, you can install them from the official Python Packaging Index (a.k.a. PyPI). 
+BSDploy and its dependencies are written in Python, so you can install them from the official Python Packaging Index (a.k.a. PyPI). 
 
 The short version:
 

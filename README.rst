@@ -41,24 +41,6 @@ BSDploy's scope is quite ambitious, so naturally it does not attempt to do all o
 In addition to the above mentioned Ansible and Fabric, it uses `ezjail <http://erdgeist.org/arts/software/ezjail/>`_ on the host to manage the jails and on the client numerous members of the `ployground family <https://github.com/ployground/>`_ for pretty much everything else.
 
 
-Server requirements
-*******************
-
-A FreeBSD system that wants to be managed by BSDploy will need to have `ezjail <http://erdgeist.org/arts/software/ezjail/>`_ installed, as well as `Python <http://python.org>`_ and must have SSH access enabled (either for root or with ``sudo`` configured).
-
-Strictly speaking, BSDploy only needs Python for the initial configuration of the jailhost. If you chose to perform that step yourself or use a pre-existing host, you won't need Python on the host, just ezjail.
-
-BSDPloy can take care of these requirements for you during bootstrapping but of course you can also use it to manage existing machines that already meet them.
-
-BSDploy currently only supports FreeBSD 9.2 (although in theory any 9.x should work) but not yet FreeBSD 10. But that is only a matter of time. We can't wait to use it on 10 ourselves :-)
-
-
-Client requirements
-*******************
-
-BSDploy and its dependencies are written in `Python <http://python.org>`_ and thus should run on pretty much any platform, although it's currently only been tested on Mac OS X and FreeBSD.
-
-
 Full documentation
 ------------------
 
