@@ -49,7 +49,7 @@ The short version:
 To do so, you will need Python and virtualenv installed on your system, i.e. 
 
 - on **Mac OS X** using ``homebrew`` you would install ``brew install pyenv-virtualenv``.
-- on **FreeBSD** using ``pgk`` you would ``pkg install py27-virtualenv``
+- on **FreeBSD** using ``pkg`` you would ``pkg install py27-virtualenv``
 
 (``2``) To use the version installed inside this virtualenv it is  suggested to 'source' the python interpreter. This will add the ``bin`` directory of the virtualenv (temporarily) to your ``$PATH`` so you can use the binaries installed inside it just as if they were installed globally. Note, that the default ``activate`` works for bash, if you're using ``tcsh`` (the default on FreeBSD you will have to ``source bin/activate.csh``)
 
