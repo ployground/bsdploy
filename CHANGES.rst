@@ -2,6 +2,8 @@
 ==================
 
 - automatically set env.shell for fabric scripts.
+- generate ssh host keys locally during bootstrap if possible.
+- set ``fingerprint`` option for ezjail master automatically if a ssh host key exists locally.
 
 
 1.0b4 - 2014-07-08
