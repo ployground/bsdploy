@@ -29,7 +29,7 @@ def test_bootstrap_ask_to_continue(bootstrap, capsys, run_mock, tempdir, yesno_m
     format_info = dict(
         bsdploy_path=bsdploy_path,
         tempdir=tempdir.directory)
-    tempdir['etc/authorized_keys'].fill('id_dsa')
+    tempdir['bootstrap-files/authorized_keys'].fill('id_dsa')
     create_ssh_host_keys(tempdir)
     run_mock.expected = [
         ('mount', {}, default_mounts),
@@ -48,7 +48,7 @@ def test_bootstrap_ask_to_continue(bootstrap, capsys, run_mock, tempdir, yesno_m
         "",
         "Using these local files for bootstrapping:",
         "%(bsdploy_path)s/bootstrap-files/FreeBSD.conf -(template:False)-> /mnt/usr/local/etc/pkg/repos/FreeBSD.conf" % format_info,
-        "%(tempdir)s/etc/authorized_keys -(template:False)-> /mnt/root/.ssh/authorized_keys" % format_info,
+        "%(tempdir)s/bootstrap-files/authorized_keys -(template:False)-> /mnt/root/.ssh/authorized_keys" % format_info,
         "%(bsdploy_path)s/bootstrap-files/make.conf -(template:False)-> /mnt/etc/make.conf" % format_info,
         "%(bsdploy_path)s/bootstrap-files/pkg.conf -(template:False)-> /mnt/usr/local/etc/pkg.conf" % format_info,
         "%(bsdploy_path)s/bootstrap-files/rc.conf -(template:True)-> /mnt/etc/rc.conf" % format_info,
@@ -79,7 +79,7 @@ def test_bootstrap_ask_to_continue(bootstrap, capsys, run_mock, tempdir, yesno_m
 
 
 def test_bootstrap_no_newline_at_end_of_rc_conf(bootstrap, capsys, local_mock, run_mock, tempdir):
-    tempdir['etc/authorized_keys'].fill('id_dsa')
+    tempdir['bootstrap-files/authorized_keys'].fill('id_dsa')
     create_ssh_host_keys(tempdir)
     tempdir['bootstrap-files/rc.conf'].fill('foo')
     run_mock.expected = [
@@ -104,11 +104,11 @@ def test_bootstrap(bootstrap, put_mock, run_mock, tempdir, yesno_mock):
     format_info = dict(
         bsdploy_path=bsdploy_path,
         tempdir=tempdir.directory)
-    tempdir['etc/authorized_keys'].fill('id_dsa')
+    tempdir['bootstrap-files/authorized_keys'].fill('id_dsa')
     create_ssh_host_keys(tempdir)
     put_mock.expected = [
         (("%(bsdploy_path)s/bootstrap-files/FreeBSD.conf" % format_info, '/mnt/usr/local/etc/pkg/repos/FreeBSD.conf'), {'mode': None}),
-        (("%(tempdir)s/etc/authorized_keys" % format_info, '/mnt/root/.ssh/authorized_keys'), {'mode': None}),
+        (("%(tempdir)s/bootstrap-files/authorized_keys" % format_info, '/mnt/root/.ssh/authorized_keys'), {'mode': None}),
         (("%(bsdploy_path)s/bootstrap-files/make.conf" % format_info, '/mnt/etc/make.conf'), {'mode': None}),
         (("%(bsdploy_path)s/bootstrap-files/pkg.conf" % format_info, '/mnt/usr/local/etc/pkg.conf'), {'mode': None}),
         # put from upload_template

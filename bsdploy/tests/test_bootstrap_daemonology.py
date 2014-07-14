@@ -20,7 +20,7 @@ def test_bootstrap(bootstrap, capsys, put_mock, run_mock, tempdir, yesno_mock):
         bsdploy_path=bsdploy_path,
         tempdir=tempdir.directory)
     put_mock.expected = [
-        (('etc/authorized_keys', '/tmp/authorized_keys'), {}),
+        (('bootstrap-files/authorized_keys', '/tmp/authorized_keys'), {}),
         (("%(bsdploy_path)s/enable_root_login_on_daemonology.sh" % format_info, '/tmp/'), {'mode': '0775'}),
         (("%(bsdploy_path)s/bootstrap-files/FreeBSD.conf" % format_info, '/usr/local/etc/pkg/repos/FreeBSD.conf'), {'mode': None}),
         (("%(bsdploy_path)s/bootstrap-files/make.conf" % format_info, '/etc/make.conf'), {'mode': None}),

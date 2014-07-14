@@ -30,9 +30,7 @@ class BootstrapFile(object):
 
     @property
     def expected_path(self):
-        if 'expected_path' in self.info:
-            return self.info['expected_path']
-        elif 'url' in self.info:
+        if 'url' in self.info:
             return self.bu().download_path
         else:
             return self.bu().custom_template_path
@@ -165,7 +163,6 @@ class BootstrapUtils:
                 'directory': '/mnt/root/.ssh',
                 'directory_mode': '0600',
                 'remote': '/mnt/root/.ssh/authorized_keys',
-                'expected_path': self.ploy_conf_path,
                 'fallback': [
                     '~/.ssh/identity.pub',
                     '~/.ssh/id_rsa.pub',
@@ -189,6 +186,8 @@ class BootstrapUtils:
                 print("The '%s' file is missing." % bf.local)
                 for path in bf.existing_fallback:
                     if yesno("Should we generate it using the key in '%s'?" % path):
+                        if not exists(bf.expected_path):
+                            os.mkdir(bf.expected_path)
                         with open(bf.local, 'wb') as out:
                             with open(path, 'rb') as f:
                                 out.write(f.read())

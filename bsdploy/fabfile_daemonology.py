@@ -17,7 +17,7 @@ def bootstrap(**kwargs):
     # the user for the image is `ec2-user`, there is no sudo, but we can su to root w/o password
     original_host = env.host_string
     env.host_string = 'ec2-user@%s' % env.instance.uid
-    put('etc/authorized_keys', '/tmp/authorized_keys')
+    put('bootstrap-files/authorized_keys', '/tmp/authorized_keys')
     put(join(bsdploy_path, 'enable_root_login_on_daemonology.sh'), '/tmp/', mode='0775')
     run("""su root -c '/tmp/enable_root_login_on_daemonology.sh'""")
     # revert back to root
