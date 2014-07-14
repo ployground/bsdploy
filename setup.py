@@ -14,7 +14,7 @@ install_requires = [
     'ploy>=1.0rc13',
     'ploy_ansible>=1.0b8',
     'ploy_ezjail>=1.0b9',
-    'ploy_fabric>=1.0b5',
+    'ploy_fabric>=1.0b6',
 ]
 
 setup(

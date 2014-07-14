@@ -1,6 +1,7 @@
 1.0b5 - unreleased
 ==================
 
+- automatically set env.shell for fabric scripts.
 
 
 1.0b4 - 2014-07-08
