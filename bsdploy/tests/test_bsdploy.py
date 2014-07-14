@@ -37,10 +37,12 @@ def test_bootstrap_command(capsys, ctrl, monkeypatch):
 def test_augment_ezjail_master(ctrl, ployconf):
     config = dict(ctrl.instances['jailhost'].config)
     assert sorted(config.keys()) == [
-        'ansible_python_interpreter', 'fabfile', 'fabric-shell', 'roles']
+        'ansible_python_interpreter', 'fabfile', 'fabric-shell', 'fingerprint',
+        'roles']
     assert config['ansible_python_interpreter'] == '/usr/local/bin/python2.7'
     assert config['fabfile'].endswith('fabfile_mfsbsd.py')
     assert config['fabric-shell'] == '/bin/sh -c'
+    assert config['fingerprint'].endswith('bootstrap-files/ssh_host_rsa_key.pub')
     assert os.path.exists(config['fabfile']), "The fabfile '%s' doesn't exist." % config['fabfile']
     assert config['roles'] == 'jails_host'
 

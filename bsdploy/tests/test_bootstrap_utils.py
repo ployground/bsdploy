@@ -206,29 +206,11 @@ def test_bootstrap_files_template(bu, input, context, expected, tempdir):
             bfs['rc.conf'].read(context)
 
 
-@pytest.fixture
-def local_mock(fabric_integration, monkeypatch):
-    from mock import Mock
-    local = Mock()
-
-    def _local(command):
-        try:
-            expected = local.expected.pop(0)
-        except IndexError:  # pragma: nocover
-            expected = '', '', ''
-        assert command == expected
-
-    local.side_effect = _local
-    local.expected = []
-    monkeypatch.setattr('bsdploy.bootstrap_utils.local', local)
-    return local
-
-
 def test_fetch_assets(bu, local_mock, tempdir):
     format_info = dict(tempdir=tempdir.directory)
     tempdir['etc/authorized_keys'].fill('id_dsa')
     local_mock.expected = [
-        'wget -c -O "%(tempdir)s/downloads/pkg.txz" "http://pkg.freebsd.org/freebsd:9:x86:64/quarterly/Latest/pkg.txz"' % format_info]
+        ('wget -c -O "%(tempdir)s/downloads/pkg.txz" "http://pkg.freebsd.org/freebsd:9:x86:64/quarterly/Latest/pkg.txz"' % format_info, {}, '')]
     bu.fetch_assets()
 
 
@@ -244,9 +226,9 @@ def test_fetch_assets_packagesite(bu, local_mock, tempdir):
     with open(os.path.join(bsdploy_path, 'tests', 'packagesite.txz')) as f:
         tempdir['downloads/packagesite.txz'].fill(f.read())
     local_mock.expected = [
-        'wget -c -O "%(tempdir)s/downloads/packagesite.txz" "http://pkg.freebsd.org/freebsd:9:x86:64/quarterly/packagesite.txz"' % format_info,
-        'wget -c -O "%(tempdir)s/downloads/pkg.txz" "http://pkg.freebsd.org/freebsd:9:x86:64/quarterly/Latest/pkg.txz"' % format_info,
-        'wget -c -O "%(tempdir)s/downloads/packages/freebsd:9:x86:64/latest/All/python27-2.7.6_4.txz" "http://pkg.freebsd.org/freebsd:9:x86:64/latest/All/python27-2.7.6_4.txz"' % format_info,
-        'wget -c -O "%(tempdir)s/downloads/packages/freebsd:9:x86:64/latest/All/gettext-0.18.3.1.txz" "http://pkg.freebsd.org/freebsd:9:x86:64/latest/All/gettext-0.18.3.1.txz"' % format_info,
-        'wget -c -O "%(tempdir)s/downloads/packages/freebsd:9:x86:64/latest/All/libiconv-1.14_3.txz" "http://pkg.freebsd.org/freebsd:9:x86:64/latest/All/libiconv-1.14_3.txz"' % format_info]
+        ('wget -c -O "%(tempdir)s/downloads/packagesite.txz" "http://pkg.freebsd.org/freebsd:9:x86:64/quarterly/packagesite.txz"' % format_info, {}, ''),
+        ('wget -c -O "%(tempdir)s/downloads/pkg.txz" "http://pkg.freebsd.org/freebsd:9:x86:64/quarterly/Latest/pkg.txz"' % format_info, {}, ''),
+        ('wget -c -O "%(tempdir)s/downloads/packages/freebsd:9:x86:64/latest/All/python27-2.7.6_4.txz" "http://pkg.freebsd.org/freebsd:9:x86:64/latest/All/python27-2.7.6_4.txz"' % format_info, {}, ''),
+        ('wget -c -O "%(tempdir)s/downloads/packages/freebsd:9:x86:64/latest/All/gettext-0.18.3.1.txz" "http://pkg.freebsd.org/freebsd:9:x86:64/latest/All/gettext-0.18.3.1.txz"' % format_info, {}, ''),
+        ('wget -c -O "%(tempdir)s/downloads/packages/freebsd:9:x86:64/latest/All/libiconv-1.14_3.txz" "http://pkg.freebsd.org/freebsd:9:x86:64/latest/All/libiconv-1.14_3.txz"' % format_info, {}, '')]
     bu.fetch_assets()

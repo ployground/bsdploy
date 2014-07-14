@@ -26,6 +26,7 @@ def bootstrap(**kwargs):
     env.instance.config.update(kwargs)
 
     bu = BootstrapUtils()
+    bu.generate_ssh_keys()
     bu.print_bootstrap_files()
     # gather infos
     if not bu.bsd_url:
@@ -111,17 +112,11 @@ def bootstrap(**kwargs):
     # set autoboot delay
     autoboot_delay = env.instance.config.get('bootstrap-autoboot-delay', '-1')
     run('echo autoboot_delay=%s >> /mnt/boot/loader.conf' % autoboot_delay)
-    # ssh host keys
-    for ssh_key, ssh_keygen_args in sorted(bu.ssh_keys):
-        if ssh_key not in bu.bootstrap_files:
-            run("ssh-keygen %s -f /mnt/etc/ssh/%s -N ''" % (ssh_keygen_args, ssh_key))
-    fingerprint = run("ssh-keygen -lf /mnt/etc/ssh/ssh_host_rsa_key")
+    bu.generate_remote_ssh_keys()
     # reboot
     if value_asbool(env.instance.config.get('bootstrap-reboot', 'true')):
         with settings(hide('warnings'), warn_only=True):
             run('reboot')
-    print("The SSH fingerprint of the newly bootstrapped server is:")
-    print(fingerprint)
 
 
 def fetch_assets(**kwargs):
