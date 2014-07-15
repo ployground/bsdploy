@@ -66,7 +66,8 @@ def bootstrap(**kwargs):
             if not yesno("\nDidn't find an '%s' setting in rc.conf. You sure that you want to continue?" % ifconfig):
                 return
 
-    if not yesno("\nContinuing will destroy the existing data on the following devices:\n    %s\n\nContinue?" % ' '.join(bu.devices)):
+    yes = env.instance.config.get('bootstrap-yes', False)
+    if not (yes or yesno("\nContinuing will destroy the existing data on the following devices:\n    %s\n\nContinue?" % ' '.join(bu.devices))):
         return
 
     # install FreeBSD in ZFS root

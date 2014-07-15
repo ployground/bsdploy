@@ -23,7 +23,7 @@ To give us the luxury of running against a well-defined context, this quickstart
 
 Since VirtualBox support is optional and BSDploy is fairly modular, you will need to install ``ploy_virtualbox`` to follow this quickstart like so::
 
-	pip install ploy_virtualbox
+	% pip install --pre ploy_virtualbox
 
 
 Getting the FreeBSD installer
@@ -31,15 +31,15 @@ Getting the FreeBSD installer
 
 BSDploy has the notion of an environment, which is just fancy talk for a directory with specific conventions. Let's create one::
 
-	mkdir ploy-quickstart
-	cd ploy-quickstart
+	% mkdir ploy-quickstart
+	% cd ploy-quickstart
 
 First, we need to download a FreeBSD boot image. BSDploy uses `mfsBSD <http://mfsbsd.vx.sk>`_ which is basically the official FreeBSD installer plus pre-configured SSH access.
 
 BSDploy provides a small cross-platform helper for downloading assets via HTTP which also checks the integrity of the downloaded file::
 
-	mkdir downloads
-	ploy-download http://mfsbsd.vx.sk/files/iso/9/amd64/mfsbsd-se-9.2-RELEASE-amd64.iso 4ef70dfd7b5255e36f2f7e1a5292c7a05019c8ce downloads/
+	% mkdir downloads
+	% ploy-download http://mfsbsd.vx.sk/files/iso/9/amd64/mfsbsd-se-9.2-RELEASE-amd64.iso 4ef70dfd7b5255e36f2f7e1a5292c7a05019c8ce downloads/
 
 
 Configuring the virtual machine
@@ -47,7 +47,7 @@ Configuring the virtual machine
 
 Since BSDploy also handles provisioning, we can configure the virtualbox instance within the main configuration file. It is named ``ploy.conf`` and lives inside a top-level directory named ``etc`` by default::
 
-	mkdir etc
+	% mkdir etc
 
 Inside it create a file named ``ploy.conf`` with the following contents::
 
@@ -81,7 +81,7 @@ Inside it create a file named ``ploy.conf`` with the following contents::
 
 Now we can start it up::
 
-	ploy start ploy-demo
+	% ploy start ploy-demo
 
 This should fire up virtualbox and boot a VirtualBox VM into mfsBSD.
 
@@ -98,26 +98,15 @@ This creates an ezjail jailhost (``ez-master``) named ``jailhost`` and tells BSD
 
 But since none of this has happened yet, we need to tell BSDploy to make it so, like this::
 
-	ploy bootstrap
+	% ploy bootstrap
 
 This will ask you to provide a SSH public key (answer ``y`` if you have one in ``~/.ssh/identity.pub``).
 
 Next it will give you one last chance to abort before it commences to wipe the target drive, so answer ``y`` again.
 
-After the installation has completed, note the final output, as it contains the SSH fingerprint of the newly configured SSH daemon, for example::
-
-	The SSH fingerprint of the newly bootstrapped server is:
-	2048 f3:51:c2:2a:94:c3:06:0e:02:e0:87:51:73:f0:dc:6f  root@mfsbsd (RSA)
-
-Before we can continue you need to add that fingerprint to the jailhost configuration, as BSDploy refuses to connect to unknown hosts, i.e. add the following line to ``ploy.conf`` so that your jailhost definition looks like so::
-
-	[ez-master:jailhost]
-	instance = ploy-demo
-	fingerprint = f3:51:c2:2a:94:c3:06:0e:02:e0:87:51:73:f0:dc:6f
-
 To make sure that everything has worked so far, let's take a look at the host by logging into it via SSH. ``bsdploy`` provides a command for that, too::
 
-	ploy ssh jailhost
+	% ploy ssh jailhost
 	FreeBSD 9.2-RELEASE (GENERIC) #6 r255896M: Wed Oct  9 01:45:07 CEST 2013
 	[...]
 
@@ -154,18 +143,17 @@ Now we can configure the vanilla installation. This step is performed internally
 
 	[ez-master:jailhost]
 	instance = ploy-demo
-	fingerprint = xxxx
 	roles =
 	    dhcp_host
 	    jails_host
 
 With this information, BSDploy can get to work::
 
-	ploy configure jailhost
+	% ploy configure jailhost
 
 Let's log in once more and take another look::
 
-	ploy ssh jailhost
+	% ploy ssh jailhost
 	[...]
 
 Package-wise nothing much has changed – only ``ezjail`` has been installed::
@@ -213,7 +201,7 @@ Add the following lines to ``etc/ploy.conf``::
 
 and start the jail like so::
 
-	ploy start demo_jail
+	% ploy start demo_jail
 
 Let's check on it first, by logging into the host::
 
@@ -260,7 +248,7 @@ Like with the jailhost, we could assign roles to our demo jail, but another way 
 
 and apply it::
 
-	ploy configure demo_jail
+	% ploy configure demo_jail
 
 Ok, now we have a jail with a webserver running inside of it. How do we access it? Right, *port forwarding*...
 
@@ -272,7 +260,7 @@ Port forwarding from the host to jails is implemented using ``ipnat`` and BSDplo
 
 To do so, create a file named ``host_vars/jailhost.yml``::
 
-	mkdir host_vars
+	% mkdir host_vars
 
 with the following content::
 
@@ -282,13 +270,13 @@ with the following content::
 To activate the rules, re-apply the jail host configuration.
 Ansible will figure out, that it needs to update them (and only them) and then restart the network. However, in practice running the entire configuration can take quite some time, so if you already know you only want to update some specific sub set of tasks you can pass in one or more tags. In this case for updating the ipnat rules::
 
-	ploy configure jailhost -t ipnat_rules
+	% ploy configure jailhost -t ipnat_rules
 
 Since the demo is running inside a host that got its IP address via DHCP we will need to find that out before we can access it in the browser.
 
 To find out, which one was assigned run ``ifconfig`` like so::
 
-	ploy ssh jailhost 'ifconfig em0'
+	% ploy ssh jailhost 'ifconfig em0'
 	em0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> metric 0 mtu 1500
 		options=9b<RXCSUM,TXCSUM,VLAN_MTU,VLAN_HWTAGGING,VLAN_HWCSUM>
 		ether 08:00:27:87:2e:40

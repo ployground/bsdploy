@@ -185,7 +185,8 @@ class BootstrapUtils:
                     sys.exit(1)
                 print("The '%s' file is missing." % bf.local)
                 for path in bf.existing_fallback:
-                    if yesno("Should we generate it using the key in '%s'?" % path):
+                    yes = env.instance.config.get('bootstrap-yes', False)
+                    if yes or yesno("Should we generate it using the key in '%s'?" % path):
                         if not exists(bf.expected_path):
                             os.mkdir(bf.expected_path)
                         with open(bf.local, 'wb') as out:

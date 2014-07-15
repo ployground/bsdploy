@@ -32,11 +32,14 @@ class PloyBootstrapCmd(object):
             help="Name of the jailhost from the config.",
             choices=masters,
             default=masters.keys()[0] if len(masters) == 1 else None)
+        parser.add_argument(
+            "-y", "--yes", action="store_true",
+            help="Answer yes to all questions.")
         args = parser.parse_args(argv)
         master = args.master if len(masters) == 1 else args.master[0]
         instance = self.ctrl.instances[master]
         instance.hooks.before_bsdploy_bootstrap(instance)
-        instance.do('bootstrap')
+        instance.do('bootstrap', **{'bootstrap-yes': args.yes})
         instance.hooks.after_bsdploy_bootstrap(instance)
 
 
