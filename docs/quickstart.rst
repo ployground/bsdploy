@@ -104,17 +104,6 @@ This will ask you to provide a SSH public key (answer ``y`` if you have one in `
 
 Next it will give you one last chance to abort before it commences to wipe the target drive, so answer ``y`` again.
 
-After the installation has completed, note the final output, as it contains the SSH fingerprint of the newly configured SSH daemon, for example::
-
-	The SSH fingerprint of the newly bootstrapped server is:
-	2048 f3:51:c2:2a:94:c3:06:0e:02:e0:87:51:73:f0:dc:6f  root@mfsbsd (RSA)
-
-Before we can continue you need to add that fingerprint to the jailhost configuration, as BSDploy refuses to connect to unknown hosts, i.e. add the following line to ``ploy.conf`` so that your jailhost definition looks like so::
-
-	[ez-master:jailhost]
-	instance = ploy-demo
-	fingerprint = f3:51:c2:2a:94:c3:06:0e:02:e0:87:51:73:f0:dc:6f
-
 To make sure that everything has worked so far, let's take a look at the host by logging into it via SSH. ``bsdploy`` provides a command for that, too::
 
 	% ploy ssh jailhost
@@ -154,7 +143,6 @@ Now we can configure the vanilla installation. This step is performed internally
 
 	[ez-master:jailhost]
 	instance = ploy-demo
-	fingerprint = xxxx
 	roles =
 	    dhcp_host
 	    jails_host
