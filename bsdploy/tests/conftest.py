@@ -82,6 +82,27 @@ def put_mock(fabric_integration, monkeypatch):
 
 
 @pytest.fixture
+def local_mock(fabric_integration, monkeypatch):
+    from mock import Mock
+    local = Mock()
+
+    def _local(command, **kwargs):
+        try:
+            expected = local.expected.pop(0)
+        except IndexError:  # pragma: nocover
+            expected = '', '', ''
+        cmd, kw, result = expected
+        assert command == cmd
+        assert kwargs == kw
+        return result
+
+    local.side_effect = _local
+    local.expected = []
+    monkeypatch.setattr('bsdploy.bootstrap_utils.local', local)
+    return local
+
+
+@pytest.fixture
 def env_mock(fabric_integration, monkeypatch, ployconf):
     from fabric.utils import _AttributeDict
     env = _AttributeDict()

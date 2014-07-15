@@ -46,6 +46,8 @@ def augment_instance(instance):
         return
     if 'ansible_python_interpreter' not in instance.config:
         instance.config['ansible_python_interpreter'] = '/usr/local/bin/python2.7'
+    if 'fabric-shell' not in instance.config:
+        instance.config['fabric-shell'] = '/bin/sh -c'
     if instance.master.instance is instance:
         # for hosts
         if 'fabfile' not in instance.config:
@@ -58,6 +60,16 @@ def augment_instance(instance):
             sys.exit(1)
         if not has_playbook(instance):
             instance.config['roles'] = 'jails_host'
+        if 'fingerprint' not in instance.config:
+            host_defined_path = instance.config.get('bootstrap-files')
+            ploy_conf_path = instance.master.main_config.path
+            if host_defined_path is None:
+                bootstrap_path = path.join(ploy_conf_path, '..', 'bootstrap-files')
+            else:
+                bootstrap_path = path.join(ploy_conf_path, host_defined_path)
+            ssh_key = path.abspath(path.join(bootstrap_path, 'ssh_host_rsa_key.pub'))
+            if path.exists(ssh_key):
+                instance.config['fingerprint'] = ssh_key
     else:
         # for jails
         if 'startup_script' not in instance.config:

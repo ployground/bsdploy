@@ -34,12 +34,16 @@ def test_bootstrap_command(capsys, ctrl, monkeypatch):
         "do with ('bootstrap',), {} called!"]
 
 
-def test_augment_ezjail_master(ctrl, ployconf):
+def test_augment_ezjail_master(ctrl, ployconf, tempdir):
+    tempdir['bootstrap-files/ssh_host_rsa_key.pub'].fill('rsa')
     config = dict(ctrl.instances['jailhost'].config)
     assert sorted(config.keys()) == [
-        'ansible_python_interpreter', 'fabfile', 'roles']
+        'ansible_python_interpreter', 'fabfile', 'fabric-shell', 'fingerprint',
+        'roles']
     assert config['ansible_python_interpreter'] == '/usr/local/bin/python2.7'
     assert config['fabfile'].endswith('fabfile_mfsbsd.py')
+    assert config['fabric-shell'] == '/bin/sh -c'
+    assert config['fingerprint'].endswith('bootstrap-files/ssh_host_rsa_key.pub')
     assert os.path.exists(config['fabfile']), "The fabfile '%s' doesn't exist." % config['fabfile']
     assert config['roles'] == 'jails_host'
 
@@ -68,8 +72,10 @@ def test_augment_ezjail_master_playbook_explicit(ctrl, ployconf, tempdir):
 def test_augment_ezjail_instance(ctrl, ployconf):
     config = dict(ctrl.instances['foo'].config)
     assert sorted(config.keys()) == [
-        'ansible_python_interpreter', 'flavour', 'master', 'startup_script']
+        'ansible_python_interpreter', 'fabric-shell', 'flavour', 'master',
+        'startup_script']
     assert config['ansible_python_interpreter'] == '/usr/local/bin/python2.7'
+    assert config['fabric-shell'] == '/bin/sh -c'
     assert config['flavour'] == 'base'
     assert config['master'] == 'jailhost'
     assert config['startup_script']['path'].endswith('startup-ansible-jail.sh')

@@ -51,6 +51,15 @@ Since BSDploy also handles provisioning, we can configure the virtualbox instanc
 
 Inside it create a file named ``ploy.conf`` with the following contents::
 
+	[vb-hostonlyif:vboxnet0]
+	ip = 192.168.56.1
+
+	[vb-dhcpserver:vboxnet0]
+	ip = 192.168.56.2
+	netmask = 255.255.255.0
+	lowerip = 192.168.56.100
+	upperip = 192.168.56.254
+
 	[vb-instance:ploy-demo]
 	vm-ostype = FreeBSD_64
 	vm-memory = 512

@@ -30,9 +30,7 @@ class BootstrapFile(object):
 
     @property
     def expected_path(self):
-        if 'expected_path' in self.info:
-            return self.info['expected_path']
-        elif 'url' in self.info:
+        if 'url' in self.info:
             return self.bu().download_path
         else:
             return self.bu().custom_template_path
@@ -110,6 +108,29 @@ class BootstrapUtils:
     def download_path(self):
         return abspath(join(self.ploy_conf_path, '..', 'downloads'))
 
+    def generate_ssh_keys(self):
+        for ssh_key_name, ssh_keygen_args in sorted(self.ssh_keys):
+            if not exists(self.custom_template_path):
+                os.mkdir(self.custom_template_path)
+            ssh_key = join(self.custom_template_path, ssh_key_name)
+            if exists(ssh_key):
+                continue
+            with settings(quiet(), warn_only=True):
+                result = local(
+                    "ssh-keygen %s -f %s -N ''" % (ssh_keygen_args, ssh_key),
+                    capture=True)
+                if result.failed:
+                    continue
+            with settings(quiet()):
+                fingerprint = local(
+                    "ssh-keygen -lf %s" % ssh_key, capture=True).split()[1]
+            print("Generated %s with fingerprint %s." % (ssh_key_name, fingerprint))
+
+    def generate_remote_ssh_keys(self):
+        for ssh_key, ssh_keygen_args in sorted(self.ssh_keys):
+            if ssh_key not in self.bootstrap_files:
+                run("ssh-keygen %s -f /mnt/etc/ssh/%s -N ''" % (ssh_keygen_args, ssh_key))
+
     @lazy
     def bootstrap_files(self):
         """ we need some files to bootstrap the FreeBSD installation.
@@ -142,7 +163,6 @@ class BootstrapUtils:
                 'directory': '/mnt/root/.ssh',
                 'directory_mode': '0600',
                 'remote': '/mnt/root/.ssh/authorized_keys',
-                'expected_path': self.ploy_conf_path,
                 'fallback': [
                     '~/.ssh/identity.pub',
                     '~/.ssh/id_rsa.pub',
@@ -166,6 +186,8 @@ class BootstrapUtils:
                 print("The '%s' file is missing." % bf.local)
                 for path in bf.existing_fallback:
                     if yesno("Should we generate it using the key in '%s'?" % path):
+                        if not exists(bf.expected_path):
+                            os.mkdir(bf.expected_path)
                         with open(bf.local, 'wb') as out:
                             with open(path, 'rb') as f:
                                 out.write(f.read())
@@ -185,9 +207,10 @@ class BootstrapUtils:
                 for filename in filenames:
                     if not filename.endswith('.txz'):
                         continue
-                    bootstrap_files[join(path, filename)] = dict(
-                        local=join(dirpath, filename),
-                        remote=join('/mnt/var/cache/pkg/All', filename))
+                    bootstrap_files[join(path, filename)] = BootstrapFile(
+                        self, filename, **dict(
+                            local=join(dirpath, join(path, filename)),
+                            remote=join('/mnt/var/cache/pkg/All', filename)))
 
         if self.ssh_keys is not None:
             for ssh_key_name, ssh_key_options in list(self.ssh_keys):
@@ -198,8 +221,16 @@ class BootstrapUtils:
                     if not exists(pub_key):
                         print("Public key '%s' for '%s' missing." % (pub_key, ssh_key))
                         sys.exit(1)
-                    bootstrap_files[ssh_key_name] = dict(local=ssh_key, remote='/mnt/etc/ssh/%s' % ssh_key_name, mode=0600)
-                    bootstrap_files[pub_key_name] = dict(local=pub_key, remote='/mnt/etc/ssh/%s' % pub_key_name, mode=0644)
+                    bootstrap_files[ssh_key_name] = BootstrapFile(
+                        self, ssh_key_name, **dict(
+                            local=ssh_key,
+                            remote='/mnt/etc/ssh/%s' % ssh_key_name,
+                            mode=0600))
+                    bootstrap_files[pub_key_name] = BootstrapFile(
+                        self, pub_key_name, **dict(
+                            local=pub_key,
+                            remote='/mnt/etc/ssh/%s' % pub_key_name,
+                            mode=0644))
         return bootstrap_files
 
     def print_bootstrap_files(self):

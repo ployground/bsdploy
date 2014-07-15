@@ -11,21 +11,14 @@ install_requires = [
     'PyYAML',
     'jinja2',
     'setuptools',
-    'ploy>=1.0rc13',
-    'ploy_ansible>=1.0b7',
+    'ploy>=1.0rc14',
+    'ploy_ansible>=1.0b8',
     'ploy_ezjail>=1.0b9',
-    'ploy_fabric>=1.0b5',
+    'ploy_fabric>=1.0b6',
 ]
 
-# workaround for installing via buildout, as ansible
-# violates its sandbox limitations
-try:
-    import ansible  # noqa
-except ImportError:
-    install_requires.append('ansible')
-
-
-setup(name="bsdploy",
+setup(
+    name="bsdploy",
     version=version,
     description="A tool to provision, configure and maintain FreeBSD jails",
     long_description=README + '\n\n\nChanges\n=======\n\n' + CHANGES,

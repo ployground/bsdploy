@@ -85,6 +85,15 @@ And in your ``staging.conf`` you define ``fqdn_suffix`` to be i.e. ``.192.168.56
 
 Finally, configure the VirtualBox instance in staging to use a host-only adapter, like so (the second nic is needed for the virtual instance to access the internet)::
 
+	[vb-hostonlyif:vboxnet0]
+	ip = 192.168.56.1
+
+	[vb-dhcpserver:vboxnet0]
+	ip = 192.168.56.2
+	netmask = 255.255.255.0
+	lowerip = 192.168.56.100
+	upperip = 192.168.56.254
+
 	[vb-instance:provisioner]
 	vm-ostype = FreeBSD_64
 	vm-nic1 = hostonly

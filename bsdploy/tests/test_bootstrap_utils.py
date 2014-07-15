@@ -129,7 +129,7 @@ def test_bootstrap_files_no_ssh_keys(bu, capsys, tempdir):
     (out, err) = capsys.readouterr()
     out_lines = out.splitlines()
     assert out_lines == [
-        "Found no public key in %(tempdir)s/.ssh, you have to create '%(tempdir)s/etc/authorized_keys' manually" % format_info]
+        "Found no public key in %(tempdir)s/.ssh, you have to create '%(tempdir)s/bootstrap-files/authorized_keys' manually" % format_info]
 
 
 def test_bootstrap_files_multiple_ssh_keys_but_none_used(bu, capsys, tempdir, yesno_mock):
@@ -145,7 +145,7 @@ def test_bootstrap_files_multiple_ssh_keys_but_none_used(bu, capsys, tempdir, ye
     (out, err) = capsys.readouterr()
     out_lines = out.splitlines()
     assert out_lines == [
-        "The '%(tempdir)s/etc/authorized_keys' file is missing." % format_info,
+        "The '%(tempdir)s/bootstrap-files/authorized_keys' file is missing." % format_info,
         "Should we generate it using the key in '%(tempdir)s/.ssh/id_dsa.pub'?" % format_info,
         "Should we generate it using the key in '%(tempdir)s/.ssh/id_rsa.pub'?" % format_info]
 
@@ -161,16 +161,16 @@ def test_bootstrap_files_multiple_ssh_keys_use_second(bu, capsys, run_mock, temp
     (out, err) = capsys.readouterr()
     out_lines = out.splitlines()
     assert out_lines == [
-        "The '%(tempdir)s/etc/authorized_keys' file is missing." % format_info,
+        "The '%(tempdir)s/bootstrap-files/authorized_keys' file is missing." % format_info,
         "Should we generate it using the key in '%(tempdir)s/.ssh/id_dsa.pub'?" % format_info,
         "Should we generate it using the key in '%(tempdir)s/.ssh/id_rsa.pub'?" % format_info]
-    assert os.path.exists(tempdir['etc/authorized_keys'].path)
-    with open(tempdir['etc/authorized_keys'].path) as f:
+    assert os.path.exists(tempdir['bootstrap-files/authorized_keys'].path)
+    with open(tempdir['bootstrap-files/authorized_keys'].path) as f:
         assert f.read() == 'id_rsa'
 
 
 def test_default_rc_conf(bu, tempdir):
-    tempdir['etc/authorized_keys'].fill('id_dsa')
+    tempdir['bootstrap-files/authorized_keys'].fill('id_dsa')
     bfs = bu.bootstrap_files
     result = bfs['rc.conf'].read({
         'hostname': 'foo',
@@ -195,7 +195,7 @@ def test_default_rc_conf(bu, tempdir):
     ('    {% for x in xs -%}\n    foo_{{x}}\n{% endfor %}\n', {'xs': ['bar']}, '    foo_bar\n'),
 ])
 def test_bootstrap_files_template(bu, input, context, expected, tempdir):
-    tempdir['etc/authorized_keys'].fill('id_dsa')
+    tempdir['bootstrap-files/authorized_keys'].fill('id_dsa')
     tempdir['bootstrap-files/rc.conf'].fill(input)
     bfs = bu.bootstrap_files
     if isinstance(expected, basestring):
@@ -206,29 +206,11 @@ def test_bootstrap_files_template(bu, input, context, expected, tempdir):
             bfs['rc.conf'].read(context)
 
 
-@pytest.fixture
-def local_mock(fabric_integration, monkeypatch):
-    from mock import Mock
-    local = Mock()
-
-    def _local(command):
-        try:
-            expected = local.expected.pop(0)
-        except IndexError:  # pragma: nocover
-            expected = '', '', ''
-        assert command == expected
-
-    local.side_effect = _local
-    local.expected = []
-    monkeypatch.setattr('bsdploy.bootstrap_utils.local', local)
-    return local
-
-
 def test_fetch_assets(bu, local_mock, tempdir):
     format_info = dict(tempdir=tempdir.directory)
-    tempdir['etc/authorized_keys'].fill('id_dsa')
+    tempdir['bootstrap-files/authorized_keys'].fill('id_dsa')
     local_mock.expected = [
-        'wget -c -O "%(tempdir)s/downloads/pkg.txz" "http://pkg.freebsd.org/freebsd:9:x86:64/quarterly/Latest/pkg.txz"' % format_info]
+        ('wget -c -O "%(tempdir)s/downloads/pkg.txz" "http://pkg.freebsd.org/freebsd:9:x86:64/quarterly/Latest/pkg.txz"' % format_info, {}, '')]
     bu.fetch_assets()
 
 
@@ -236,7 +218,7 @@ def test_fetch_assets_packagesite(bu, local_mock, tempdir):
     from bsdploy import bsdploy_path
     pytest.importorskip("lzma")
     format_info = dict(tempdir=tempdir.directory)
-    tempdir['etc/authorized_keys'].fill('id_dsa')
+    tempdir['bootstrap-files/authorized_keys'].fill('id_dsa')
     tempdir['bootstrap-files/files.yml'].fill([
         "'packagesite.txz':",
         "    url: 'http://pkg.freebsd.org/freebsd:9:x86:64/quarterly/packagesite.txz'",
@@ -244,9 +226,9 @@ def test_fetch_assets_packagesite(bu, local_mock, tempdir):
     with open(os.path.join(bsdploy_path, 'tests', 'packagesite.txz')) as f:
         tempdir['downloads/packagesite.txz'].fill(f.read())
     local_mock.expected = [
-        'wget -c -O "%(tempdir)s/downloads/packagesite.txz" "http://pkg.freebsd.org/freebsd:9:x86:64/quarterly/packagesite.txz"' % format_info,
-        'wget -c -O "%(tempdir)s/downloads/pkg.txz" "http://pkg.freebsd.org/freebsd:9:x86:64/quarterly/Latest/pkg.txz"' % format_info,
-        'wget -c -O "%(tempdir)s/downloads/packages/freebsd:9:x86:64/latest/All/python27-2.7.6_4.txz" "http://pkg.freebsd.org/freebsd:9:x86:64/latest/All/python27-2.7.6_4.txz"' % format_info,
-        'wget -c -O "%(tempdir)s/downloads/packages/freebsd:9:x86:64/latest/All/gettext-0.18.3.1.txz" "http://pkg.freebsd.org/freebsd:9:x86:64/latest/All/gettext-0.18.3.1.txz"' % format_info,
-        'wget -c -O "%(tempdir)s/downloads/packages/freebsd:9:x86:64/latest/All/libiconv-1.14_3.txz" "http://pkg.freebsd.org/freebsd:9:x86:64/latest/All/libiconv-1.14_3.txz"' % format_info]
+        ('wget -c -O "%(tempdir)s/downloads/packagesite.txz" "http://pkg.freebsd.org/freebsd:9:x86:64/quarterly/packagesite.txz"' % format_info, {}, ''),
+        ('wget -c -O "%(tempdir)s/downloads/pkg.txz" "http://pkg.freebsd.org/freebsd:9:x86:64/quarterly/Latest/pkg.txz"' % format_info, {}, ''),
+        ('wget -c -O "%(tempdir)s/downloads/packages/freebsd:9:x86:64/latest/All/python27-2.7.6_4.txz" "http://pkg.freebsd.org/freebsd:9:x86:64/latest/All/python27-2.7.6_4.txz"' % format_info, {}, ''),
+        ('wget -c -O "%(tempdir)s/downloads/packages/freebsd:9:x86:64/latest/All/gettext-0.18.3.1.txz" "http://pkg.freebsd.org/freebsd:9:x86:64/latest/All/gettext-0.18.3.1.txz"' % format_info, {}, ''),
+        ('wget -c -O "%(tempdir)s/downloads/packages/freebsd:9:x86:64/latest/All/libiconv-1.14_3.txz" "http://pkg.freebsd.org/freebsd:9:x86:64/latest/All/libiconv-1.14_3.txz"' % format_info, {}, '')]
     bu.fetch_assets()
