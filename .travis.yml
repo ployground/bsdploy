@@ -7,3 +7,8 @@ install:
   - pip install tox
 script:
   - tox -e $TOX_ENV
+notifications:
+  irc:
+    - "irc.freenode.org#bsdploy"
+  on_success: change
+  on_failure: change
