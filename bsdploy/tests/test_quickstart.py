@@ -116,7 +116,6 @@ def iter_quickstart_calls(actions, tempdir):
 
 
 def test_quickstart_calls(qs_path, tempdir):
-    from pprint import pprint
     calls = []
     for action, func, args, kw in iter_quickstart_calls(parse_qs(qs_path), tempdir):
         if action in ('add', 'create'):
@@ -124,13 +123,12 @@ def test_quickstart_calls(qs_path, tempdir):
             calls.append((action, func.__self__.path))
         else:
             calls.append((func, args))
-    pprint(calls)
     assert calls == [
         (subprocess.check_call, ('pip install --pre ploy_virtualbox',)),
         (subprocess.check_call, ('mkdir ploy-quickstart',)),
         (subprocess.check_call, ('cd ploy-quickstart',)),
         (subprocess.check_call, ('mkdir downloads',)),
-        (subprocess.check_call, ('ploy-download file:///Users/fschulze/downloads/archives/mfsbsd-se-9.2-RELEASE-amd64.iso 4ef70dfd7b5255e36f2f7e1a5292c7a05019c8ce downloads/',)),
+        (subprocess.check_call, ('ploy-download http://mfsbsd.vx.sk/files/iso/9/amd64/mfsbsd-se-9.2-RELEASE-amd64.iso 4ef70dfd7b5255e36f2f7e1a5292c7a05019c8ce downloads/',)),
         (subprocess.check_call, ('mkdir etc',)),
         ('create', '%s/etc/ploy.conf' % tempdir.directory),
         (subprocess.check_call, ('ploy start ploy-demo',)),
