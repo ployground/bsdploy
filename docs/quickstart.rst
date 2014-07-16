@@ -139,7 +139,7 @@ In other words, there's still work to do, so let's log out and continue...
 Configuring the host
 --------------------
 
-Now we can configure the vanilla installation. This step is performed internally using `ansible playbooks <http://docs.ansible.com/playbooks_intro.html>`_, which are divided into different so-called *roles*. For the tutorial we will need the DHCP role (since Virtualbox provides DHCP to the VM) and the main jailhost role so add the following lines to the jailhost configuration to make it look like so::
+Now we can configure the vanilla installation. This step is performed internally using `ansible playbooks <http://docs.ansible.com/playbooks_intro.html>`_, which are divided into different so-called *roles*. For the tutorial we will need the DHCP role (since Virtualbox provides DHCP to the VM) and the main jailhost role so add the following lines to the jailhost configuration in ``ploy.conf`` to make it look like so::
 
 	[ez-master:jailhost]
 	instance = ploy-demo
@@ -258,11 +258,11 @@ Port forwarding
 
 Port forwarding from the host to jails is implemented using ``ipnat`` and BSDploy offers explicit support for configuring it.
 
-To do so, create a file named ``host_vars/jailhost.yml``::
+To do so, make a folder named ``host_vars``::
 
 	% mkdir host_vars
 
-with the following content::
+and create the file ``jailhost.yml`` in it with the following content::
 
 	ipnat_rules:
 	    - "rdr em0 {{ ansible_em0.ipv4[0].address }}/32 port 80 -> {{ hostvars['jailhost-demo_jail']['ploy_ip'] }} port 80"

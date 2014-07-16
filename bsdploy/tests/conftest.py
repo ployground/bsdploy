@@ -6,6 +6,12 @@ import pytest
 (ployconf, tempdir)  # shutup pyflakes
 
 
+def pytest_addoption(parser):
+    parser.addoption(
+        "--quickstart-bsdploy", help="Run the quickstart with this bsdploy sdist",
+        action="store", dest="quickstart_bsdploy")
+
+
 default_mounts = '\n'.join([
     '/dev/md0 on / (ufs, local, read-only)',
     'devfs on /dev (devfs, local, multilabel)',
