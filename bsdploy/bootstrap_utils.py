@@ -49,6 +49,8 @@ class BootstrapFile(object):
 
     @property
     def local(self):
+        if 'local' in self.info:
+            return self.info['local']
         local_path = join(self.expected_path, self.filename)
         if self.raw_fallback:
             return local_path
@@ -209,8 +211,8 @@ class BootstrapUtils:
                     if not filename.endswith('.txz'):
                         continue
                     bootstrap_files[join(path, filename)] = BootstrapFile(
-                        self, filename, **dict(
-                            local=join(dirpath, join(path, filename)),
+                        self, join(path, filename), **dict(
+                            local=join(packages_path, join(path, filename)),
                             remote=join('/mnt/var/cache/pkg/All', filename)))
 
         if self.ssh_keys is not None:
