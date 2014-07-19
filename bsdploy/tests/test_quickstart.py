@@ -104,8 +104,7 @@ def iter_quickstart_calls(actions, tempdir):
             yield (action[0], paths[name].fill, (content,), {})
         elif action[0] == 'add':
             name = action[1][-1]
-            with open(paths[name].path) as f:
-                content = f.read().split('\n')
+            content = paths[name].content().split('\n')
             content.extend(action[2])
             content.append('')
             yield (action[0], paths[name].fill, (content,), {})
@@ -146,6 +145,59 @@ def test_quickstart_calls(qs_path, tempdir):
         ('create', '%s/host_vars/jailhost.yml' % tempdir.directory),
         (subprocess.check_call, ('ploy configure jailhost -t ipnat_rules',)),
         (subprocess.check_call, ("ploy ssh jailhost 'ifconfig em0'",))]
+    assert tempdir['etc/ploy.conf'].content().splitlines() == [
+        '[vb-hostonlyif:vboxnet0]',
+        'ip = 192.168.56.1',
+        '',
+        '[vb-dhcpserver:vboxnet0]',
+        'ip = 192.168.56.2',
+        'netmask = 255.255.255.0',
+        'lowerip = 192.168.56.100',
+        'upperip = 192.168.56.254',
+        '',
+        '[vb-instance:ploy-demo]',
+        'vm-ostype = FreeBSD_64',
+        'vm-memory = 512',
+        'vm-accelerate3d = off',
+        'vm-acpi = on',
+        'vm-rtcuseutc = on',
+        'vm-boot1 = disk',
+        'vm-boot2 = dvd',
+        'vm-nic1 = hostonly',
+        'vm-hostonlyadapter1 = vboxnet0',
+        'vm-nic2 = nat',
+        'vm-natpf2 = ssh,tcp,,44003,,22',
+        'storage =',
+        '    --type dvddrive --medium ../downloads/mfsbsd-se-9.2-RELEASE-amd64.iso',
+        '    --medium vb-disk:boot',
+        '',
+        '[vb-disk:boot]',
+        'size = 102400',
+        '',
+        '[ez-master:jailhost]',
+        'instance = ploy-demo',
+        '',
+        '[ez-master:jailhost]',
+        'instance = ploy-demo',
+        'roles =',
+        '    dhcp_host',
+        '    jails_host',
+        '',
+        '[ez-instance:demo_jail]',
+        'ip = 10.0.0.1']
+    assert tempdir['jailhost-demo_jail.yml'].content().splitlines() == [
+        '---',
+        '- hosts: jailhost-demo_jail',
+        '  tasks:',
+        '    - name: install nginx',
+        '      pkgng: name=nginx state=present',
+        '    - name: enable nginx at startup time',
+        '      lineinfile: dest=/etc/rc.conf regexp=^nginx_enable= line=nginx_enable=\\"YES\\"',
+        '    - name: make sure nginx is running or reloaded',
+        '      service: name=nginx state=restarted']
+    assert tempdir['host_vars/jailhost.yml'].content().splitlines() == [
+        'ipnat_rules:',
+        '    - "rdr em0 {{ ansible_em0.ipv4[0].address }}/32 port 80 -> {{ hostvars[\'jailhost-demo_jail\'][\'ploy_ip\'] }} port 80"']
 
 
 @pytest.yield_fixture
