@@ -41,6 +41,8 @@
   lineinfile: dest=/etc/rc.conf regexp=^cloned_interfaces= line=cloned_interfaces=\"lo1\"
   notify: restart network
 
+- meta: flush_handlers
+
 - name: Enable allow_raw_sockets
   sysctl: name=security.jail.allow_raw_sockets value=1 state=present
 - name: Enable sysvipc_allowed
