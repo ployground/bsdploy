@@ -79,7 +79,7 @@ def augment_instance(instance):
             instance.config['startup_script'] = path.join(
                 bsdploy_path, 'startup-ansible-jail.sh')
         if 'flavour' not in instance.config:
-            instance.config['flavour'] = 'base'
+            instance.config['flavour'] = 'bsdploy_base'
 
 
 def get_commands(ctrl):

@@ -76,7 +76,7 @@ def test_augment_ezjail_instance(ctrl, ployconf):
         'startup_script']
     assert config['ansible_python_interpreter'] == '/usr/local/bin/python2.7'
     assert config['fabric-shell'] == '/bin/sh -c'
-    assert config['flavour'] == 'base'
+    assert config['flavour'] == 'bsdploy_base'
     assert config['master'] == 'jailhost'
     assert config['startup_script']['path'].endswith('startup-ansible-jail.sh')
     assert os.path.exists(config['startup_script']['path']), "The startup_script at '%s' doesn't exist." % config['startup_script']['path']
