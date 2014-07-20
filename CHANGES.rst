@@ -1,4 +1,4 @@
-1.0b5 - unreleased
+1.0.0 - 2014-07-20
 ==================
 
 - added bsdploy.fabutils with a wrapper for rsync_project
