@@ -1,6 +1,7 @@
 1.0b5 - unreleased
 ==================
 
+- added bsdploy.fabutils with a wrapper for rsync_project
 - automatically set env.shell for fabric scripts.
 - generate ssh host keys locally during bootstrap if possible.
 - set ``fingerprint`` option for ezjail master automatically if a ssh host key exists locally.
