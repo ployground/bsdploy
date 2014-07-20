@@ -76,19 +76,19 @@ def test_roles(ctrl, monkeypatch):
         'Jails ZFS file system',
         'Initialize ezjail (may take a while)',
         'Download pkg.txz',
-        'Directory for jail flavour "base"',
-        'Pkg in base flavour',
-        'The .ssh directory for root in base flavour',
-        'The etc directory in base flavour',
-        'The etc/ssh directory in base flavour',
-        'copy src=make.conf dest=/usr/jails/flavours/base/etc/make.conf owner=root group=wheel',
-        'file dest=/usr/jails/flavours/base/usr/local/etc/pkg/repos state=directory owner=root group=wheel',
-        'copy src=pkg.conf dest=/usr/jails/flavours/base/usr/local/etc/pkg.conf owner=root group=wheel',
-        'template src=FreeBSD.conf dest=/usr/jails/flavours/base/usr/local/etc/pkg/repos/FreeBSD.conf owner=root group=wheel',
-        'rc.conf for base flavour',
-        'sshd_config for base flavour',
-        'motd for base flavour',
-        'copy some settings from host to base flavour']
+        'Directory for jail flavour "bsdploy_base"',
+        'Pkg in bsdploy_base flavour',
+        'The .ssh directory for root in bsdploy_base flavour',
+        'The etc directory in bsdploy_base flavour',
+        'The etc/ssh directory in bsdploy_base flavour',
+        'copy src=make.conf dest=/usr/jails/flavours/bsdploy_base/etc/make.conf owner=root group=wheel',
+        'file dest=/usr/jails/flavours/bsdploy_base/usr/local/etc/pkg/repos state=directory owner=root group=wheel',
+        'copy src=pkg.conf dest=/usr/jails/flavours/bsdploy_base/usr/local/etc/pkg.conf owner=root group=wheel',
+        'template src=FreeBSD.conf dest=/usr/jails/flavours/bsdploy_base/usr/local/etc/pkg/repos/FreeBSD.conf owner=root group=wheel',
+        'rc.conf for bsdploy_base flavour',
+        'sshd_config for bsdploy_base flavour',
+        'motd for bsdploy_base flavour',
+        'copy some settings from host to bsdploy_base flavour']
 
 
 def test_all_role_templates_tested(ctrl, monkeypatch, request):
