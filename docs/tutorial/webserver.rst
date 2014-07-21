@@ -171,7 +171,7 @@ Since the webserver jail only has read-access, we need to upload the website via
 
 	[ez-master:jailhost]
 	instance = ploy-demo
-	fabfile = ../fabweb.py
+	fabfile = ../fabfile.py
 
 Create a simple index page::
 
