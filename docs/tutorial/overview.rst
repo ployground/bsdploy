@@ -13,11 +13,6 @@ We will
 
 - configure a webserver jail (nginx) with a simple static overview site which contains links to the various services offered inside the jails. This step will also demonstrate the integration of Fabric scripts and configuring FreeBSD services and how to mount ZFS filesystems into jails.
 - install an application that is more or less usable out-of-the-box and requires minimal configuration (transmission, a bit torrent client with a web frontend)
-- then migrate to installing a custom application from source (a pyramid application). This will demonstrate best practices such as
-
-  - creating custom users for your applications and adjust permissions
-  - inter-jail communication
-
 - create a 'production' configuration and apply the setup to it
 
 
