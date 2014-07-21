@@ -47,7 +47,15 @@ So here, we tag the new task with ``zfs-layout``, so we can call it explicitly::
 
 .. note:: You should see an ``INFO`` entry in the output that tells you which playbook the ``configure`` command has used.
 
-Now we can create the webserver host and mount the website ZFS into it like so::
+
+Exercise
+--------
+
+In the quickstart, we've created a demo jail which conveniently already contains a webserver.
+
+Repurpose it to create a jail named webserver which has nginx installed into it.
+
+Now we can mount the website ZFS into it like so::
 
 	[ez-instance:webserver]
 	master = jailhost
