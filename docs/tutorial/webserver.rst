@@ -63,7 +63,7 @@ Now we can mount the website ZFS into it like so::
 	master = jailhost
 	ip = 10.0.0.2
 	mounts =
-	    src=tank/htdocs dst=/usr/local/www/data ro=true
+	    src=/tank/htdocs dst=/usr/local/www/data ro=true
 
 .. note:: Mounting filesystems into jails gives us the ability to mount them read-only, like we do in this case.
 
