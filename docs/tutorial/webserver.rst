@@ -32,7 +32,7 @@ Once we have a playbook in place, it becomes easy to add custom tasks::
 
 	  tasks:
 	    - name: ensure ZFS file systems are in place
-	      zfs: name={{ item }} state=present
+	      zfs: name={{ item }} state=present mountpoint=/{{ item }}
 	      with_items:
 	      - tank/htdocs
 	      tags: zfs-layout
