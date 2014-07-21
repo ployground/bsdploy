@@ -5,7 +5,7 @@ The idea is that the webserver lives in its own jail and receives all HTTP traff
 
 The webserver jail itself will host a simple website that lists and links the available services.
 
-The website itself will in a dedicated ZFS that will be mounted into the jail, so let's start with creating this.
+The website will be in a dedicated ZFS that will be mounted into the jail, so let's start with creating this.
 
 In ``etc/ploy.conf`` from the quickstart you should have the following ezjail master::
 
@@ -25,10 +25,8 @@ To set up the ZFS layout we will replace the inline roles with a dedicated playb
 	- hosts: jailhost
 	  user: root
 	  roles:
-	    - { role: dhcp_host }
-	    - { role: jails_host, tags: ['jails_host'] }
-
-.. note:: Here we also demonstrate how to tie roles to tags for the ``jails_host`` role, by using YAML dictionaries as list items
+	    - dhcp_host
+	    - jails_host
 
 Once we have a playbook in place, it becomes easy to add custom tasks::
 
@@ -53,7 +51,11 @@ Exercise
 
 In the quickstart, we've created a demo jail which conveniently already contains a webserver.
 
-Repurpose it to create a jail named webserver which has nginx installed into it.
+Repurpose it to create a jail named ``webserver`` which has nginx installed into it.
+
+Do this by first terminating the demo jail, *then* renaming it, otherwise we will have an 'orphaned' instance which would interfere with the new jail::
+
+	ploy terminate demo_jail
 
 Now we can mount the website ZFS into it like so::
 
@@ -163,7 +165,6 @@ Let's create a top-level file named ``fabfile.py`` with the following contents::
 	from fabric import api as fab
 
 	def upload_website():
-		ansible_vars = fab.env.instance.get_ansible_variables()
 		fab.put('htdocs/*', '/usr/jails/webserver/usr/local/www/nginx/')
 
 Since the webserver jail only has read-access, we need to upload the website via the host (for now), so let's associate the fabric file with the host by making its entry in ``ploy.conf`` look like so::
@@ -184,11 +185,23 @@ Then upload it::
 and reload the website.
 
 
-Exercise
---------
+Exercise One
+------------
 
 Requiring write-access to the jail host in order to update the website is surely not very clever.
 
 Your task is to create a jail named ``website-edit`` that contains a writeable mount of the website and which uses a modified version of the fabric script from above to update the contents.
 
-Bonus: put the path to the website on the host into a ansible variable defined in ploy.conf and make the fabric script reference it.
+
+Exercise Two
+------------
+
+Put the path to the website on the host into a ansible variable defined in ploy.conf and make the fabric script reference it instead of hard coding it.
+
+You can access variables defined in ansible and ``ploy.conf`` in Fabric via its ``env`` like so::
+
+	ansible_vars = fab.env.instance.get_ansible_variables()
+
+The result is a dictionary populated with variables from ``group_vars``, ``host_vars`` and from within ``ploy.conf``.
+However, it does *not* contain any of the Ansible facts.
+For details check `ploy_fabric's documentation <http://ploy.readthedocs.org/en/latest/ploy_ansible/README.html>`_
