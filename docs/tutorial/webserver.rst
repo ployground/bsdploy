@@ -110,3 +110,77 @@ To activate the rules, re-apply the jail host configuration::
 	ploy configure jailhost -t ipnat_rules
 
 You should now be able to access the default nginx website at the ``http://192.168.56.100`` address.
+
+
+Use defaults
+------------
+
+Currently the webserver serves the default site located at ``/usr/local/www/nginx`` which is a symbolic link to ``nginx-dist``.
+
+Now, to switch it the website located inside the ZFS filesystem we could either change the nginx configuration to point to it but in practice it can be a good idea to use default settings as much as possible and instead make the environment match the default.
+*Every custom configuration file you can avoid is a potential win*.
+
+In this particular case, let's mount the website into the default location. First we need to remove the symbolic link that has been created by the nginx start up.
+Since this is truly a one-time operation (if we re-run the modified playbook against a fresh instance the symbolic link would not be created and wouldn't need to be removed) we can use ploy's ability to execute ssh commands like so::
+
+	ploy ssh jailhost "rm /usr/jails/webserver/usr/local/www/nginx"
+
+Now we can change the mountpoint in ``ploy.conf``::
+
+	[ez-instance:webserver]
+	master = jailhost
+	ip = 10.0.0.2
+	mounts =
+	    src=tank/htdocs dst=/usr/local/www/nginx ro=true
+
+Unfortunately, currently the only way to re-mount is to stop and start the jail in question, so let's do that::
+
+	ploy stop webserver
+	ploy start webserver
+
+Reload the website in your browser: you should now receive a ``Forbidden``.
+Let's change that!
+
+
+Fabric integration
+------------------
+
+So far we've used ansible to configure the host and the jail.
+Its declarative approach is perfect for this.
+But what about maintenance tasks such as updating the contents of a website?
+Such tasks are a more natural fit for an *imperative* approach and ``ploy_fabric`` gives us a neat way of doing this.
+
+Let's create a top-level file named ``fabfile.py`` with the following contents::
+
+	from fabric import api as fab
+
+	def upload_website():
+		ansible_vars = fab.env.instance.get_ansible_variables()
+		fab.put('htdocs/*', '/usr/jails/webserver/usr/local/www/nginx/')
+
+Since the webserver jail only has read-access, we need to upload the website via the host (for now), so let's associate the fabric file with the host by making its entry in ``ploy.conf`` look like so::
+
+	[ez-master:jailhost]
+	instance = ploy-demo
+	fabfile = ../fabweb.py
+
+Create a simple index page::
+
+	mkdir htdocs
+	echo "Hello Berlin" >> htdocs/index.html
+
+Then upload it::
+
+	ploy do jailhost upload_website
+
+and reload the website.
+
+
+Exercise
+--------
+
+Requiring write-access to the jail host in order to update the website is surely not very clever.
+
+Your task is to create a jail named ``website-edit`` that contains a writeable mount of the website and which uses a modified version of the fabric script from above to update the contents.
+
+Bonus: put the path to the website on the host into a ansible variable defined in ploy.conf and make the fabric script reference it.
