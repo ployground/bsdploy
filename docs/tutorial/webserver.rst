@@ -133,7 +133,7 @@ Now, to switch it the website located inside the ZFS filesystem we could either 
 In this particular case, let's mount the website into the default location. First we need to remove the symbolic link that has been created by the nginx start up.
 Since this is truly a one-time operation (if we re-run the modified playbook against a fresh instance the symbolic link would not be created and wouldn't need to be removed) we can use ploy's ability to execute ssh commands like so::
 
-	ploy ssh jailhost "rm /usr/jails/webserver/usr/local/www/nginx"
+	ploy ssh webserver "rm /usr/local/www/nginx"
 
 Now we can change the mountpoint in ``ploy.conf``::
 
@@ -141,15 +141,14 @@ Now we can change the mountpoint in ``ploy.conf``::
 	master = jailhost
 	ip = 10.0.0.2
 	mounts =
-	    src=tank/htdocs dst=/usr/local/www/nginx ro=true
+	    src=/tank/htdocs dst=/usr/local/www/nginx ro=true
 
 Unfortunately, currently the only way to re-mount is to stop and start the jail in question, so let's do that::
 
 	ploy stop webserver
 	ploy start webserver
 
-Reload the website in your browser: you should now receive a ``Forbidden``.
-Let's change that!
+Reload the website in your browser: you should now receive a ``Forbidden`` instead of the default site because the website directory is still empty.
 
 
 Fabric integration
@@ -190,7 +189,7 @@ Exercise One
 
 Requiring write-access to the jail host in order to update the website is surely not very clever.
 
-Your task is to create a jail named ``website-edit`` that contains a writeable mount of the website and which uses a modified version of the fabric script from above to update the contents.
+Your task is to create a jail named ``website_edit`` that contains a writeable mount of the website and which uses a modified version of the fabric script from above to update the contents.
 
 
 Exercise Two
