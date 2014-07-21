@@ -35,13 +35,17 @@ Populate them with a settings template in ``roles/transmission/templates/setting
         "ratio-limit-enabled": true
     }
 
-And in ``roles/transmission/handlers/main.yml``::
+And in ``roles/transmission/handlers/main.yml``:
+
+.. code-block:: yaml
 
     ---
     - name: restart transmission
       service: name=transmission state=restarted
 
-And finally in ``roles/transmission/tasks/main.yml``::
+And finally in ``roles/transmission/tasks/main.yml``:
+
+.. code-block:: yaml
 
     - name: Ensure helper packages are installed
       pkgng: name={{ item }} state=present
