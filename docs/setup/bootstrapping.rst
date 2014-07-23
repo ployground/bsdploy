@@ -6,6 +6,22 @@ Bootstrapping in the context of BSDploy means installing FreeBSD onto a :doc:`pr
 The Bootstrapping process assumes that the target host has been booted into an installer and can be reached via SSH under the configured address and that you have configured the appropriate bootstrapping type (currently either ``mfsbsd`` or ``daemonology``).
 
 
+Bootstrapping FreeBSD 10
+------------------------
+
+The default version that BSDploy assumes is 9.2 (the latest 9.x  FreeBSD version that mfsBSD supports).
+If you want to install different versions, i.e. 10.0 you must:
+
+- set ``bootstrap-fingerprint`` to ``1f:cb:78:20:b8:97:dd:dc:3d:23:75:f0:bb:ad:84:03`` in ``ploy.conf``
+- create a file named ``files.yml`` in ``bootstrap-files`` with the following contents::
+
+    ---
+    'pkg.txz':
+        url: 'http://pkg.freebsd.org/freebsd:10:x86:64/quarterly/Latest/pkg.txz'
+        directory: '/mnt/var/cache/pkg/All'
+        remote: '/mnt/var/cache/pkg/All/pkg.txz'
+
+
 Bootstrap configuration
 -----------------------
 
@@ -52,7 +68,7 @@ You can use the following optional parameters to configure the bootstrapping pro
 
 - ``bootstrap-bsd-url``: If you don't want to use the installation files found on the installer image (or if your boot image doesn't contain any) you can provide an explicit alternative (i.e. ``http://ftp4.de.freebsd.org/pub/FreeBSD/releases/amd64/9.2-RELEASE/``) and this will be used to fetch the system from.
 
-- ``bootstrap-fingerprint``: Since the installer runs a different sshd configuration than the final installation, we need to provide its fingerprint explicitly. However, if you don't provide one, BSDploy will assume the (currently hardcoded) fingerprint of the 9.2 mfsBSD installer (``02:2e:b4:dd:c3:8a:b7:7b:ba:b2:4a:f0:ab:13:f4:2d``).
+- ``bootstrap-fingerprint``: Since the installer runs a different sshd configuration than the final installation, we need to provide its fingerprint explicitly. However, if you don't provide one, BSDploy will assume the (currently hardcoded) fingerprint of the 9.2 mfsBSD installer (``02:2e:b4:dd:c3:8a:b7:7b:ba:b2:4a:f0:ab:13:f4:2d``). If you are using newer versions you must update the value (for 10.0 i.e. ``1f:cb:78:20:b8:97:dd:dc:3d:23:75:f0:bb:ad:84:03``)
 
 
 Bootstrap rc.conf

@@ -11,9 +11,9 @@ A FreeBSD system that wants to be managed by BSDploy will need to have `ezjail <
 
 Strictly speaking, BSDploy only needs Python for the initial configuration of the jailhost. If you chose to perform that step yourself or use a pre-existing host, you won't need Python on the host, just ezjail.
 
-BSDPloy can take care of these requirements for you during bootstrapping but of course you can also use it to manage existing machines that already meet them.
+BSDploy can take care of these requirements for you during bootstrapping but of course you can also use it to manage existing machines that already meet them.
 
-BSDploy currently only supports FreeBSD 9.2 (although in theory any 9.x should work) but not yet FreeBSD 10. But that is only a matter of time. We can't wait to use it on 10 ourselves :-)
+BSDploy supports FreeBSD >= 9.2, including 10.0.
 
 
 Client Installation
