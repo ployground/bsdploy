@@ -103,7 +103,4 @@ The following features don't exist yet but should eventually :)
 
 - OS installers
    - homebrew
-   - freebsd ports + pkgng
-   - ?
-- support ``bootstrap-rc-XXX``
 - support vmware explicitly (like virtualbox)?
