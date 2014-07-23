@@ -1,7 +1,5 @@
 .. include:: ../README.rst
 
-.. warning:: BSDploy is currently still in beta. While it's not considered ready for production, it is now in feature freeze mode and you are encouraged to :doc:`give it a spin </quickstart>` and `report any issues <http://github.com/ployground/bsdploy/issues>`_ that you find, so it can move to a 1.0 release – thanks!
-
 
 Dive in
 -------
