@@ -124,10 +124,10 @@ Bootstrap execution
 
 With (all) those pre-requisites out of the way, the entire process boils down to issuing the following command::
 
-    ploy bootstrap
+    % ploy bootstrap
 
 Or, if your configuration has more than one instance defined you need to provide its name, i.e.::
 
-    ploy bootstrap jailhost
+    % ploy bootstrap jailhost
 
 Once this has run successfully, you can move on to the final setup step :doc:`Configuration <configuration>`.
