@@ -27,7 +27,9 @@ Bootstrap configuration
 
 Since bootstrapping is specific to BSDploy we cannot configure it in the provisioning instance. Instead we need to create a specific entry for it in our configuration of the type ``ez-master`` and assign it to the provisioner.
 
-I.e. in our example::
+I.e. in our example:
+
+.. code-block:: ini
 
     [ez-master:jailhost]
     instance = ploy-demo
@@ -42,13 +44,17 @@ If you don't know the device name FreeBSD has assigned, run ``gpart list`` and l
 
 If you provide more than one device name, BSDploy will create a zpool mirror configuration, just make sure the devices are compatible.
 
-There we can provide the name of the target device, so we get the following::
+There we can provide the name of the target device, so we get the following:
+
+.. code-block:: ini
 
     [ez-master:jailhost]
     instance = ploy-demo
     bootstrap-system-devices = ada0
 
-Or if we have more than one device::
+Or if we have more than one device:
+
+.. code-block:: ini
 
     [ez-master:jailhost]
     instance = ploy-demo
