@@ -7,3 +7,7 @@
   service: name=sshd state=restarted
 - name: restart ntpd
   service: name=ntpd state=restarted
+- name: reload sysctl
+  raw: service sysctl reload
+  register: command_result
+  failed_when: "command_result.stderr"
