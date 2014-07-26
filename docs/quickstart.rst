@@ -39,7 +39,7 @@ First, we need to download a FreeBSD boot image. BSDploy uses `mfsBSD <http://mf
 BSDploy provides a small cross-platform helper for downloading assets via HTTP which also checks the integrity of the downloaded file::
 
 	% mkdir downloads
-	% ploy-download http://mfsbsd.vx.sk/files/iso/9/amd64/mfsbsd-se-9.2-RELEASE-amd64.iso 4ef70dfd7b5255e36f2f7e1a5292c7a05019c8ce downloads/
+	% ploy-download http://mfsbsd.vx.sk/files/iso/10/amd64/mfsbsd-se-10.0-RELEASE-amd64.iso 06165ce1e06ff8e4819e86c9e23e7d149f820bb4 downloads/
 
 
 Configuring the virtual machine
