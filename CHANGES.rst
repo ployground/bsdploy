@@ -1,6 +1,7 @@
 1.0.1 - Unreleased
 ==================
 
+- use FreeBSD 10.0 as default for bootstrapping and documentation
 
 
 1.0.0 - 2014-07-20
