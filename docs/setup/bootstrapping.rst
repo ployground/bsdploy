@@ -111,7 +111,7 @@ Some of these files...
 
 - need to be provided by the user (i.e. ``authorized_keys``)
 - others have some (sensible) defaults (i.e. ``rc.conf``)
-- some can be downloaded via URL (i.e.) ``http://pkg.freebsd.org/freebsd:9:x86:64/latest/Latest/pkg.txz``
+- some can be downloaded via URL (i.e.) ``http://pkg.freebsd.org/freebsd:10:x86:64/latest/Latest/pkg.txz``
 
 The list of files, their possible sources and their destination is encoded in a ``.yml`` file, the default of which is this
 

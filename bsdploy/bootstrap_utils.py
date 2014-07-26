@@ -139,7 +139,7 @@ class BootstrapUtils:
         Some...
             - need to be provided by the user (i.e. authorized_keys)
             - others have some (sensible) defaults (i.e. rc.conf)
-            - some can be downloaded via URL (i.e.) http://pkg.freebsd.org/freebsd:9:x86:64/latest/Latest/pkg.txz
+            - some can be downloaded via URL (i.e.) http://pkg.freebsd.org/freebsd:10:x86:64/latest/Latest/pkg.txz
 
         For those which can be downloaded we check the downloads directory. if the file exists there
         (and if the checksum matches TODO!) we will upload it to the host. If not, we will fetch the file
