@@ -80,7 +80,7 @@ Roles are useful for more complex scenarios that are being re-used.
 For smaller tasks it's often easier to simply create a one-off playbook for a particular host.
 
 To associate a playbook with an instance you need to create a top-level YAML file with the same name as the instance – like we did above for the jailhost.
-For jail instances, this name contains both the name of the master instance *and* the name of the jail, so let's create a top-level file named ``jailhost-webserver`` with the following contents::
+For jail instances, this name contains both the name of the master instance *and* the name of the jail, so let's create a top-level file named ``jailhost-webserver.yml`` with the following contents::
 
 	---
 	- hosts: jailhost-webserver
@@ -95,14 +95,14 @@ For jail instances, this name contains both the name of the master instance *and
 In the above playbook we demonstrate
 
 - how to install a package with the ``pkgng`` module from ansible
-- enable a service in ``rc.conf`` using the ``lineinfile`` comannd
+- enable a service in ``rc.conf`` using the ``lineinfile`` command
 - ensure a service is running with the ``service`` command
 
 Let's give that a spin::
 
 	ploy configure webserver
 
-.. note:: If the name of a jail is only used in a single master instance, ``ploy`` allows us to address it without stating the full name for convenience. IOW the above command is an alias to ``ploy configure jailhost-webserver``.
+.. note:: If the name of a jail is only used in a single master instance, ``ploy`` allows us to address it without stating the full name on the command line for convenience. IOW the above command is an alias to ``ploy configure jailhost-webserver``.
 
 
 "Publishing" jails

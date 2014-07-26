@@ -127,7 +127,7 @@ def test_quickstart_calls(qs_path, tempdir):
         (subprocess.check_call, ('mkdir ploy-quickstart',)),
         (subprocess.check_call, ('cd ploy-quickstart',)),
         (subprocess.check_call, ('mkdir downloads',)),
-        (subprocess.check_call, ('ploy-download http://mfsbsd.vx.sk/files/iso/9/amd64/mfsbsd-se-9.2-RELEASE-amd64.iso 4ef70dfd7b5255e36f2f7e1a5292c7a05019c8ce downloads/',)),
+        (subprocess.check_call, ('ploy-download http://mfsbsd.vx.sk/files/iso/10/amd64/mfsbsd-se-10.0-RELEASE-amd64.iso 06165ce1e06ff8e4819e86c9e23e7d149f820bb4 downloads/',)),
         (subprocess.check_call, ('mkdir etc',)),
         ('create', '%s/etc/ploy.conf' % tempdir.directory),
         (subprocess.check_call, ('ploy start ploy-demo',)),

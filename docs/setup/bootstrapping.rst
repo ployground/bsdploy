@@ -6,18 +6,25 @@ Bootstrapping in the context of BSDploy means installing FreeBSD onto a :doc:`pr
 The Bootstrapping process assumes that the target host has been booted into an installer and can be reached via SSH under the configured address and that you have configured the appropriate bootstrapping type (currently either ``mfsbsd`` or ``daemonology``).
 
 
-Bootstrapping FreeBSD 10
-------------------------
+Bootstrapping FreeBSD 9.2
+-------------------------
 
-The default version that BSDploy assumes is 9.2 (the latest 9.x  FreeBSD version that mfsBSD supports).
-If you want to install different versions, i.e. 10.0 you must:
+The default version that BSDploy assumes is 10.0.
+If you want to install different versions, i.e. 9.2 you must:
 
-- set ``bootstrap-fingerprint`` to ``1f:cb:78:20:b8:97:dd:dc:3d:23:75:f0:bb:ad:84:03`` in ``ploy.conf``
-- create a file named ``files.yml`` in ``bootstrap-files`` with the following contents::
+- use the iso image for that version::
+
+    % ploy-download http://mfsbsd.vx.sk/files/iso/9/amd64/mfsbsd-se-9.2-RELEASE-amd64.iso 4ef70dfd7b5255e36f2f7e1a5292c7a05019c8ce downloads/
+
+- set ``bootstrap-fingerprint`` to ``02:2e:b4:dd:c3:8a:b7:7b:ba:b2:4a:f0:ab:13:f4:2d`` in ``ploy.conf``
+  (each mfsbsd release has it's own hardcoded fingerprint)
+- create a file named ``files.yml`` in ``bootstrap-files`` with the following contents:
+
+  .. code-block:: yaml
 
     ---
     'pkg.txz':
-        url: 'http://pkg.freebsd.org/freebsd:10:x86:64/quarterly/Latest/pkg.txz'
+        url: 'http://pkg.freebsd.org/freebsd:9:x86:64/quarterly/Latest/pkg.txz'
         directory: '/mnt/var/cache/pkg/All'
         remote: '/mnt/var/cache/pkg/All/pkg.txz'
 
@@ -27,7 +34,9 @@ Bootstrap configuration
 
 Since bootstrapping is specific to BSDploy we cannot configure it in the provisioning instance. Instead we need to create a specific entry for it in our configuration of the type ``ez-master`` and assign it to the provisioner.
 
-I.e. in our example::
+I.e. in our example:
+
+.. code-block:: ini
 
     [ez-master:jailhost]
     instance = ploy-demo
@@ -42,13 +51,17 @@ If you don't know the device name FreeBSD has assigned, run ``gpart list`` and l
 
 If you provide more than one device name, BSDploy will create a zpool mirror configuration, just make sure the devices are compatible.
 
-There we can provide the name of the target device, so we get the following::
+There we can provide the name of the target device, so we get the following:
+
+.. code-block:: ini
 
     [ez-master:jailhost]
     instance = ploy-demo
     bootstrap-system-devices = ada0
 
-Or if we have more than one device::
+Or if we have more than one device:
+
+.. code-block:: ini
 
     [ez-master:jailhost]
     instance = ploy-demo
@@ -98,7 +111,7 @@ Some of these files...
 
 - need to be provided by the user (i.e. ``authorized_keys``)
 - others have some (sensible) defaults (i.e. ``rc.conf``)
-- some can be downloaded via URL (i.e.) ``http://pkg.freebsd.org/freebsd:9:x86:64/latest/Latest/pkg.txz``
+- some can be downloaded via URL (i.e.) ``http://pkg.freebsd.org/freebsd:10:x86:64/latest/Latest/pkg.txz``
 
 The list of files, their possible sources and their destination is encoded in a ``.yml`` file, the default of which is this
 
@@ -118,10 +131,10 @@ Bootstrap execution
 
 With (all) those pre-requisites out of the way, the entire process boils down to issuing the following command::
 
-    ploy bootstrap
+    % ploy bootstrap
 
 Or, if your configuration has more than one instance defined you need to provide its name, i.e.::
 
-    ploy bootstrap jailhost
+    % ploy bootstrap jailhost
 
 Once this has run successfully, you can move on to the final setup step :doc:`Configuration <configuration>`.
