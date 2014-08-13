@@ -92,11 +92,11 @@ def iter_quickstart_calls(actions, tempdir):
                         continue
                     bootstrap = line.endswith('bootstrap')
                     if bootstrap:
-                        yield (action[0], time.sleep, (120,), {})
+                        yield (action[0], time.sleep, (90,), {})
                         line = '%s -y' % line
                     yield (action[0], subprocess.check_call, (line,), dict(shell=True))
                     if bootstrap:
-                        yield (action[0], time.sleep, (120,), {})
+                        yield (action[0], time.sleep, (90,), {})
         elif action[0] == 'create':
             name = action[1][-1]
             content = list(action[2])
@@ -132,9 +132,9 @@ def test_quickstart_calls(qs_path, tempdir):
         ('create', '%s/etc/ploy.conf' % tempdir.directory),
         (subprocess.check_call, ('ploy start ploy-demo',)),
         ('add', '%s/etc/ploy.conf' % tempdir.directory),
-        (time.sleep, (120,)),
+        (time.sleep, (90,)),
         (subprocess.check_call, ('ploy bootstrap -y',)),
-        (time.sleep, (120,)),
+        (time.sleep, (90,)),
         ('add', '%s/etc/ploy.conf' % tempdir.directory),
         (subprocess.check_call, ('ploy configure jailhost',)),
         ('add', '%s/etc/ploy.conf' % tempdir.directory),
@@ -192,7 +192,10 @@ def test_quickstart_calls(qs_path, tempdir):
         '    - name: install nginx',
         '      pkgng: name=nginx state=present',
         '    - name: enable nginx at startup time',
-        '      lineinfile: dest=/etc/rc.conf regexp=^nginx_enable= line=nginx_enable=\\"YES\\"',
+        '      lineinfile:',
+        '        dest: /etc/rc.conf',
+        '        regexp: ^nginx_enable=',
+        '        line: nginx_enable=\\"YES\\"',
         '    - name: make sure nginx is running or reloaded',
         '      service: name=nginx state=restarted']
     assert tempdir['host_vars/jailhost.yml'].content().splitlines() == [

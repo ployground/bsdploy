@@ -1,32 +1,53 @@
 ---
 - name: bind host sshd to primary ip
-  lineinfile: dest=/etc/ssh/sshd_config regexp=^ListenAddress line='ListenAddress {{ ansible_default_ipv4.address }}'
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: ^ListenAddress
+    line: 'ListenAddress {{ ansible_default_ipv4.address }}'
   notify: restart sshd
 
 - { include: ntpd.yml, tags: ntpd }
 
 - name: Enable ipfilter in rc.conf
-  lineinfile: dest=/etc/rc.conf regexp=^ipfilter_enable= line=ipfilter_enable=\"YES\"
+  lineinfile:
+    dest: /etc/rc.conf
+    regexp: ^ipfilter_enable=
+    line: ipfilter_enable=\"YES\"
   notify: restart network
 - name: Set ipfilter_rules in rc.conf
-  lineinfile: dest=/etc/rc.conf regexp=^ipfilter_rules= line=ipfilter_rules=\"/etc/ipf.rules\"
+  lineinfile:
+    dest: /etc/rc.conf
+    regexp: ^ipfilter_rules=
+    line: ipfilter_rules=\"/etc/ipf.rules\"
   notify: restart network
 - name: Setup ipf.rules
   template: src=ipf.rules dest=/etc/ipf.rules
   notify: restart network
 
 - name: Enable ipmon in rc.conf
-  lineinfile: dest=/etc/rc.conf regexp=^ipmon_enable= line=ipmon_enable=\"YES\"
+  lineinfile:
+    dest: /etc/rc.conf
+    regexp: ^ipmon_enable=
+    line: ipmon_enable=\"YES\"
   notify: restart network
 - name: Set ipmon_flags in rc.conf
-  lineinfile: dest=/etc/rc.conf regexp=^ipmon_flags= line=ipmon_flags=\"-Ds\"
+  lineinfile:
+    dest: /etc/rc.conf
+    regexp: ^ipmon_flags=
+    line: ipmon_flags=\"-Ds\"
   notify: restart network
 
 - name: Enable ipnat in rc.conf
-  lineinfile: dest=/etc/rc.conf regexp=^ipnat_enable= line=ipnat_enable=\"YES\"
+  lineinfile:
+    dest: /etc/rc.conf
+    regexp: ^ipnat_enable=
+    line: ipnat_enable=\"YES\"
   notify: restart network
 - name: Set ipnat_rules in rc.conf
-  lineinfile: dest=/etc/rc.conf regexp=^ipnat_rules= line=ipnat_rules=\"/etc/ipnat.rules\"
+  lineinfile:
+    dest: /etc/rc.conf
+    regexp: ^ipnat_rules=
+    line: ipnat_rules=\"/etc/ipnat.rules\"
   notify: restart network
 - name: Setup ipnat.rules
   template: src=ipnat.rules dest=/etc/ipnat.rules
@@ -34,11 +55,17 @@
   tags: ipnat_rules
 
 - name: Enable gateway in rc.conf
-  lineinfile: dest=/etc/rc.conf regexp=^gateway_enable= line=gateway_enable=\"YES\"
+  lineinfile:
+    dest: /etc/rc.conf
+    regexp: ^gateway_enable=
+    line: gateway_enable=\"YES\"
   notify: restart network
 
 - name: Add lo1 to rc.conf
-  lineinfile: dest=/etc/rc.conf regexp=^cloned_interfaces= line=cloned_interfaces=\"lo1\"
+  lineinfile:
+    dest: /etc/rc.conf
+    regexp: ^cloned_interfaces=
+    line: cloned_interfaces=\"lo1\"
   notify: restart network
 
 - meta: flush_handlers
@@ -46,11 +73,17 @@
 # The sysctl module in ansible adds spaces around the equal sign in
 # /etc/sysctl.conf which breaks in FreeBSD 10, so we do this manually
 - name: Enable security.jail.allow_raw_sockets
-  lineinfile: dest=/etc/sysctl.conf regexp="^security.jail.allow_raw_sockets\s*=" line=security.jail.allow_raw_sockets=1
+  lineinfile:
+    dest: /etc/sysctl.conf
+    regexp: ^security.jail.allow_raw_sockets\s*=
+    line: security.jail.allow_raw_sockets=1
   notify: reload sysctl
   tags: sysctl
 - name: Enable security.jail.sysvipc_allowed
-  lineinfile: dest=/etc/sysctl.conf regexp="^security.jail.sysvipc_allowed\s*=" line=security.jail.sysvipc_allowed=1
+  lineinfile:
+    dest: /etc/sysctl.conf
+    regexp: ^security.jail.sysvipc_allowed\s*=
+    line: security.jail.sysvipc_allowed=1
   notify: reload sysctl
   tags: sysctl
 
@@ -60,17 +93,29 @@
   - ezjail
 
 - name: Set default jail interface
-  lineinfile: dest=/etc/rc.conf regexp=^jail_interface= line=jail_interface=\"lo1\"
+  lineinfile:
+    dest: /etc/rc.conf
+    regexp: ^jail_interface=
+    line: jail_interface=\"lo1\"
   notify: restart ezjail
 - name: Set default jail parameters
-  lineinfile: dest=/etc/rc.conf regexp=^jail_parameters= line=jail_parameters=\"allow.raw_sockets=1\ allow.sysvipc=1\"
+  lineinfile:
+    dest: /etc/rc.conf
+    regexp: ^jail_parameters=
+    line: jail_parameters=\"allow.raw_sockets=1\ allow.sysvipc=1\"
   notify: restart ezjail
 - name: Set default jail exec stop
-  lineinfile: dest=/etc/rc.conf regexp=^jail_exec_stop= line=jail_exec_stop=\"/bin/sh\ /etc/rc.shutdown\"
+  lineinfile:
+    dest: /etc/rc.conf
+    regexp: ^jail_exec_stop=
+    line: jail_exec_stop=\"/bin/sh\ /etc/rc.shutdown\"
   notify: restart ezjail
 
 - name: Enable ezjail in rc.conf
-  lineinfile: dest=/etc/rc.conf regexp=^ezjail_enable= line=ezjail_enable=\"YES\"
+  lineinfile:
+    dest: /etc/rc.conf
+    regexp: ^ezjail_enable=
+    line: ezjail_enable=\"YES\"
   notify: restart ezjail
 - name: Setup ezjail.conf
   template: src=ezjail.conf dest=/usr/local/etc/ezjail.conf
@@ -86,7 +131,10 @@
   register: data_pool_result
 
 - name: Setup rc.conf lines for data zpool
-  lineinfile: dest=/etc/rc.conf regexp={{ item.regexp }} line={{ item.line }}
+  lineinfile:
+    dest: /etc/rc.conf
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
   with_items: data_pool_result.rc_lines
   when: data_pool_result.rc_lines|default()
 
