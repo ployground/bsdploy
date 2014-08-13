@@ -1,4 +1,4 @@
-1.0.1 - Unreleased
+1.1.0 - Unreleased
 ==================
 
 - use FreeBSD 10.0 as default for bootstrapping and documentation
