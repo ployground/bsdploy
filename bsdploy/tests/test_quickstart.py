@@ -225,6 +225,8 @@ def virtualenv(tempdir):
 def test_quickstart(request, qs_path, tempdir, virtualenv):
     if not os.path.isabs(request.config.option.quickstart_bsdploy):
         pytest.fail("The path given by --quickstart-bsdploy needs to be absolute.")
+    if request.config.option.ansible_version:
+        subprocess.check_call(['pip', 'install', 'ansible==%s' % request.config.option.ansible_version])
     subprocess.check_call(['pip', 'install', '--pre', request.config.option.quickstart_bsdploy])
     for action, func, args, kw in iter_quickstart_calls(parse_qs(qs_path), tempdir):
         func(*args, **kw)
