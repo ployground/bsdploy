@@ -73,7 +73,7 @@ Inside it create a file named ``ploy.conf`` with the following contents::
 	vm-nic2 = nat
 	vm-natpf2 = ssh,tcp,,44003,,22
 	storage =
-	    --type dvddrive --medium ../downloads/mfsbsd-se-9.2-RELEASE-amd64.iso
+	    --type dvddrive --medium ../downloads/mfsbsd-se-10.0-RELEASE-amd64.iso
 	    --medium vb-disk:boot
 
 	[vb-disk:boot]
