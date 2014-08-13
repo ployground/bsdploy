@@ -76,7 +76,10 @@ class BootstrapFile(object):
 
     def read(self, context):
         if self.use_jinja:
-            return self.template_from_file(dirname(self.local), self.local, context)
+            result = self.template_from_file(dirname(self.local), self.local, context)
+            if isinstance(result, unicode):
+                result = result.encode('utf-8')
+            return result
         else:
             return open(self.local, 'r')
 
