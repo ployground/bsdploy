@@ -12,7 +12,7 @@ install_requires = [
     'jinja2',
     'setuptools',
     'ploy>=1.0.0',
-    'ploy_ansible>=1.0.0',
+    'ploy_ansible>=1.1.0',
     'ploy_ezjail>=1.0.0',
     'ploy_fabric>=1.0.0',
 ]

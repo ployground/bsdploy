@@ -201,6 +201,7 @@ def test_bootstrap_files_template(bu, input, context, expected, tempdir):
     if isinstance(expected, basestring):
         result = bfs['rc.conf'].read(context)
         assert result == expected
+        assert not isinstance(result, unicode)
     else:
         with pytest.raises(expected):
             bfs['rc.conf'].read(context)

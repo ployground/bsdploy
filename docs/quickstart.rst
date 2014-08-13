@@ -73,7 +73,7 @@ Inside it create a file named ``ploy.conf`` with the following contents::
 	vm-nic2 = nat
 	vm-natpf2 = ssh,tcp,,44003,,22
 	storage =
-	    --type dvddrive --medium ../downloads/mfsbsd-se-9.2-RELEASE-amd64.iso
+	    --type dvddrive --medium ../downloads/mfsbsd-se-10.0-RELEASE-amd64.iso
 	    --medium vb-disk:boot
 
 	[vb-disk:boot]
@@ -242,7 +242,10 @@ Like with the jailhost, we could assign roles to our demo jail, but another way 
 	    - name: install nginx
 	      pkgng: name=nginx state=present
 	    - name: enable nginx at startup time
-	      lineinfile: dest=/etc/rc.conf regexp=^nginx_enable= line=nginx_enable=\"YES\"
+	      lineinfile:
+	        dest: /etc/rc.conf
+	        regexp: ^nginx_enable=
+	        line: nginx_enable=\"YES\"
 	    - name: make sure nginx is running or reloaded
 	      service: name=nginx state=restarted
 
