@@ -24,7 +24,7 @@ To create a 'production' environment, create an additional configuration file ``
 
     [vb-instance:demo-production]
     vm-ostype = FreeBSD_64
-    vm-memory = 512
+    vm-memory = 1024
     vm-accelerate3d = off
     vm-acpi = on
     vm-rtcuseutc = on
