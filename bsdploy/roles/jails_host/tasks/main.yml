@@ -102,7 +102,7 @@
   lineinfile:
     dest: /etc/rc.conf
     regexp: ^jail_parameters=
-    line: jail_parameters=\"allow.raw_sockets=1\ allow.sysvipc=1\"
+    line: jail_parameters=\"allow.raw_sockets=1; allow.sysvipc=1\"
   notify: restart ezjail
 - name: Set default jail exec stop
   lineinfile:
