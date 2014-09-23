@@ -80,6 +80,7 @@ def iter_quickstart_calls(actions, tempdir):
     paths = {
         'ploy.conf': tempdir['etc/ploy.conf'],
         'etc/ploy.conf': tempdir['etc/ploy.conf'],
+        'files.yml': tempdir['bootstrap-files/files.yml'],
         'jailhost.yml': tempdir['host_vars/jailhost.yml'],
         'jailhost-demo_jail.yml': tempdir['jailhost-demo_jail.yml']}
     for action in actions:
