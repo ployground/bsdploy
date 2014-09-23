@@ -225,7 +225,7 @@ def virtualenv(tempdir):
 
 
 @pytest.mark.skipif("not config.option.quickstart_bsdploy")
-def test_quickstart(request, qs_path, tempdir, virtualenv):
+def test_quickstart_functional(request, qs_path, tempdir, virtualenv):
     if not os.path.isabs(request.config.option.quickstart_bsdploy):
         pytest.fail("The path given by --quickstart-bsdploy needs to be absolute.")
     if request.config.option.ansible_version:
