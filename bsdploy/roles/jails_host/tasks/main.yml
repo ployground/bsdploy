@@ -102,13 +102,13 @@
   lineinfile:
     dest: /etc/rc.conf
     regexp: ^jail_parameters=
-    line: jail_parameters=\"allow.raw_sockets=1\ allow.sysvipc=1\"
+    line: jail_parameters=\"allow.raw_sockets=1 allow.sysvipc=1\"
   notify: restart ezjail
 - name: Set default jail exec stop
   lineinfile:
     dest: /etc/rc.conf
     regexp: ^jail_exec_stop=
-    line: jail_exec_stop=\"/bin/sh\ /etc/rc.shutdown\"
+    line: jail_exec_stop=\"/bin/sh /etc/rc.shutdown\"
   notify: restart ezjail
 
 - name: Enable ezjail in rc.conf
