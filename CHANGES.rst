@@ -1,4 +1,4 @@
-1.1.1 - Unreleased
+1.1.1 - 2014-09-25
 ==================
 
 - increase memory for virtual machines in documentation from 512MB to 1024MB
