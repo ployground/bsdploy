@@ -1,6 +1,8 @@
 1.1.1 - Unreleased
 ==================
 
+- increase memory for virtual machines in documentation from 512MB to 1024MB
+- fix escaping for jail settings in rc.conf preventing jails from starting
 
 
 1.1.0 - 2014-08-13

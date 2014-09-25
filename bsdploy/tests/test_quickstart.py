@@ -80,6 +80,7 @@ def iter_quickstart_calls(actions, tempdir):
     paths = {
         'ploy.conf': tempdir['etc/ploy.conf'],
         'etc/ploy.conf': tempdir['etc/ploy.conf'],
+        'files.yml': tempdir['bootstrap-files/files.yml'],
         'jailhost.yml': tempdir['host_vars/jailhost.yml'],
         'jailhost-demo_jail.yml': tempdir['jailhost-demo_jail.yml']}
     for action in actions:
@@ -157,7 +158,7 @@ def test_quickstart_calls(qs_path, tempdir):
         '',
         '[vb-instance:ploy-demo]',
         'vm-ostype = FreeBSD_64',
-        'vm-memory = 512',
+        'vm-memory = 1024',
         'vm-accelerate3d = off',
         'vm-acpi = on',
         'vm-rtcuseutc = on',
@@ -225,7 +226,7 @@ def virtualenv(tempdir):
 
 
 @pytest.mark.skipif("not config.option.quickstart_bsdploy")
-def test_quickstart(request, qs_path, tempdir, virtualenv):
+def test_quickstart_functional(request, qs_path, tempdir, virtualenv):
     if not os.path.isabs(request.config.option.quickstart_bsdploy):
         pytest.fail("The path given by --quickstart-bsdploy needs to be absolute.")
     if request.config.option.ansible_version:

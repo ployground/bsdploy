@@ -1,0 +1,68 @@
+diff --git a/bsdploy/tests/test_quickstart.py b/bsdploy/tests/test_quickstart.py
+--- a/bsdploy/tests/test_quickstart.py
++++ b/bsdploy/tests/test_quickstart.py
+@@ -128,9 +128,11 @@ def test_quickstart_calls(qs_path, tempdir):
+         (subprocess.check_call, ('mkdir ploy-quickstart',)),
+         (subprocess.check_call, ('cd ploy-quickstart',)),
+         (subprocess.check_call, ('mkdir downloads',)),
+-        (subprocess.check_call, ('ploy-download http://mfsbsd.vx.sk/files/iso/10/amd64/mfsbsd-se-10.0-RELEASE-amd64.iso 06165ce1e06ff8e4819e86c9e23e7d149f820bb4 downloads/',)),
++        (subprocess.check_call, ('ploy-download http://mfsbsd.vx.sk/files/iso/9/amd64/mfsbsd-se-9.2-RELEASE-amd64.iso 4ef70dfd7b5255e36f2f7e1a5292c7a05019c8ce downloads/',)),
+         (subprocess.check_call, ('mkdir etc',)),
+         ('create', '%s/etc/ploy.conf' % tempdir.directory),
++        (subprocess.check_call, ('mkdir bootstrap-files',)),
++        ('create', '%s/bootstrap-files/files.yml' % tempdir.directory),
+         (subprocess.check_call, ('ploy start ploy-demo',)),
+         ('add', '%s/etc/ploy.conf' % tempdir.directory),
+         (time.sleep, (90,)),
+@@ -169,8 +171,9 @@ def test_quickstart_calls(qs_path, tempdir):
+         'vm-nic2 = nat',
+         'vm-natpf2 = ssh,tcp,,44003,,22',
+         'storage =',
+-        '    --type dvddrive --medium ../downloads/mfsbsd-se-10.0-RELEASE-amd64.iso',
++        '    --type dvddrive --medium ../downloads/mfsbsd-se-9.2-RELEASE-amd64.iso',
+         '    --medium vb-disk:boot',
++        'bootstrap-fingerprint = 02:2e:b4:dd:c3:8a:b7:7b:ba:b2:4a:f0:ab:13:f4:2d',
+         '',
+         '[vb-disk:boot]',
+         'size = 102400',
+diff --git a/docs/quickstart.rst b/docs/quickstart.rst
+--- a/docs/quickstart.rst
++++ b/docs/quickstart.rst
+@@ -39,7 +39,7 @@ First, we need to download a FreeBSD boot image. BSDploy uses `mfsBSD <http://mf
+ BSDploy provides a small cross-platform helper for downloading assets via HTTP which also checks the integrity of the downloaded file::
+ 
+ 	% mkdir downloads
+-	% ploy-download http://mfsbsd.vx.sk/files/iso/10/amd64/mfsbsd-se-10.0-RELEASE-amd64.iso 06165ce1e06ff8e4819e86c9e23e7d149f820bb4 downloads/
++	% ploy-download http://mfsbsd.vx.sk/files/iso/9/amd64/mfsbsd-se-9.2-RELEASE-amd64.iso 4ef70dfd7b5255e36f2f7e1a5292c7a05019c8ce downloads/
+ 
+ 
+ Configuring the virtual machine
+@@ -73,12 +73,27 @@ Inside it create a file named ``ploy.conf`` with the following contents::
+ 	vm-nic2 = nat
+ 	vm-natpf2 = ssh,tcp,,44003,,22
+ 	storage =
+-	    --type dvddrive --medium ../downloads/mfsbsd-se-10.0-RELEASE-amd64.iso
++	    --type dvddrive --medium ../downloads/mfsbsd-se-9.2-RELEASE-amd64.iso
+ 	    --medium vb-disk:boot
++	bootstrap-fingerprint = 02:2e:b4:dd:c3:8a:b7:7b:ba:b2:4a:f0:ab:13:f4:2d
+ 
+ 	[vb-disk:boot]
+ 	size = 102400
+ 
++Create a ``bootstrap-files`` directory::
++
++	% mkdir bootstrap-files
++
++And in it create a file named ``files.yml`` with the following contents:
++
++.. code-block:: yaml
++
++    ---
++    'pkg.txz':
++        url: 'http://pkg.freebsd.org/freebsd:9:x86:64/quarterly/Latest/pkg.txz'
++        directory: '/mnt/var/cache/pkg/All'
++        remote: '/mnt/var/cache/pkg/All/pkg.txz'
++
+ Now we can start it up::
+ 
+ 	% ploy start ploy-demo
