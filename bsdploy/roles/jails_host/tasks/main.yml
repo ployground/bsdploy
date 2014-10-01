@@ -123,11 +123,11 @@
 
 - name: Setup data zpool
   zpool:
-    name="{{ ploy_bootstrap_data_pool_name }}"
-    geli="{{ ploy_bootstrap_geli|bool }}"
-    version="{{ ploy_bootstrap_zpool_version }}"
-    devices="{{ ploy_bootstrap_data_pool_devices }}"
-    raid_mode="{{ ploy_bootstrap_raid_mode }}"
+    name: "{{ ploy_bootstrap_data_pool_name }}"
+    geli: "{{ ploy_bootstrap_geli|bool }}"
+    version: "{{ ploy_bootstrap_zpool_version }}"
+    devices: "{{ ploy_bootstrap_data_pool_devices }}"
+    raid_mode: "{{ ploy_bootstrap_raid_mode }}"
   register: data_pool_result
 
 - name: Setup rc.conf lines for data zpool
