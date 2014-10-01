@@ -25,10 +25,12 @@ First you need a custom fabfile:
             reboot = value_asbool(env.instance.config.get('bootstrap-reboot', 'true'))
             env.instance.config['bootstrap-reboot'] = False
             run('echo setenv http_proxy http://192.168.56.1:8123 >> /etc/csh.cshrc')
-            run('echo export http_proxy=http://192.168.56.1:8123 >> /etc/profile')
+            run('echo http_proxy=http://192.168.56.1:8123 >> /etc/profile')
+            run('echo export http_proxy >> /etc/profile')
             _bootstrap()
             run('echo setenv http_proxy http://192.168.56.1:8123 >> /mnt/etc/csh.cshrc')
-            run('echo export http_proxy=http://192.168.56.1:8123 >> /mnt/etc/profile')
+            run('echo http_proxy=http://192.168.56.1:8123 >> /mnt/etc/profile')
+            run('echo export http_proxy >> /mnt/etc/profile')
             if reboot:
                 with settings(hide('warnings'), warn_only=True):
                     run('reboot')
@@ -39,3 +41,19 @@ For the ezjail initialization you have to add the following setting with a FreeB
 
 The ``_mfsbsd`` context manager takes care of setting the ``bootstrap-fingerprint`` etc for mfsBSD.
 The ``_bootstrap`` function then runs the regular bootstrapping.
+
+For the jails you can use a startup script like this:
+
+.. code-block:: sh
+
+    #!/bin/sh
+    exec 1>/var/log/startup.log 2>&1
+    chmod 0600 /var/log/startup.log
+    set -e
+    set -x
+    echo setenv http_proxy http://192.168.56.1:8123 >> /etc/csh.cshrc
+    echo http_proxy=http://192.168.56.1:8123 >> /etc/profile
+    echo export http_proxy >> /etc/profile
+    http_proxy=http://192.168.56.1:8123
+    export http_proxy
+    pkg install python27
