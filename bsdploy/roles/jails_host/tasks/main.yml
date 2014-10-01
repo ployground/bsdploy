@@ -3,7 +3,7 @@
   lineinfile:
     dest: /etc/ssh/sshd_config
     regexp: ^ListenAddress
-    line: 'ListenAddress {{ ansible_default_ipv4.address }}'
+    line: 'ListenAddress {{ ploy_jail_host_sshd_listenaddress }}'
   notify: restart sshd
 
 - { include: ntpd.yml, tags: ntpd }

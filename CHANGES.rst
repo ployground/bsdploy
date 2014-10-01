@@ -1,6 +1,7 @@
 1.1.2 - Unreleased
 ==================
 
+- make sshd listen address configurable
 
 
 1.1.1 - 2014-09-25
