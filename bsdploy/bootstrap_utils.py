@@ -74,14 +74,22 @@ class BootstrapFile(object):
         from ansible.utils.template import template_from_file
         return template_from_file
 
-    def read(self, context):
+    def open(self, context):
         if self.use_jinja:
             result = self.template_from_file(dirname(self.local), self.local, context)
             if isinstance(result, unicode):
                 result = result.encode('utf-8')
-            return result
+            return StringIO(result)
+        elif self.encrypted:
+            vaultlib = env.instance.get_vault_lib()
+            with open(self.local, 'r') as f:
+                result = f.read()
+            return StringIO(vaultlib.decrypt(result))
         else:
             return open(self.local, 'r')
+
+    def read(self, context):
+        return self.open(context).read()
 
 
 class BootstrapUtils:
@@ -235,9 +243,16 @@ class BootstrapUtils:
                     if not exists(pub_key):
                         print("Public key '%s' for '%s' missing." % (pub_key, ssh_key))
                         sys.exit(1)
+                    encrypted = False
+                    if hasattr(env.instance, 'get_vault_lib'):
+                        vaultlib = env.instance.get_vault_lib()
+                        with open(ssh_key) as f:
+                            data = f.read()
+                        encrypted = vaultlib.is_encrypted(data)
                     bootstrap_files[ssh_key_name] = BootstrapFile(
                         self, ssh_key_name, **dict(
                             local=ssh_key,
+                            encrypted=encrypted,
                             remote='/mnt/etc/ssh/%s' % ssh_key_name,
                             mode=0600))
                     bootstrap_files[pub_key_name] = BootstrapFile(
@@ -277,11 +292,7 @@ class BootstrapUtils:
     def upload_bootstrap_files(self, context):
         for filename, bf in sorted(self.bootstrap_files.items()):
             if bf.remote and exists(bf.local):
-                if bf.use_jinja:
-                    local = StringIO(bf.read(context))
-                else:
-                    local = bf.local
-                put(local, bf.remote, mode=bf.mode)
+                put(bf.open(context), bf.remote, mode=bf.mode)
 
     def install_pkg(self, root, chroot=None, packages=[]):
         assert isinstance(chroot, bool)

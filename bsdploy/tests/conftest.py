@@ -76,7 +76,10 @@ def put_mock(fabric_integration, monkeypatch):
         for arg, earg in zip(args, eargs):
             if earg is object:
                 continue
-            assert arg == earg
+            if hasattr(arg, 'name'):
+                assert arg.name == earg
+            else:
+                assert arg == earg
         assert sorted(kw.keys()) == sorted(ekw.keys())
         for k in kw:
             if ekw[k] is object:
@@ -118,6 +121,7 @@ def env_mock(fabric_integration, monkeypatch, ployconf):
     env.instance = Mock()
     env.instance.config = {}
     env.instance.master.main_config.path = ployconf.directory
+    env.instance.get_vault_lib().is_encrypted.return_value = False
     monkeypatch.setattr('bsdploy.bootstrap_utils.env', env)
     return env
 
