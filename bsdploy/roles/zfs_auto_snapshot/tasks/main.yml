@@ -1,21 +1,28 @@
 ---
 - name: Ensure zfstools is installed
   pkgng: name=zfstools state=present
+  tags: zfs_auto_snapshot
 
 - name: Setup hourly zfs-auto-snapshot
   cron: name="hourly zfs-auto-snapshot"  special_time=hourly  job="PATH=$PATH:/sbin:/usr/local/bin /usr/local/sbin/zfs-auto-snapshot -u hourly  24"
+  tags: zfs_auto_snapshot
 - name: "Setup {{ item.name }} zfs-auto-snapshot"
   template:
     src: 010.zfs-snapshot
     dest: "/etc/periodic/{{ item.name }}/010.zfs-snapshot"
+    mode: "0755"
   with_items:
     - { name: daily, num_keep: 7 }
     - { name: weekly, num_keep: 4 }
     - { name: monthly, num_keep: 12 }
+  tags: zfs_auto_snapshot
 
 - name: Cleanup old daily cron zfs snapshot
   cron: name="daily zfs-auto-snapshot" state=absent
+  tags: zfs_auto_snapshot
 - name: Cleanup old weekly cron zfs snapshot
   cron: name="weekly zfs-auto-snapshot" state=absent
+  tags: zfs_auto_snapshot
 - name: Cleanup old monthly cron zfs snapshot
   cron: name="monthly zfs-auto-snapshot" state=absent
+  tags: zfs_auto_snapshot
