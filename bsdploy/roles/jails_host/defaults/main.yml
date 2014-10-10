@@ -13,3 +13,4 @@ jails_pkg_url: "pkg+http://pkg.freeBSD.org/${ABI}/latest"
 ipnat_jail_networks:
     - 10.0.0.0/8
 ipnat_rules: []
+ploy_jail_host_sshd_listenaddress: "{{ ansible_default_ipv4.address }}"

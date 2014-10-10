@@ -2,6 +2,7 @@
 ==================
 
 - fix string escapes for geli setup in rc.conf
+- make sshd listen address configurable
 - fix permission of periodic scripts in zfs_auto_snapshot role
 
 
