@@ -2,6 +2,7 @@
 ==================
 
 - fix string escapes for geli setup in rc.conf
+- make sshd listen address configurable
 
 
 1.1.1 - 2014-09-25
