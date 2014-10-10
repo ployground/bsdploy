@@ -1,6 +1,7 @@
 1.1.2 - Unreleased
 ==================
 
+- fix string escapes for geli setup in rc.conf
 - make sshd listen address configurable
 
 

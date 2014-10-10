@@ -92,13 +92,13 @@ class Zpool(object):
                 rc_devices.append(device)
             rc_lines.append(dict(
                 regexp='^geli_devices=',
-                line='geli_devices=\\"%s\\"' % '\\ '.join(rc_devices)))
+                line='geli_devices=\\"%s\\"' % ' '.join(rc_devices)))
             for rc_device in rc_devices:
                 rc_lines.append(dict(
                     regexp='^geli_{rc_device}_flags='.format(
                         rc_device=rc_device.replace('/', '_'),
                         geli_passphrase_location=self.geli_passphrase_location),
-                    line='geli_{rc_device}_flags=\\"-j\\ {geli_passphrase_location}\\"'.format(
+                    line='geli_{rc_device}_flags=\\"-j {geli_passphrase_location}\\"'.format(
                         rc_device=rc_device.replace('/', '_'),
                         geli_passphrase_location=self.geli_passphrase_location)))
         else:
