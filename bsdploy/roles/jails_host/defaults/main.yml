@@ -14,3 +14,11 @@ ipnat_jail_networks:
     - 10.0.0.0/8
 ipnat_rules: []
 ploy_jail_host_sshd_listenaddress: "{{ ansible_default_ipv4.address }}"
+ploy_jail_host_pkg_repository_kind: "quarterly"
+ploy_jail_host_pkg_repository_url: "pkg+http://pkg.freeBSD.org/${ABI}/{{ ploy_jail_host_pkg_repository_kind }}"
+ploy_jail_host_pkg_repository: |
+    FreeBSD-custom: {
+        url: "{{ ploy_jail_host_pkg_repository_url }}",
+        mirror_type: "srv",
+        enabled: yes
+    }
