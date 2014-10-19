@@ -62,6 +62,7 @@ Special use cases
 
    advanced/staging
    advanced/updating
+   advanced/customizing-bootstrap
 
 
 Contribute

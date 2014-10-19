@@ -1,5 +1,6 @@
 # coding: utf-8
 from bsdploy.bootstrap_utils import BootstrapUtils
+from contextlib import contextmanager
 from fabric.api import env, hide, run, settings
 from ploy.common import yesno
 from ploy.config import value_asbool
@@ -10,21 +11,36 @@ from ploy.config import value_asbool
 env.shell = '/bin/sh -c'
 
 
-def bootstrap(**kwargs):
-    """ bootstrap an instance booted into mfsbsd (http://mfsbsd.vx.sk)
-    """
-    env.shell = '/bin/sh -c'
+@contextmanager
+def _mfsbsd(env, kwargs={}):
+    old_shell = env.get('shell')
+    old_config = env.instance.config.copy()
+    try:
+        env.shell = '/bin/sh -c'
 
-    # default ssh settings for mfsbsd with possible overwrite by bootstrap-fingerprint
-    fingerprint = env.instance.config.get(
-        'bootstrap-fingerprint',
-        '1f:cb:78:20:b8:97:dd:dc:3d:23:75:f0:bb:ad:84:03')
-    env.instance.config['fingerprint'] = fingerprint
-    env.instance.config['password-fallback'] = True
-    env.instance.config['password'] = 'mfsroot'
-    # allow overwrites from the commandline
-    env.instance.config.update(kwargs)
+        # default ssh settings for mfsbsd with possible overwrite by bootstrap-fingerprint
+        fingerprint = env.instance.config.get(
+            'bootstrap-fingerprint',
+            '1f:cb:78:20:b8:97:dd:dc:3d:23:75:f0:bb:ad:84:03')
+        env.instance.config['fingerprint'] = fingerprint
+        env.instance.config['password-fallback'] = True
+        env.instance.config['password'] = 'mfsroot'
+        # allow overwrites from the commandline
+        env.instance.config.update(kwargs)
 
+        yield
+    finally:
+        added_keys = set(env.instance.config) - set(old_config)
+        for key in added_keys:
+            del env.instance.config[key]
+        env.instance.config.update(old_config)
+        if old_shell is None:
+            del env['shell']
+        else:
+            env.shell = old_shell
+
+
+def _bootstrap():
     bu = BootstrapUtils()
     bu.generate_ssh_keys()
     bu.print_bootstrap_files()
@@ -118,6 +134,13 @@ def bootstrap(**kwargs):
     if value_asbool(env.instance.config.get('bootstrap-reboot', 'true')):
         with settings(hide('warnings'), warn_only=True):
             run('reboot')
+
+
+def bootstrap(**kwargs):
+    """ bootstrap an instance booted into mfsbsd (http://mfsbsd.vx.sk)
+    """
+    with _mfsbsd(env, kwargs):
+        _bootstrap()
 
 
 def fetch_assets(**kwargs):
