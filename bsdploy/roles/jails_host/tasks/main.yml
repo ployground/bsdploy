@@ -154,6 +154,9 @@
 - name: Initialize ezjail (may take a while)
   command: "ezjail-admin install -h {{ ploy_ezjail_install_host }} -r {{ ploy_ezjail_install_release|default(ansible_distribution_release) }} creates=/usr/jails/basejail"
 
+- name: Create pkg cache folder
+  file: dest=/var/cache/pkg/All/ state=directory owner=root group=wheel
+
 - name: Download pkg.txz
   get_url: dest=/var/cache/pkg/All/pkg.txz url={{ pkg_txz_url }}
 
