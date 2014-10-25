@@ -75,6 +75,7 @@ def test_roles(ctrl, monkeypatch):
         'Set data zpool options',
         'Jails ZFS file system',
         'Initialize ezjail (may take a while)',
+        'Create pkg cache folder',
         'Download pkg.txz',
         'Directory for jail flavour "bsdploy_base"',
         'Pkg in bsdploy_base flavour',

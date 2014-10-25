@@ -18,6 +18,7 @@ Unlike bootstrapping, this final step is implemented using ansible playbooks and
 
 Among other things, this will create an additional zpool named ``tank`` (by default) which will be used to contain the jails.
 
+
 Full-Disk encryption with GELI
 ------------------------------
 

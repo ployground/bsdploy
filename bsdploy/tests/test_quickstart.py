@@ -124,7 +124,7 @@ def test_quickstart_calls(qs_path, tempdir):
         else:
             calls.append((func, args))
     assert calls == [
-        (subprocess.check_call, ('pip install --pre ploy_virtualbox',)),
+        (subprocess.check_call, ('pip install ploy_virtualbox',)),
         (subprocess.check_call, ('mkdir ploy-quickstart',)),
         (subprocess.check_call, ('cd ploy-quickstart',)),
         (subprocess.check_call, ('mkdir downloads',)),
@@ -192,13 +192,8 @@ def test_quickstart_calls(qs_path, tempdir):
         '  tasks:',
         '    - name: install nginx',
         '      pkgng: name=nginx state=present',
-        '    - name: enable nginx at startup time',
-        '      lineinfile:',
-        '        dest: /etc/rc.conf',
-        '        regexp: ^nginx_enable=',
-        '        line: nginx_enable=\\"YES\\"',
-        '    - name: make sure nginx is running or reloaded',
-        '      service: name=nginx state=restarted']
+        '    - name: Setup nginx to start immediately and on boot',
+        '      service: name=nginx enabled=yes state=started']
     assert tempdir['host_vars/jailhost.yml'].content().splitlines() == [
         'ipnat_rules:',
         '    - "rdr em0 {{ ansible_em0.ipv4[0].address }}/32 port 80 -> {{ hostvars[\'jailhost-demo_jail\'][\'ploy_ip\'] }} port 80"']

@@ -49,3 +49,4 @@ Basically, unless you want to use one of the specific provisioners such as EC2 o
 
    provisioning-plain
    provisioning-virtualbox
+   provisioning-ec2

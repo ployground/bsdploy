@@ -36,6 +36,7 @@ How to setup a host from scratch or make an existing one ready for BSDploy:
    setup/overview
    setup/provisioning-plain
    setup/provisioning-virtualbox
+   setup/provisioning-ec2
    setup/bootstrapping
    setup/configuration
 
