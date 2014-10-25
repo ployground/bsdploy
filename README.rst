@@ -37,8 +37,6 @@ Here's what an abbreviated bootstrapping session of a simple website inside a ja
 
     # ploy start ec-instance
     [...]
-    # ploy bootstrap jailhost
-    [...]
     # ploy configure jailhost
     [...]
     # ploy start webserver

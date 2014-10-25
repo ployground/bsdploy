@@ -15,7 +15,7 @@ As a rule-of-thumb, if you ever need to configure two scenarios simultenously or
 
 Another benefit of using two configurations is that you need to explicitly reference the non-default configuration which minimizes accidental modification of i.e. production hosts.
 
-In this tutorial we will use a second VirtualBox instances to simulate a production environment but in actual projects you would more likely define either plain instances or EC instances.
+In this tutorial we will use a second VirtualBox instances to simulate a production environment but in actual projects you would more likely define either plain instances or EC2 instances.
 
 To create a 'production' environment, create an additional configuration file ``etc/production.conf`` with the following contents::
 

@@ -52,8 +52,8 @@ And finally in ``roles/transmission/tasks/main.yml``:
       with_items:
       - transmission-daemon
       - transmission-web
-    - name: Enable transmission in rc.conf
-      lineinfile: dest=/etc/rc.conf regexp=^transmission_enable= line=transmission_enable=\"YES\"
+    - name: Setup transmission to start on boot
+      service: name=transmission enabled=yes
     - name: Configure transmission
       template: src=settings.json dest=/usr/local/etc/transmission/home/settings.json backup=yes owner=transmission
       notify:
@@ -62,7 +62,7 @@ And finally in ``roles/transmission/tasks/main.yml``:
 The above tasks should look pretty familiar by now:
 
 - install the required packages (this time it's more than one and we demonstrate the ``with_items`` method)
-- enable it in ``rc.conf`` (this time we're using a regex-based command, which is a bit more boilerplate but generally the preferred approach as it's more robust)
+- enable it in ``rc.conf``
 - Finally, as a new technique we upload a settings file as a template and...
 - ... use ansible's *handlers* to make sure that the service is reloaded every time we change its settings.
 
