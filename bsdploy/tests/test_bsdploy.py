@@ -87,6 +87,15 @@ def test_augment_ezjail_master_fabfile_implicit(ctrl, ployconf, tempdir):
     assert get_fabfile(ctrl.instances['jailhost']).endswith('jailhost/fabfile.py')
 
 
+def test_augment_ezjail_jail_fabfile_implicit(ctrl, ployconf, tempdir):
+    jailhost_fab = tempdir['jailhost-foo/fabfile.py']
+    jailhost_fab.fill('')
+    config = dict(ctrl.instances['foo'].config)
+    assert config['fabfile'].endswith('jailhost-foo/fabfile.py')
+    from ploy_fabric import get_fabfile
+    assert get_fabfile(ctrl.instances['foo']).endswith('jailhost-foo/fabfile.py')
+
+
 def test_augment_ezjail_master_fabfile_explicit(ctrl, ployconf, tempdir):
     jailhost_fab = tempdir['jailhost/fabfile.py']
     jailhost_fab.fill('')
