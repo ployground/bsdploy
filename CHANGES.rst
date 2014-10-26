@@ -1,5 +1,5 @@
-1.1.2 - Unreleased
-==================
+1.2 - 2014-10-26
+================
 
 - [feature] provide default and by-convention assignment of fabfiles
 - [doc] document provisioning of EC2 instances
