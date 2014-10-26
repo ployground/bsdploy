@@ -1,6 +1,7 @@
 1.1.2 - Unreleased
 ==================
 
+- document provisioning of EC2 instances
 - provide default and by-convention assignment of fabfiles
 - fix string escapes for geli setup in rc.conf
 - make sshd listen address configurable
