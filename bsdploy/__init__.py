@@ -44,13 +44,20 @@ class PloyBootstrapCmd(object):
 
 
 def augment_instance(instance):
-    from ploy_ansible import has_playbook
+    from ploy_ansible import get_playbooks_directory, has_playbook
     if not instance.master.sectiongroupname.startswith('ez-'):
         return
     if 'ansible_python_interpreter' not in instance.config:
         instance.config['ansible_python_interpreter'] = '/usr/local/bin/python2.7'
     if 'fabric-shell' not in instance.config:
         instance.config['fabric-shell'] = '/bin/sh -c'
+
+    if 'fabfile' not in instance.config:
+        playbooks_directory = get_playbooks_directory(instance.master.main_config)
+        fabfile = path.join(playbooks_directory, instance.uid, 'fabfile.py')
+        if path.exists(fabfile):
+            instance.config['fabfile'] = fabfile
+
     if instance.master.instance is instance:
         # for hosts
         if 'fabfile' not in instance.config:

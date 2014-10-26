@@ -69,6 +69,47 @@ def test_augment_ezjail_master_playbook_explicit(ctrl, ployconf, tempdir):
     assert has_playbook(ctrl.instances['jailhost'])
 
 
+def test_augment_ezjail_master_fabfile_default_mfsbsd(ctrl, ployconf, tempdir):
+    """ if no fabfile is stated and the by-convention does not exist,
+    the default is set """
+    config = dict(ctrl.instances['jailhost'].config)
+    assert config['fabfile'].endswith('fabfile_mfsbsd.py')
+    from ploy_fabric import get_fabfile
+    assert get_fabfile(ctrl.instances['jailhost']).endswith('fabfile_mfsbsd.py')
+
+
+def test_augment_ezjail_master_fabfile_implicit(ctrl, ployconf, tempdir):
+    jailhost_fab = tempdir['jailhost/fabfile.py']
+    jailhost_fab.fill('')
+    config = dict(ctrl.instances['jailhost'].config)
+    assert config['fabfile'].endswith('jailhost/fabfile.py')
+    from ploy_fabric import get_fabfile
+    assert get_fabfile(ctrl.instances['jailhost']).endswith('jailhost/fabfile.py')
+
+
+def test_augment_ezjail_jail_fabfile_implicit(ctrl, ployconf, tempdir):
+    jailhost_fab = tempdir['jailhost-foo/fabfile.py']
+    jailhost_fab.fill('')
+    config = dict(ctrl.instances['foo'].config)
+    assert config['fabfile'].endswith('jailhost-foo/fabfile.py')
+    from ploy_fabric import get_fabfile
+    assert get_fabfile(ctrl.instances['foo']).endswith('jailhost-foo/fabfile.py')
+
+
+def test_augment_ezjail_master_fabfile_explicit(ctrl, ployconf, tempdir):
+    jailhost_fab = tempdir['jailhost/fabfile.py']
+    jailhost_fab.fill('')
+    jailhost_fab = tempdir['blubber.py']
+    jailhost_fab.fill('')
+    ployconf.fill([
+        '[ez-master:jailhost]',
+        'fabfile = ../blubber.py'])
+    config = dict(ctrl.instances['jailhost'].config)
+    assert config['fabfile'].endswith('blubber.py')
+    from ploy_fabric import get_fabfile
+    assert get_fabfile(ctrl.instances['jailhost']).endswith('blubber.py')
+
+
 def test_augment_ezjail_instance(ctrl, ployconf):
     config = dict(ctrl.instances['foo'].config)
     assert sorted(config.keys()) == [
