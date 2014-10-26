@@ -7,9 +7,8 @@ Fabric integration
 
 BSDploy supports applying Fabric scripts to jails and jail hosts via the `ploy_fabric <http://ploy.readthedocs.org/en/latest/ploy_fabric.html>`_ plugin.
 
-There are three ways you can assign a fabric file to an instance:
+There are two ways you can assign a fabric file to an instance:
 
- - Don't assign any – the default from BSDploy will be used (it contains the bootstrap command)
  - *by convention* – if the project directory contains a directory with the same name as the instance, i.e. ``jailhost`` or ``jailhost-jailname`` containing a Python file named ``fabfile.py`` and no explicit file has been given, that file is used
  - by *explicit assigning one* in ``ploy.conf``, i.e.::
 
