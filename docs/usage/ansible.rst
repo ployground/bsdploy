@@ -60,6 +60,8 @@ To select multiple tags, pass them in comma-separated. Note that in this case yo
 	ploy configure webserver -t config,cert
 
 
+.. _dir-structure:
+
 Directory structure
 -------------------
 

@@ -42,6 +42,24 @@ In a nutshell, though, given the previous example setup, what you need to do is 
 	ploy configure jailhost
 	ploy start webserver
 
+
+Project setup and directory structure
+-------------------------------------
+
+``ploy`` and thus by extension also BSDploy have a "project based" approach, meaning that all configuration, playbooks, assets etc. for one given  use case (a.k.a. "project") are contained in a single directory, as opposed to having a central configuration such as ``/usr/local/etc/ploy.conf``.
+
+The minimal structure of such a directory is to contain a subdirectory named ``etc`` in which the main configuration file ``ploy.conf`` is located.
+
+Since BSDploy treats this directory technically as an :ref:`Ansible directory <dir-structure>` you typically would also have additional top-level directories such as ``roles``, ``host_vars`` etc.
+
+Another (entirely optional) convention is to have a top-level directory named ``downloads`` where assets such as installer images or package archives are placed.
+
+This approach was also chosen because most of the times project directories are version controlled and for example ``downloads/`` can then be safely ignored, because all of its contents are a) large, binary files and b) easily replaceable whereas ``etc/`` often contains sensitive, project specific data such as private keys, certificates etc. and may be even part of a different repository altogether.
+
+
+Next step: Provisioning
+-----------------------
+
 Basically, unless you want to use one of the specific provisioners such as EC2 or VirtualBox, just use a plain instance:
 
 .. toctree::

@@ -44,7 +44,7 @@ How to setup a host from scratch or make an existing one ready for BSDploy:
 General usage
 -------------
 
-How to create an manage jails once the host is set up:
+How to create and manage jails once the host is set up:
 
 .. toctree::
    :maxdepth: 2
