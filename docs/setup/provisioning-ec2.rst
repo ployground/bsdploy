@@ -3,9 +3,7 @@ Provisioning Amazon EC2 instances
 
 BSDploy provides automated provisioning of `Amazon EC2 <http://aws.amazon.com/ec2/>`_ instances via the `ploy_ec2 plugin <http://ploy.readthedocs.org/en/latest/ploy_ec2/README.html>`_.
 
-Note, that this plugin is not installed by default when installing BSDploy, so you need to install it additionally::
-
-    pip install ploy_ec2
+.. Note:: The plugin is not installed by default when installing BSDploy, so you need to install it additionally like so ``pip install ploy_ec2``.
 
 Like with :doc:`Virtualbox instances <provisioning-virtualbox>` the configuration doesn't just describe existing instances but is used to create them. 
 
