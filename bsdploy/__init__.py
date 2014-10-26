@@ -59,7 +59,6 @@ def augment_instance(instance):
             instance.config['fabfile'] = fabfile
 
     if instance.master.instance is instance:
-        ploy_conf_path = instance.master.main_config.path
         # for hosts
         if 'fabfile' not in instance.config:
             bootstrap_type = instance.config.get('bootstrap', 'mfsbsd')
@@ -73,6 +72,7 @@ def augment_instance(instance):
             instance.config['roles'] = 'jails_host'
         if 'fingerprint' not in instance.config:
             host_defined_path = instance.config.get('bootstrap-files')
+            ploy_conf_path = instance.master.main_config.path
             if host_defined_path is None:
                 bootstrap_path = path.join(ploy_conf_path, '..', 'bootstrap-files')
             else:
