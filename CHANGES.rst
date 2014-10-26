@@ -1,12 +1,12 @@
 1.1.2 - Unreleased
 ==================
 
-- document provisioning of EC2 instances
-- provide default and by-convention assignment of fabfiles
-- fix string escapes for geli setup in rc.conf
-- make sshd listen address configurable
-- fix permission of periodic scripts in zfs_auto_snapshot role
-- describe how to use a http proxy for mfsBSD
+- [feature] provide default and by-convention assignment of fabfiles
+- [doc] document provisioning of EC2 instances
+- [fix] fix string escapes for geli setup in rc.conf
+- [feature] make sshd listen address configurable
+- [fix] fix permission of periodic scripts in zfs_auto_snapshot role
+- [doc] describe how to use a http proxy for mfsBSD
 
 
 1.1.1 - 2014-09-25
