@@ -15,7 +15,7 @@ Main Features
 
 - **describe** one or more jail hosts and their jails in a canonical configuration
 
-- **declarative configuration** – apply `Ansible <http://ansible.cc>`_ playbooks to hosts and jails
+- **declarative configuration** – apply `Ansible <http://ansible.com>`_ playbooks to hosts and jails
 
 - **imperative maintenance**  – run `Fabric <http://fabfile.org>`_ scripts against hosts and jails
 
