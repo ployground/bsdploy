@@ -1,5 +1,7 @@
-1.3 - Unreleased
-================
+1.2.1 - Unreleased
+==================
+
+- [fix] use helpers in ploy and ploy_fabric to properly handle rsync_project
 
 
 1.2 - 2014-10-26
