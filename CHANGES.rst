@@ -1,6 +1,9 @@
 1.3 - Unreleased
 ================
 
+- [deprecation] rsync_project is not working in all cases, print a warning
+- [feature] added rsync helper, which is a tiny wrapper around the rsync command
+
 
 1.2 - 2014-10-26
 ================

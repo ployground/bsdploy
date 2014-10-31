@@ -11,10 +11,10 @@ install_requires = [
     'PyYAML',
     'jinja2',
     'setuptools',
-    'ploy>=1.0.1',
+    'ploy>=1.0.2',
     'ploy_ansible>=1.1.0',
     'ploy_ezjail>=1.0.0',
-    'ploy_fabric>=1.0.0',
+    'ploy_fabric>=1.1.0',
 ]
 
 setup(
