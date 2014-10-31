@@ -1,7 +1,8 @@
-1.2.1 - Unreleased
-==================
+1.3 - Unreleased
+================
 
-- [fix] use helpers in ploy and ploy_fabric to properly handle rsync_project
+- [deprecation] rsync_project is not working in all cases, print a warning
+- [feature] added rsync helper, which is a tiny wrapper around the rsync command
 
 
 1.2 - 2014-10-26
