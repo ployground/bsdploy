@@ -3,6 +3,9 @@
 
 - [deprecation] rsync_project is not working in all cases, print a warning
 - [feature] added rsync helper, which is a tiny wrapper around the rsync command
+- [fix] change format of /usr/local/etc/pkg/repos/FreeBSD.conf so the package
+  repository is properly recognized
+- [change] use quarterly package repository everywhere
 
 
 1.2 - 2014-10-26
