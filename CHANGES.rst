@@ -6,6 +6,7 @@
 - [fix] change format of /usr/local/etc/pkg/repos/FreeBSD.conf so the package
   repository is properly recognized
 - [change] use quarterly package repository everywhere
+- [fix] set full /etc/ntp.conf instead of trying to fiddle with an existing one.
 
 
 1.2 - 2014-10-26
