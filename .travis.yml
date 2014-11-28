@@ -5,6 +5,7 @@ env:
   - TOX_ENV=ansible14
   - TOX_ENV=ansible15
   - TOX_ENV=ansible16
+  - TOX_ENV=ansible17
 install:
   - pip install setuptools-git
   - pip install tox
