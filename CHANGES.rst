@@ -1,4 +1,4 @@
-1.3 - Unreleased
+1.3 - 2014-11-28
 ================
 
 - [deprecation] rsync_project is not working in all cases, print a warning
