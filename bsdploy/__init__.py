@@ -14,6 +14,16 @@ ansible_paths = dict(
     roles=[path.join(bsdploy_path, 'roles')],
     library=[path.join(bsdploy_path, 'library')])
 
+virtualbox_defaults = {
+    'vm-ostype': 'FreeBSD_64',
+    'vm-memory': '1024',
+    'vm-accelerate3d': 'off',
+    'vm-acpi': 'on',
+    'vm-rtcuseutc': 'on',
+    'vm-boot1': 'disk',
+    'vm-boot2': 'dvd',
+}
+
 
 class PloyBootstrapCmd(object):
     def __init__(self, ctrl):
@@ -46,7 +56,9 @@ class PloyBootstrapCmd(object):
 def augment_instance(instance):
     from ploy_ansible import get_playbooks_directory, has_playbook
 
-    # TODO set defaults for virtualbox instances (type, mem etc)
+    if instance.master.sectiongroupname == ('vb-instance'):
+        for key, value in virtualbox_defaults.items():
+            instance.config.setdefault(key, value)
     if not instance.master.sectiongroupname.startswith('ez-'):
         return
     # TODO use setdefault

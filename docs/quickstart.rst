@@ -61,13 +61,6 @@ Inside it create a file named ``ploy.conf`` with the following contents::
     upperip = 192.168.56.254
 
     [vb-instance:ploy-demo]
-    vm-ostype = FreeBSD_64
-    vm-memory = 1024
-    vm-accelerate3d = off
-    vm-acpi = on
-    vm-rtcuseutc = on
-    vm-boot1 = disk
-    vm-boot2 = dvd
     vm-nic1 = hostonly
     vm-hostonlyadapter1 = vboxnet0
     vm-nic2 = nat

@@ -1,6 +1,7 @@
 1.4 - Unreleased
 ================
 
+- [feature] provide defaults for VirtualBox instances (less boilerplate)
 - [fix] set full /etc/ntp.conf instead of trying to fiddle with an existing one.
 
 
