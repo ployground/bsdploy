@@ -45,8 +45,11 @@ class PloyBootstrapCmd(object):
 
 def augment_instance(instance):
     from ploy_ansible import get_playbooks_directory, has_playbook
+
+    # TODO set defaults for virtualbox instances (type, mem etc)
     if not instance.master.sectiongroupname.startswith('ez-'):
         return
+    # TODO use setdefault
     if 'ansible_python_interpreter' not in instance.config:
         instance.config['ansible_python_interpreter'] = '/usr/local/bin/python2.7'
     if 'fabric-shell' not in instance.config:
@@ -82,6 +85,7 @@ def augment_instance(instance):
                 instance.config['fingerprint'] = ssh_key
     else:
         # for jails
+        # TODO: use setdefault
         if 'startup_script' not in instance.config:
             instance.config['startup_script'] = path.join(
                 bsdploy_path, 'startup-ansible-jail.sh')
