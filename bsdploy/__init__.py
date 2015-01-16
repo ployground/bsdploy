@@ -24,6 +24,11 @@ virtualbox_defaults = {
     'vm-boot2': 'dvd',
 }
 
+ez_instance_defaults = {
+    'ansible_python_interpreter': '/usr/local/bin/python2.7',
+    'fabric-shell': '/bin/sh -c',
+}
+
 
 class PloyBootstrapCmd(object):
     def __init__(self, ctrl):
@@ -59,13 +64,12 @@ def augment_instance(instance):
     if instance.master.sectiongroupname == ('vb-instance'):
         for key, value in virtualbox_defaults.items():
             instance.config.setdefault(key, value)
+
     if not instance.master.sectiongroupname.startswith('ez-'):
         return
-    # TODO use setdefault
-    if 'ansible_python_interpreter' not in instance.config:
-        instance.config['ansible_python_interpreter'] = '/usr/local/bin/python2.7'
-    if 'fabric-shell' not in instance.config:
-        instance.config['fabric-shell'] = '/bin/sh -c'
+
+    for key, value in ez_instance_defaults.items():
+        instance.config.setdefault(key, value)
 
     if 'fabfile' not in instance.config:
         playbooks_directory = get_playbooks_directory(instance.master.main_config)
@@ -97,12 +101,9 @@ def augment_instance(instance):
                 instance.config['fingerprint'] = ssh_key
     else:
         # for jails
-        # TODO: use setdefault
-        if 'startup_script' not in instance.config:
-            instance.config['startup_script'] = path.join(
-                bsdploy_path, 'startup-ansible-jail.sh')
-        if 'flavour' not in instance.config:
-            instance.config['flavour'] = 'bsdploy_base'
+        instance.config.setdefault('startup_script', path.join(
+            bsdploy_path, 'startup-ansible-jail.sh'))
+        instance.config.setdefault('flavour', 'bsdploy_base')
 
 
 def get_commands(ctrl):
