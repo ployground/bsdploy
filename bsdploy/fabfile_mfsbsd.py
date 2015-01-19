@@ -81,7 +81,6 @@ def _bootstrap():
         else:
             if not yesno("\nDidn't find an '%s' setting in rc.conf. You sure that you want to continue?" % ifconfig):
                 return
-
     yes = env.instance.config.get('bootstrap-yes', False)
     if not (yes or yesno("\nContinuing will destroy the existing data on the following devices:\n    %s\n\nContinue?" % ' '.join(bu.devices))):
         return
@@ -123,9 +122,16 @@ def _bootstrap():
     run('cp /etc/resolv.conf /mnt/etc/resolv.conf')
     bu.create_bootstrap_directories()
     bu.upload_bootstrap_files(template_context)
+
+    bootstrap_packages = ['python27']
+    if value_asbool(env.instance.config.get('firstboot-update', 'true')):
+        bootstrap_packages.append('firstboot-freebsd-update')
+        run('''touch /mnt/firstboot''')
+        run('''sysrc -f /mnt/etc/rc.conf firstboot_freebsd_update_enable=YES''')
+
     # we need to install python here, because there is no way to install it via
     # ansible playbooks
-    bu.install_pkg('/mnt', chroot=True, packages=['python27'])
+    bu.install_pkg('/mnt', chroot=True, packages=bootstrap_packages)
     # set autoboot delay
     autoboot_delay = env.instance.config.get('bootstrap-autoboot-delay', '-1')
     run('echo autoboot_delay=%s >> /mnt/boot/loader.conf' % autoboot_delay)

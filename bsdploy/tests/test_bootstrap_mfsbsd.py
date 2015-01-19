@@ -138,12 +138,14 @@ def test_bootstrap(bootstrap, put_mock, run_mock, tempdir, yesno_mock):
         ('mkdir -p "/mnt/usr/local/etc/pkg/repos"', {'shell': False}, ''),
         ('mkdir -p "/mnt/root/.ssh" && chmod 0600 "/mnt/root/.ssh"', {'shell': False}, ''),
         ('mkdir -p "/mnt/var/cache/pkg/All"', {'shell': False}, ''),
+        ('touch /mnt/firstboot', {}, ''),
+        ('sysrc -f /mnt/etc/rc.conf firstboot_freebsd_update_enable=YES', {}, ''),
         ('fetch -o /mnt/var/cache/pkg/All/pkg.txz http://pkg.freebsd.org/freebsd:10:x86:64/quarterly/Latest/pkg.txz', {}, ''),
         ('chmod 0600 /mnt/var/cache/pkg/All/pkg.txz', {}, ''),
         ("tar -x -C /mnt --chroot --exclude '+*' -f /mnt/var/cache/pkg/All/pkg.txz", {}, ''),
         ('chroot /mnt /etc/rc.d/ldconfig start', {}, ''),
         ('chroot /mnt pkg2ng', {}, ''),
-        ('chroot /mnt pkg install python27', {}, ''),
+        ('chroot /mnt pkg install python27 firstboot-freebsd-update', {}, ''),
         ('echo autoboot_delay=-1 >> /mnt/boot/loader.conf', {}, ''),
         ('reboot', {}, '')]
     yesno_mock.expected = [

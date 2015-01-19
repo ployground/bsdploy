@@ -1,4 +1,4 @@
-from fabric.api import env, local, sudo
+from fabric.api import env, local, run, sudo
 from fabric.contrib.project import rsync_project as _rsync_project
 from ploy.common import shjoin
 
@@ -56,3 +56,8 @@ def service(service=None, action='status'):
     if service is None:
         exit("You must provide a service name")
     sudo('service %s %s' % (service, action), warn_only=True)
+
+
+def freebsd_update():
+    run('freebsd-update cron')
+    run('freebsd-update install')

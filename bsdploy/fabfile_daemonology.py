@@ -13,6 +13,7 @@ env.shell = '/bin/sh -c'
 
 def bootstrap(**kwargs):
     """ Bootstrap an EC2 instance that has been booted into an AMI from http://www.daemonology.net/freebsd-on-ec2/
+    Note: deprecated, current AMI images are basically pre-bootstrapped, they just need to be configured.
     """
     # the user for the image is `ec2-user`, there is no sudo, but we can su to root w/o password
     original_host = env.host_string

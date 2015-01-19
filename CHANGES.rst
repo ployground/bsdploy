@@ -1,6 +1,7 @@
 1.4 - Unreleased
 ================
 
+- [feature] enable `firstboot-freebsd-update <http://www.freshports.org/sysutils/firstboot-freebsd-update/>`_ by default
 - [feature] provide defaults for VirtualBox instances (less boilerplate)
 - [fix] set full /etc/ntp.conf instead of trying to fiddle with an existing one.
 

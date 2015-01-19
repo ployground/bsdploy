@@ -16,7 +16,7 @@ ansible_paths = dict(
 
 virtualbox_defaults = {
     'vm-ostype': 'FreeBSD_64',
-    'vm-memory': '1024',
+    'vm-memory': '2048',
     'vm-accelerate3d': 'off',
     'vm-acpi': 'on',
     'vm-rtcuseutc': 'on',
