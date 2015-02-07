@@ -14,7 +14,7 @@ ansible_paths = dict(
     roles=[path.join(bsdploy_path, 'roles')],
     library=[path.join(bsdploy_path, 'library')])
 
-virtualbox_defaults = {
+virtualbox_instance_defaults = {
     'vm-ostype': 'FreeBSD_64',
     'vm-memory': '2048',
     'vm-accelerate3d': 'off',
@@ -22,6 +22,10 @@ virtualbox_defaults = {
     'vm-rtcuseutc': 'on',
     'vm-boot1': 'disk',
     'vm-boot2': 'dvd',
+}
+
+virtualbox_hostonlyif_defaults = {
+    'ip': '192.168.56.1',
 }
 
 ez_instance_defaults = {
@@ -60,10 +64,17 @@ class PloyBootstrapCmd(object):
 
 def augment_instance(instance):
     from ploy_ansible import get_playbooks_directory, has_playbook
+    from ploy.config import ConfigSection
 
     if instance.master.sectiongroupname == ('vb-instance'):
-        for key, value in virtualbox_defaults.items():
+        # default values for virtualbox instance
+        for key, value in virtualbox_instance_defaults.items():
             instance.config.setdefault(key, value)
+
+        # default hostonly interface
+        if 'vb-hostonlyif' not in instance.master.main_config:
+            instance.master.main_config['vb-hostonlyif'] = ConfigSection(
+                vboxnet0=ConfigSection(virtualbox_hostonlyif_defaults))
 
     if not instance.master.sectiongroupname.startswith('ez-'):
         return
