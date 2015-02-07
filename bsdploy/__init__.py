@@ -75,7 +75,9 @@ def augment_instance(instance):
     from ploy_ansible import get_playbooks_directory, has_playbook
     from ploy.config import ConfigSection
 
+    # provide virtualbox specific convenience defaults:
     if instance.master.sectiongroupname == ('vb-instance'):
+
         # default values for virtualbox instance
         for key, value in virtualbox_instance_defaults.items():
             instance.config.setdefault(key, value)
