@@ -22,6 +22,8 @@ virtualbox_instance_defaults = {
     'vm-rtcuseutc': 'on',
     'vm-boot1': 'disk',
     'vm-boot2': 'dvd',
+    'vm-nic1': 'hostonly',
+    'vm-hostonlyadapter1': 'vboxnet0',
 }
 
 virtualbox_hostonlyif_defaults = {
