@@ -30,6 +30,13 @@ virtualbox_hostonlyif_defaults = {
     'ip': '192.168.56.1',
 }
 
+virtualbox_dhcpserver_defaults = {
+    'ip': '192.168.56.2',
+    'netmask': '255.255.255.0',
+    'lowerip': '192.168.56.100',
+    'upperip': '192.168.56.254',
+}
+
 ez_instance_defaults = {
     'ansible_python_interpreter': '/usr/local/bin/python2.7',
     'fabric-shell': '/bin/sh -c',
@@ -77,6 +84,11 @@ def augment_instance(instance):
         if 'vb-hostonlyif' not in instance.master.main_config:
             instance.master.main_config['vb-hostonlyif'] = ConfigSection(
                 vboxnet0=ConfigSection(virtualbox_hostonlyif_defaults))
+
+        # default dhcp server
+        if 'vb-dhcpserver' not in instance.master.main_config:
+            instance.master.main_config['vb-dhcpserver'] = ConfigSection(
+                vboxnet0=ConfigSection(virtualbox_dhcpserver_defaults))
 
     if not instance.master.sectiongroupname.startswith('ez-'):
         return
