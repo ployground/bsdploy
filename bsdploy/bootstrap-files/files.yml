@@ -7,6 +7,8 @@
 'pkg.conf':
     remote: '/mnt/usr/local/etc/pkg.conf'
     use_jinja: True
+'pf.conf':
+    remote: '/mnt/etc/pf.conf'
 'FreeBSD.conf':
     directory: '/mnt/usr/local/etc/pkg/repos'
     remote: '/mnt/usr/local/etc/pkg/repos/FreeBSD.conf'

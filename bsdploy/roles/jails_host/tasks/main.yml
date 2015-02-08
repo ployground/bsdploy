@@ -7,59 +7,8 @@
   notify: restart sshd
 
 - { include: ntpd.yml, tags: ntpd }
-
-- name: Enable ipfilter in rc.conf
-  lineinfile:
-    dest: /etc/rc.conf
-    regexp: ^ipfilter_enable=
-    line: ipfilter_enable=\"YES\"
-  notify: restart network
-- name: Set ipfilter_rules in rc.conf
-  lineinfile:
-    dest: /etc/rc.conf
-    regexp: ^ipfilter_rules=
-    line: ipfilter_rules=\"/etc/ipf.rules\"
-  notify: restart network
-- name: Setup ipf.rules
-  template: src=ipf.rules dest=/etc/ipf.rules
-  notify: restart network
-
-- name: Enable ipmon in rc.conf
-  lineinfile:
-    dest: /etc/rc.conf
-    regexp: ^ipmon_enable=
-    line: ipmon_enable=\"YES\"
-  notify: restart network
-- name: Set ipmon_flags in rc.conf
-  lineinfile:
-    dest: /etc/rc.conf
-    regexp: ^ipmon_flags=
-    line: ipmon_flags=\"-Ds\"
-  notify: restart network
-
-- name: Enable ipnat in rc.conf
-  lineinfile:
-    dest: /etc/rc.conf
-    regexp: ^ipnat_enable=
-    line: ipnat_enable=\"YES\"
-  notify: restart network
-- name: Set ipnat_rules in rc.conf
-  lineinfile:
-    dest: /etc/rc.conf
-    regexp: ^ipnat_rules=
-    line: ipnat_rules=\"/etc/ipnat.rules\"
-  notify: restart network
-- name: Setup ipnat.rules
-  template: src=ipnat.rules dest=/etc/ipnat.rules
-  notify: restart network
-  tags: ipnat_rules
-
-- name: Enable gateway in rc.conf
-  lineinfile:
-    dest: /etc/rc.conf
-    regexp: ^gateway_enable=
-    line: gateway_enable=\"YES\"
-  notify: restart network
+- { include: obsolete-ipf.yml, tags: pf }
+- { include: pf.yml, tags: pf }
 
 - name: Add lo1 to rc.conf
   lineinfile:

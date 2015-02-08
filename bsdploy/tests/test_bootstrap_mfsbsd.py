@@ -50,6 +50,7 @@ def test_bootstrap_ask_to_continue(bootstrap, capsys, run_mock, tempdir, yesno_m
         "%(bsdploy_path)s/bootstrap-files/FreeBSD.conf -(template:False)-> /mnt/usr/local/etc/pkg/repos/FreeBSD.conf" % format_info,
         "%(tempdir)s/bootstrap-files/authorized_keys -(template:False)-> /mnt/root/.ssh/authorized_keys" % format_info,
         "%(bsdploy_path)s/bootstrap-files/make.conf -(template:False)-> /mnt/etc/make.conf" % format_info,
+        "%(bsdploy_path)s/bootstrap-files/pf.conf -(template:False)-> /mnt/etc/pf.conf" % format_info,
         "%(bsdploy_path)s/bootstrap-files/pkg.conf -(template:True)-> /mnt/usr/local/etc/pkg.conf" % format_info,
         "%(bsdploy_path)s/bootstrap-files/rc.conf -(template:True)-> /mnt/etc/rc.conf" % format_info,
         "%(tempdir)s/bootstrap-files/ssh_host_dsa_key -(template:False)-> /mnt/etc/ssh/ssh_host_dsa_key" % format_info,
@@ -110,6 +111,7 @@ def test_bootstrap(bootstrap, put_mock, run_mock, tempdir, yesno_mock):
         (("%(tempdir)s/bootstrap-files/authorized_keys" % format_info, '/mnt/root/.ssh/authorized_keys'), {'mode': None}),
         (("%(bsdploy_path)s/bootstrap-files/make.conf" % format_info, '/mnt/etc/make.conf'), {'mode': None}),
         # put from upload_template
+        ((object, '/mnt/etc/pf.conf'), {'mode': None}),
         ((object, '/mnt/usr/local/etc/pkg.conf'), {'mode': None}),
         ((object, '/mnt/etc/rc.conf'), {'mode': None}),
         (("%(tempdir)s/bootstrap-files/ssh_host_dsa_key" % format_info, '/mnt/etc/ssh/ssh_host_dsa_key'), {'mode': 0600}),

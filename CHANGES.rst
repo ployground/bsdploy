@@ -1,9 +1,10 @@
-1.4 - Unreleased
+2.0 - Unreleased
 ================
 
 - [feature] add support for http proxies
 - [change] deactivate pkg's *auto update* feature by default
 - [feature] add support for `firstboot-freebsd-update <http://www.freshports.org/sysutils/firstboot-freebsd-update/>`_ (disabled by default)
+- [change] [BACKWARDS INCOMPATIBLE] switched from ipfilter to pf - you must convert any existing ``ipnat_rules`` to the new ``pf_nat_rules``.
 - [feature] provide defaults for VirtualBox instances (less boilerplate)
 - [fix] set full /etc/ntp.conf instead of trying to fiddle with an existing one.
 

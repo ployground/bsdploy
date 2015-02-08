@@ -3,6 +3,8 @@
   raw: /etc/netstart
 - name: restart ezjail
   service: name=ezjail state=restarted
+- name: reload pf
+  service: name=pf state=reloaded
 - name: restart sshd
   service: name=sshd state=restarted
 - name: restart ntpd
