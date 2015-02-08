@@ -20,7 +20,7 @@ install_requires = [
 setup(
     name="bsdploy",
     version=version,
-    description="A tool to provision, configure and maintain FreeBSD jails",
+    description="A tool to remotely provision, configure and maintain FreeBSD jails",
     long_description=README + '\n\n\nChanges\n=======\n\n' + CHANGES,
     author='Tom Lazar',
     author_email='tom@tomster.org',
