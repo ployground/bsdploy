@@ -26,8 +26,8 @@ Since VirtualBox support is optional and BSDploy is fairly modular, you will nee
     % pip install ploy_virtualbox
 
 
-Getting the FreeBSD installer
------------------------------
+Initializing the project environment
+------------------------------------
 
 BSDploy has the notion of an environment, which is just fancy talk for a directory with specific conventions. Let's create one::
 
