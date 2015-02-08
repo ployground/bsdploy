@@ -37,6 +37,11 @@ virtualbox_dhcpserver_defaults = {
     'upperip': '192.168.56.254',
 }
 
+virtualbox_bootdisk_defaults = {
+    'size': '102400',
+}
+
+
 ez_instance_defaults = {
     'ansible_python_interpreter': '/usr/local/bin/python2.7',
     'fabric-shell': '/bin/sh -c',
@@ -91,6 +96,14 @@ def augment_instance(instance):
         if 'vb-dhcpserver' not in instance.master.main_config:
             instance.master.main_config['vb-dhcpserver'] = ConfigSection(
                 vboxnet0=ConfigSection(virtualbox_dhcpserver_defaults))
+
+        # default virtual disk
+        if 'vb-disk:defaultdisk' in instance.config.get('storage'):
+            try:
+                instance.master.main_config['vb-disk']['defaultdisk']
+            except KeyError:
+                instance.master.main_config['vb-disk'] = ConfigSection(
+                    defaultdisk=ConfigSection(virtualbox_bootdisk_defaults))
 
     if not instance.master.sectiongroupname.startswith('ez-'):
         return
