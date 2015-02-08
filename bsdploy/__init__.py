@@ -98,7 +98,7 @@ def augment_instance(instance):
                 vboxnet0=ConfigSection(virtualbox_dhcpserver_defaults))
 
         # default virtual disk
-        if 'vb-disk:defaultdisk' in instance.config.get('storage'):
+        if 'vb-disk:defaultdisk' in instance.config.get('storage', {}):
             try:
                 instance.master.main_config['vb-disk']['defaultdisk']
             except KeyError:
