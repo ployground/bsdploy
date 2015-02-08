@@ -23,15 +23,6 @@ To create a 'production' environment, create an additional configuration file ``
     extends = ploy.conf
 
     [vb-instance:demo-production]
-    vm-ostype = FreeBSD_64
-    vm-memory = 1024
-    vm-accelerate3d = off
-    vm-acpi = on
-    vm-rtcuseutc = on
-    vm-boot1 = disk
-    vm-boot2 = dvd
-    vm-nic1 = hostonly
-    vm-hostonlyadapter1 = vboxnet0
     vm-nic2 = nat
     vm-natpf2 = ssh,tcp,,44004,,22
     storage =

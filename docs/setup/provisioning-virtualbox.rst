@@ -9,34 +9,44 @@ BSDploy provides automated provisioning of `VirtualBox <https://www.virtualbox.o
 Unlike with :doc:`plain instances <provisioning-plain>` the configuration doesn't just describe existing instances but is used to create them. Consider the following entry in ``ploy.conf``::
 
     [vb-instance:ploy-demo]
-    vm-ostype = FreeBSD_64
-    vm-memory = 1024
-    vm-accelerate3d = off
-    vm-acpi = on
-    vm-rtcuseutc = on
-    vm-boot1 = disk
-    vm-boot2 = dvd
-    vm-nic1 = nat
+    vm-nic2 = nat
     vm-natpf1 = ssh,tcp,,44003,,22
     storage =
-        --type dvddrive --medium ../downloads/mfsbsd-se-9.2-RELEASE-amd64.iso
-        --medium vb-disk:boot
+        --medium vb-disk:defaultdisk
+        --type dvddrive --medium http://mfsbsd.vx.sk/files/iso/10/amd64/mfsbsd-se-10.1-RELEASE-amd64.iso --medium_sha1 03af247c1058a78a251c46ad5a13dc7b84a7ee7d
 
-    [vb-disk:boot]
-    size = 102400
 
-VirtualBox instances are configured using the ``vb-instance`` prefix and you can set parameters of the virtual machine by prefixing them with ``vm-``. For additional details on which parameters are available and what they mean, refer to the documentation of the VirtualBox commandline tool `VBoxManage <http://www.virtualbox.org/manual/ch08.html>`_, in particualar for `VBoxManage createvm <http://www.virtualbox.org/manual/ch08.html#vboxmanage-createvm>`_ and `VBoxManage modifyvm <http://www.virtualbox.org/manual/ch08.html#vboxmanage-modifyvm>`_.
+VirtualBox instances are configured using the ``vb-instance`` prefix and you can set parameters of the virtual machine by prefixing them with ``vm-``. For additional details on which parameters are available and what they mean, refer to `the plugin's documentation <http://ploy.readthedocs.org/en/latest/ploy_virtualbox/README.html#instances>`_ and the documentation of the VirtualBox commandline tool `VBoxManage <http://www.virtualbox.org/manual/ch08.html>`_, in particualar for `VBoxManage createvm <http://www.virtualbox.org/manual/ch08.html#vboxmanage-createvm>`_ and `VBoxManage modifyvm <http://www.virtualbox.org/manual/ch08.html#vboxmanage-modifyvm>`_.
 
-In addition to the ``vb-instance`` you will need to configure at least one storage device using a ``vb-disk`` entry which is essentially a wrapper for `VBoxManage createhd <http://www.virtualbox.org/manual/ch08.html#vboxmanage-createvdi>`_.
+Having said that, BSDploy provides a number of convenience defaults for each instance, so in most cases you won't need much more than in the above example.
 
-As you can see in the example above, you need to include the disk in the ``storage`` parameter of the ``vb-instance`` entry in order to make it available for it.
 
-Also note, that we reference a mfsBSD boot image. Since VirtualBox won't find a bootable OS on the new drive initially, it will attempt to boot into mfsBSD.
+Default hostonly network
+------------------------
 
-To download the image, use ``ploy-download`` like so::
+Unless you configure otherwise, BSDploy will tell VirtualBox to 
 
-    mkdir downloads
-    ploy-download http://mfsbsd.vx.sk/files/iso/9/amd64/mfsbsd-se-9.2-RELEASE-amd64.iso 4ef70dfd7b5255e36f2f7e1a5292c7a05019c8ce downloads/
+- create a host-only network interface named ``vboxnet0``
+- assign the first network interface to that
+- create a DHCP server for the address range ``192.168.56.100-254``
+
+This means that a) during bootstrap the VM will receive a DHCP address from that range but more importantly b) you are free to assign your own static IPs from the range *below* (i.e. ``192.168.56.10``) because the existence of the VirtualBox DHCP server will ensure that that IP is reachable from the host system. This allows you to assign known, good static IP addresses to all of your VirtualBox instances.
+
+
+Default disk setup
+------------------
+
+As you can see in the example above, there is a reference to a disk named ``defaultdisk`` in the ``storage`` parameter of the ``vb-instance`` entry. If you reference a disk of that name, BSDploy will automatically provision a virtual sparse disk of 100Gb size. In practice it's often best to leave that assignment in place (it's where the OS will be installed onto during bootstrap) and instead configure additional disks for data storage.
+
+
+Boot images
+-----------
+
+Also note, that we reference a mfsBSD boot image above and assign it to the optical drive. By providing an external URL with a checksum, ``ploy_virtualbox`` will download that image for us (by default into ``~/.ploy/downloads/``) and connect it to the instance.
+
+
+First Startup
+-------------
 
 Unlike ``VBoxManage`` BSDploy does not provide an explicit *create* command, instead just start the instance and if it doesn't exist already, BSDploy will create it for you on-demand::
 

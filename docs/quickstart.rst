@@ -34,13 +34,6 @@ BSDploy has the notion of an environment, which is just fancy talk for a directo
     % mkdir ploy-quickstart
     % cd ploy-quickstart
 
-First, we need to download a FreeBSD boot image. BSDploy uses `mfsBSD <http://mfsbsd.vx.sk>`_ which is basically the official FreeBSD installer plus pre-configured SSH access.
-
-BSDploy provides a small cross-platform helper for downloading assets via HTTP which also checks the integrity of the downloaded file::
-
-    % mkdir downloads
-    % ploy-download http://mfsbsd.vx.sk/files/iso/10/amd64/mfsbsd-se-10.0-RELEASE-amd64.iso 06165ce1e06ff8e4819e86c9e23e7d149f820bb4 downloads/
-
 
 Configuring the virtual machine
 -------------------------------
@@ -51,32 +44,25 @@ The main configuration file is named ``ploy.conf`` and lives inside a top-level 
 
 Inside it create a file named ``ploy.conf`` with the following contents::
 
-    [vb-hostonlyif:vboxnet0]
-    ip = 192.168.56.1
-
-    [vb-dhcpserver:vboxnet0]
-    ip = 192.168.56.2
-    netmask = 255.255.255.0
-    lowerip = 192.168.56.100
-    upperip = 192.168.56.254
-
     [vb-instance:ploy-demo]
-    vm-nic1 = hostonly
-    vm-hostonlyadapter1 = vboxnet0
     vm-nic2 = nat
     vm-natpf2 = ssh,tcp,,44003,,22
     storage =
-        --type dvddrive --medium ../downloads/mfsbsd-se-10.0-RELEASE-amd64.iso
-        --medium vb-disk:boot
+        --medium vb-disk:defaultdisk
+        --type dvddrive --medium http://mfsbsd.vx.sk/files/iso/10/amd64/mfsbsd-se-10.1-RELEASE-amd64.iso --medium_sha1 03af247c1058a78a251c46ad5a13dc7b84a7ee7d
 
-    [vb-disk:boot]
-    size = 102400
+
+This creates a VirtualBox instance named ``ploy-demo``. By default BSDploy provides it with a so-called "host only interface" but since that cannot be used to connect to the internet we explicitly configure a second one using NAT (mfsBSD will configure it via DHCP) and in addtion we create a port forwarding from ``localhost`` port ``44003`` to port ``22`` on the box - in essence allowing us to SSH into it via localhost.
+
+Next, we assign a virtual disk named ``defaultdisk`` onto which we will install the OS. This special disk is created automatically by BSDploy if it doesn't exist yet (it's sparse by default, so it won't take up much space on your disk).
+
+Finally, we configure a virtual optical drive to boot from the official mfsBSD 'special edition' installation image. By providing a download URL and checksum, BSDploy will automatically download it for us.
 
 Now we can start it up::
 
     % ploy start ploy-demo
 
-This should fire up virtualbox and boot a VirtualBox VM into mfsBSD.
+This should download the mfsBSD image, fire up VirtualBox and boot our VM into mfsBSD.
 
 
 Bootstrapping the host

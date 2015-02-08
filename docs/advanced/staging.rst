@@ -83,21 +83,9 @@ Change it to this::
 
 And in your ``staging.conf`` you define ``fqdn_suffix`` to be i.e. ``.192.168.56.10.xip.io`` and in ``production.conf`` to an empty string.
 
-Finally, configure the VirtualBox instance in staging to use a host-only adapter, like so (the second nic is needed for the virtual instance to access the internet)::
-
-	[vb-hostonlyif:vboxnet0]
-	ip = 192.168.56.1
-
-	[vb-dhcpserver:vboxnet0]
-	ip = 192.168.56.2
-	netmask = 255.255.255.0
-	lowerip = 192.168.56.100
-	upperip = 192.168.56.254
+Finally, configure the VirtualBox instance in staging to use a second nic (in addition to the default host-only interface) via DHCP so it can access the internet::
 
 	[vb-instance:provisioner]
-	vm-ostype = FreeBSD_64
-	vm-nic1 = hostonly
-	vm-hostonlyadapter1 = vboxnet0
 	vm-nic2 = nat
 
 ``ploy_virtualbox`` will ensure that the virtual network ``vboxnet0`` exists (if it doesn't already).

@@ -14,7 +14,7 @@ ansible_paths = dict(
     roles=[path.join(bsdploy_path, 'roles')],
     library=[path.join(bsdploy_path, 'library')])
 
-virtualbox_defaults = {
+virtualbox_instance_defaults = {
     'vm-ostype': 'FreeBSD_64',
     'vm-memory': '2048',
     'vm-accelerate3d': 'off',
@@ -22,7 +22,25 @@ virtualbox_defaults = {
     'vm-rtcuseutc': 'on',
     'vm-boot1': 'disk',
     'vm-boot2': 'dvd',
+    'vm-nic1': 'hostonly',
+    'vm-hostonlyadapter1': 'vboxnet0',
 }
+
+virtualbox_hostonlyif_defaults = {
+    'ip': '192.168.56.1',
+}
+
+virtualbox_dhcpserver_defaults = {
+    'ip': '192.168.56.2',
+    'netmask': '255.255.255.0',
+    'lowerip': '192.168.56.100',
+    'upperip': '192.168.56.254',
+}
+
+virtualbox_bootdisk_defaults = {
+    'size': '102400',
+}
+
 
 ez_instance_defaults = {
     'ansible_python_interpreter': '/usr/local/bin/python2.7',
@@ -60,10 +78,32 @@ class PloyBootstrapCmd(object):
 
 def augment_instance(instance):
     from ploy_ansible import get_playbooks_directory, has_playbook
+    from ploy.config import ConfigSection
 
+    # provide virtualbox specific convenience defaults:
     if instance.master.sectiongroupname == ('vb-instance'):
-        for key, value in virtualbox_defaults.items():
+
+        # default values for virtualbox instance
+        for key, value in virtualbox_instance_defaults.items():
             instance.config.setdefault(key, value)
+
+        # default hostonly interface
+        if 'vb-hostonlyif' not in instance.master.main_config:
+            instance.master.main_config['vb-hostonlyif'] = ConfigSection(
+                vboxnet0=ConfigSection(virtualbox_hostonlyif_defaults))
+
+        # default dhcp server
+        if 'vb-dhcpserver' not in instance.master.main_config:
+            instance.master.main_config['vb-dhcpserver'] = ConfigSection(
+                vboxnet0=ConfigSection(virtualbox_dhcpserver_defaults))
+
+        # default virtual disk
+        if 'vb-disk:defaultdisk' in instance.config.get('storage'):
+            try:
+                instance.master.main_config['vb-disk']['defaultdisk']
+            except KeyError:
+                instance.master.main_config['vb-disk'] = ConfigSection(
+                    defaultdisk=ConfigSection(virtualbox_bootdisk_defaults))
 
     if not instance.master.sectiongroupname.startswith('ez-'):
         return
