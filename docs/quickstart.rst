@@ -241,13 +241,13 @@ To do so, make a folder named ``host_vars``::
 
 and create the file ``jailhost.yml`` in it with the following content::
 
-    ipnat_rules:
-        - "rdr em0 {{ ansible_em0.ipv4[0].address }}/32 port 80 -> {{ hostvars['jailhost-demo_jail']['ploy_ip'] }} port 80"
+    pf_nat_rules:
+        - "rdr on {{ ansible_default_ipv4.interface }} proto tcp from any to {{ ansible_default_ipv4.interface }} port 80 -> {{ hostvars['jailhost-demo_jail']['ploy_ip'] }} port 80"
 
-To activate the rules, re-apply the jail host configuration.
+To activate the rules, re-apply the jail host configuration with just the ``pf-conf`` tag.
 Ansible will figure out, that it needs to update them (and only them) and then restart the network. However, in practice running the entire configuration can take quite some time, so if you already know you only want to update some specific sub set of tasks you can pass in one or more tags. In this case for updating the ipnat rules::
 
-    % ploy configure jailhost -t ipnat_rules
+    % ploy configure jailhost -t pf-conf
 
 Since the demo is running inside a host that got its IP address via DHCP we will need to find that out before we can access it in the browser.
 
