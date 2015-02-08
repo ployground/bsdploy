@@ -112,12 +112,12 @@ Eventhough the webserver is now running, we cannot reach it from the outside, we
 
 So, create or edit ``host_vars/jailhost.yml`` to look like so::
 
-	ipnat_rules:
-	    - "rdr em0 {{ ansible_em0.ipv4[0].address }}/32 port 80 -> {{ hostvars['jailhost-webserver']['ploy_ip'] }} port 80"
+	pf_nat_rules:
+	    - "rdr on {{ ansible_default_ipv4.interface }} proto tcp from any to {{ ansible_default_ipv4.interface }} port 80 -> {{ hostvars['jailhost-webserver']['ploy_ip'] }} port 80"
 
-To activate the rules, re-apply the jail host configuration::
+To activate the rules, re-apply the jail host configuration for just the ``pf-conf`` tag::
 
-	ploy configure jailhost -t ipnat_rules
+	ploy configure jailhost -t pf-conf
 
 You should now be able to access the default nginx website at the ``http://192.168.56.100`` address.
 
