@@ -11,7 +11,3 @@
     remote: '/mnt/usr/local/etc/pkg/repos/FreeBSD.conf'
 'sshd_config':
     remote: '/mnt/etc/ssh/sshd_config'
-'pkg.txz':
-    url: 'http://pkg.freebsd.org/freebsd:10:x86:64/quarterly/Latest/pkg.txz'
-    directory: '/mnt/var/cache/pkg/All'
-    remote: '/mnt/var/cache/pkg/All/pkg.txz'

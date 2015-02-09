@@ -275,16 +275,20 @@ class BootstrapUtils:
 
     def install_pkg(self, root, chroot=None, packages=[]):
         assert isinstance(chroot, bool)
-        pkg = self.bootstrap_files['pkg.txz']
-        if not exists(pkg.local):
-            run('fetch -o {0.remote} {0.url}'.format(pkg))
-        run('chmod 0600 {0.remote}'.format(pkg))
-        run("tar -x -C {root}{chroot} --exclude '+*' -f {0.remote}".format(
-            pkg, root=root, chroot=' --chroot' if chroot else ''))
         chroot_prefix = 'chroot %s ' % root if chroot else ''
-        # run pkg2ng for which the shared library path needs to be updated
-        run(chroot_prefix + '/etc/rc.d/ldconfig start')
-        run(chroot_prefix + 'pkg2ng')
+        try:
+            pkg = self.bootstrap_files['pkg.txz']
+            print("\nInstalling pkg")
+            if not exists(pkg.local):
+                run('fetch -o {0.remote} {0.url}'.format(pkg))
+            run('chmod 0600 {0.remote}'.format(pkg))
+            run("tar -x -C {root}{chroot} --exclude '+*' -f {0.remote}".format(
+                pkg, root=root, chroot=' --chroot' if chroot else ''))
+            # run pkg2ng for which the shared library path needs to be updated
+            run(chroot_prefix + '/etc/rc.d/ldconfig start')
+            run(chroot_prefix + 'pkg2ng')
+        except KeyError:
+            pass
         if packages:
             run(chroot_prefix + 'pkg install %s' % ' '.join(packages))
 
