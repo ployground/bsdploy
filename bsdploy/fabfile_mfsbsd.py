@@ -21,7 +21,7 @@ def _mfsbsd(env, kwargs={}):
         # default ssh settings for mfsbsd with possible overwrite by bootstrap-fingerprint
         fingerprint = env.instance.config.get(
             'bootstrap-fingerprint',
-            '1f:cb:78:20:b8:97:dd:dc:3d:23:75:f0:bb:ad:84:03')
+            '9e:5a:5d:3f:52:a3:bf:2b:6e:a0:34:f7:e5:20:11:af')
         env.instance.config['fingerprint'] = fingerprint
         env.instance.config['password-fallback'] = True
         env.instance.config['password'] = 'mfsroot'
