@@ -86,24 +86,32 @@ Next it will give you one last chance to abort before it commences to wipe the t
 To make sure that everything has worked so far, let's take a look at the host by logging into it via SSH. ``bsdploy`` provides a command for that, too::
 
     % ploy ssh jailhost
-    FreeBSD 9.2-RELEASE (GENERIC) #6 r255896M: Wed Oct  9 01:45:07 CEST 2013
+    FreeBSD 10.1-RELEASE (GENERIC) #0 r274401: Tue Nov 11 21:02:49 UTC 2014
+
+    Welcome to FreeBSD!
     [...]
 
-Let's take a quick look around::
+Let's take a quick look around. First, what packages have been installed?::
 
     root@jailhost:~ # pkg info
-    gettext-0.18.3.1_1             GNU gettext package
-    libiconv-1.14_3                Character set conversion library
-    python27-2.7.6_4               Interpreted object-oriented programming language
+    gettext-runtime-0.19.3         GNU gettext runtime libraries and programs
+    indexinfo-0.2.2                Utility to regenerate the GNU info page index
+    libffi-3.0.13_3                Foreign Function Interface
+    pkg-1.4.3                      Package manager
+    python27-2.7.9                 Interpreted object-oriented programming language
+
+Next, what's the ZFS scenario?::
+
     root@jailhost:~ # zpool list
-    NAME     SIZE  ALLOC   FREE    CAP  DEDUP  HEALTH  ALTROOT
-    system  19.9G   584M  19.3G     2%  1.00x  ONLINE  -
+    NAME     SIZE  ALLOC   FREE   FRAG  EXPANDSZ    CAP  DEDUP  HEALTH  ALTROOT
+    system  19.9G   931M  19.0G     2%         -     4%  1.00x  ONLINE  -
     root@jailhost:~ # zfs list
     NAME              USED  AVAIL  REFER  MOUNTPOINT
-    system            584M  19.0G    31K  none
-    system/root       583M  19.0G   533M  /
-    system/root/tmp    37K  19.0G    37K  /tmp
-    system/root/var  50.6M  19.0G  50.6M  /var
+    system            931M  18.3G    19K  none
+    system/root       931M  18.3G   876M  /
+    system/root/tmp    21K  18.3G    21K  /tmp
+    system/root/var  54.2M  18.3G  54.2M  /var
+    root@jailhost:~ # 
 
 A few things to note:
 
@@ -139,32 +147,38 @@ Package-wise nothing much has changed – only ``ezjail`` has been installed::
 
     root@jailhost:~ # pkg info
     ezjail-3.4.1                   Framework to easily create, manipulate, and run FreeBSD jails
-    gettext-0.18.3.1_1             GNU gettext package
-    libiconv-1.14_3                Character set conversion library
-    python27-2.7.6_4               Interpreted object-oriented programming language
+    gettext-runtime-0.19.3         GNU gettext runtime libraries and programs
+    indexinfo-0.2.2                Utility to regenerate the GNU info page index
+    libffi-3.0.13_3                Foreign Function Interface
+    pkg-1.4.3                      Package manager
+    python27-2.7.9                 Interpreted object-oriented programming language
+    root@jailhost:~ # 
 
 There is now a second zpool called ``tank`` and ``ezjail`` has been configured to use it::
 
     root@jailhost:~ # zpool list
-    NAME     SIZE  ALLOC   FREE    CAP  DEDUP  HEALTH  ALTROOT
-    system  19.9G   584M  19.3G     2%  1.00x  ONLINE  -
-    tank    78.5G   389M  78.1G     0%  1.00x  ONLINE  -
+    NAME     SIZE  ALLOC   FREE   FRAG  EXPANDSZ    CAP  DEDUP  HEALTH  ALTROOT
+    system  19.9G   934M  19.0G     2%         -     4%  1.00x  ONLINE  -
+    tank    75.5G   444M  75.1G      -         -     0%  1.00x  ONLINE  -
     root@jailhost:~ # zfs list
     NAME                  USED  AVAIL  REFER  MOUNTPOINT
-    system                584M  19.0G    31K  none
-    system/root           584M  19.0G   533M  /
-    system/root/tmp        38K  19.0G    38K  /tmp
-    system/root/var      50.7M  19.0G  50.7M  /var
-    tank                  389M  76.9G   144K  none
-    tank/jails            389M  76.9G  8.05M  /usr/jails
-    tank/jails/basejail   377M  76.9G   377M  /usr/jails/basejail
-    tank/jails/newjail   3.58M  76.9G  3.58M  /usr/jails/newjail
+    system                933M  18.3G    19K  none
+    system/root           933M  18.3G   877M  /
+    system/root/tmp        21K  18.3G    21K  /tmp
+    system/root/var      56.6M  18.3G  56.6M  /var
+    tank                  443M  72.7G   144K  none
+    tank/jails            443M  72.7G  10.1M  /usr/jails
+    tank/jails/basejail   426M  72.7G   426M  /usr/jails/basejail
+    tank/jails/newjail   6.37M  72.7G  6.37M  /usr/jails/newjail
+    root@jailhost:~ # 
+
 
 But there aren't any jails configured yet::
 
     root@jailhost:~ # ezjail-admin list
     STA JID  IP              Hostname                       Root Directory
     --- ---- --------------- ------------------------------ ------------------------
+    root@jailhost:~ # 
 
 Let's change that...
 
@@ -198,10 +212,10 @@ Rather conveniently `ploy_ezjail <https://github.com/ployground/ploy_ezjail>`_ h
 Log out from the jailhost and run this::
 
     # ploy ssh demo_jail
-    FreeBSD 9.2-RELEASE (GENERIC) #6 r255896M: Wed Oct  9 01:45:07 CEST 2013
+    FreeBSD 10.1-RELEASE (GENERIC) #0 r274401: Tue Nov 11 21:02:49 UTC 2014
 
     Gehe nicht über Los.
-    root@demo_jail:~ #
+    root@demo_jail:~ # 
 
 and there you are, inside the jail.
 
