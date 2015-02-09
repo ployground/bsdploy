@@ -3,7 +3,7 @@ Provisioning VirtualBox instances
 
 BSDploy provides automated provisioning of `VirtualBox <https://www.virtualbox.org>`_ instances via the `ploy_virtualbox plugin <https://github.com/ployground/ploy_virtualbox>`_.
 
-.. Note:: The plugin is not installed by default when installing BSDploy, so you need to install it additionally like so ``pip install ploy_ec2``.
+.. Note:: The plugin is not installed by default when installing BSDploy, so you need to install it additionally like so ``pip install ploy_virtualbox``.
 
 
 Unlike with :doc:`plain instances <provisioning-plain>` the configuration doesn't just describe existing instances but is used to create them. Consider the following entry in ``ploy.conf``::
