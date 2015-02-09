@@ -244,10 +244,15 @@ class BootstrapUtils:
         for filename, bf in sorted(self.bootstrap_files.items()):
             if not bf.to_be_fetched:
                 print('{0.local} -(template:{0.use_jinja})-> {0.remote}'.format(bf))
-        print("\nThe following files will be downloaded on the host during bootstrap:")
+        to_be_fetched_count = 0
         for filename, bf in sorted(self.bootstrap_files.items()):
             if bf.to_be_fetched:
+                if to_be_fetched_count == 0:
+                    print("\nThe following files will be downloaded on the host during bootstrap:")
+                to_be_fetched_count += 1
                 print('{0.url} -> {0.remote}'.format(bf))
+        if to_be_fetched_count == 0:
+            print("\nNo files will be downloaded on the host during bootstrap.")
         print()
 
     def create_bootstrap_directories(self):
