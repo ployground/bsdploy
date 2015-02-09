@@ -29,11 +29,5 @@ def test_bootstrap(bootstrap, capsys, put_mock, run_mock, tempdir, yesno_mock):
         ("su root -c '/tmp/enable_root_login_on_daemonology.sh'", {}, ''),
         ('rm /tmp/enable_root_login_on_daemonology.sh', {}, ''),
         ('mkdir -p "/usr/local/etc/pkg/repos"', {'shell': False}, ''),
-        ('mkdir -p "/var/cache/pkg/All"', {'shell': False}, ''),
-        ('fetch -o /var/cache/pkg/All/pkg.txz http://pkg.freebsd.org/freebsd:9:x86:64/quarterly/Latest/pkg.txz', {}, ''),
-        ('chmod 0600 /var/cache/pkg/All/pkg.txz', {}, ''),
-        ("tar -x -C / --exclude '+*' -f /var/cache/pkg/All/pkg.txz", {}, ''),
-        ('/etc/rc.d/ldconfig start', {}, ''),
-        ('pkg2ng', {}, ''),
         ('pkg install python27', {}, '')]
     bootstrap()
