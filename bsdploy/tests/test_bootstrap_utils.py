@@ -228,7 +228,6 @@ def test_fetch_assets_packagesite(bu, local_mock, tempdir):
         tempdir['downloads/packagesite.txz'].fill(f.read())
     local_mock.expected = [
         ('wget -c -O "%(tempdir)s/downloads/packagesite.txz" "http://pkg.freebsd.org/freebsd:10:x86:64/quarterly/packagesite.txz"' % format_info, {}, ''),
-        ('wget -c -O "%(tempdir)s/downloads/pkg.txz" "http://pkg.freebsd.org/freebsd:10:x86:64/quarterly/Latest/pkg.txz"' % format_info, {}, ''),
         ('wget -c -O "%(tempdir)s/downloads/packages/freebsd:10:x86:64/latest/All/python27-2.7.6_4.txz" "http://pkg.freebsd.org/freebsd:10:x86:64/latest/All/python27-2.7.6_4.txz"' % format_info, {}, ''),
         ('wget -c -O "%(tempdir)s/downloads/packages/freebsd:10:x86:64/latest/All/gettext-0.18.3.1.txz" "http://pkg.freebsd.org/freebsd:10:x86:64/latest/All/gettext-0.18.3.1.txz"' % format_info, {}, ''),
         ('wget -c -O "%(tempdir)s/downloads/packages/freebsd:10:x86:64/latest/All/libiconv-1.14_3.txz" "http://pkg.freebsd.org/freebsd:10:x86:64/latest/All/libiconv-1.14_3.txz"' % format_info, {}, '')]
