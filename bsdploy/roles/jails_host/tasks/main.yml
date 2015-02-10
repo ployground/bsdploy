@@ -11,10 +11,9 @@
 - { include: pf.yml, tags: pf }
 
 - name: Add lo1 to rc.conf
-  lineinfile:
-    dest: /etc/rc.conf
-    regexp: ^cloned_interfaces=
-    line: cloned_interfaces=\"lo1\"
+  sysrc:
+    name: cloned_interfaces
+    value: lo1
   notify: restart network
 
 - meta: flush_handlers
@@ -42,30 +41,27 @@
   - ezjail
 
 - name: Set default jail interface
-  lineinfile:
-    dest: /etc/rc.conf
-    regexp: ^jail_interface=
-    line: jail_interface=\"lo1\"
+  sysrc:
+    name: jail_interface
+    value: lo1
   notify: restart ezjail
 - name: Set default jail parameters
-  lineinfile:
-    dest: /etc/rc.conf
-    regexp: ^jail_parameters=
-    line: jail_parameters=\"allow.raw_sockets=1 allow.sysvipc=1\"
+  sysrc:
+    name: jail_parameters
+    value: "allow.raw_sockets=1 allow.sysvipc=1"
   notify: restart ezjail
 - name: Set default jail exec stop
-  lineinfile:
-    dest: /etc/rc.conf
-    regexp: ^jail_exec_stop=
-    line: jail_exec_stop=\"/bin/sh /etc/rc.shutdown\"
+  sysrc:
+    name: jail_exec_stop
+    value: "/bin/sh /etc/rc.shutdown"
   notify: restart ezjail
 
 - name: Enable ezjail in rc.conf
-  lineinfile:
-    dest: /etc/rc.conf
-    regexp: ^ezjail_enable=
-    line: ezjail_enable=\"YES\"
+  service:
+    name: ezjail
+    enabled: yes
   notify: restart ezjail
+
 - name: Setup ezjail.conf
   template: src=ezjail.conf dest=/usr/local/etc/ezjail.conf
   notify: restart ezjail

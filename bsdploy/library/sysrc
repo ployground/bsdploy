@@ -1,0 +1,75 @@
+#!/usr/bin/python
+DOCUMENTATION = '''
+---
+module: sysrc
+author: Florian Schulze
+short_description: Manage rc.conf via sysrc command
+description:
+    - Manage rc.conf via sysrc command
+'''
+
+
+class Sysrc(object):
+
+    platform = 'FreeBSD'
+
+    def __init__(self, module):
+        self.module = module
+        self.changed = False
+        self.state = self.module.params.pop('state')
+        self.name = self.module.params.pop('name')
+        self.value = self.module.params.pop('value')
+        self.cmd = self.module.get_bin_path('sysrc', required=True)
+
+    def sysrc(self, *params):
+        return self.module.run_command([self.cmd] + list(params))
+
+    def change_needed(self, *params):
+        (rc, out, err) = self.sysrc('-c', *params)
+        return rc != 0
+
+    def change(self, *params):
+        if self.module.check_mode:
+            self.changed = True
+            return
+        (rc, out, err) = self.sysrc(*params)
+        if rc != 0:
+            self.module.fail_json(msg="Failed to run sysrc %s:\n%s" % (' '.join(params), err))
+        self.changed = True
+
+    def __call__(self):
+        result = dict(name=self.name, state=self.state)
+
+        if self.state == 'present':
+            if not self.value:
+                self.module.fail_json(msg="When setting an rc.conf variable, a value is required.")
+            setting = "%s=%s" % (self.name, self.value)
+            if self.change_needed(setting):
+                self.change(setting)
+        elif self.state == 'absent':
+            if self.change_needed('-x', self.name):
+                self.change('-x', self.name)
+        result['changed'] = self.changed
+        return result
+
+
+MODULE_SPECS = dict(
+    argument_spec=dict(
+        name=dict(required=True, type='str'),
+        value=dict(type='str'),
+        state=dict(default='present', choices=['present', 'absent'], type='str')),
+    supports_check_mode=True)
+
+
+def main():
+    module = AnsibleModule(**MODULE_SPECS)
+    result = Sysrc(module)()
+    if 'failed' in result:
+        module.fail_json(**result)
+    else:
+        module.exit_json(**result)
+
+
+from ansible.module_utils.basic import *
+if __name__ == "__main__":
+    main()
