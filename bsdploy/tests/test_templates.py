@@ -2,11 +2,7 @@ def test_dhcp_host_dhclient_exit_hooks():
     pass
 
 
-def test_jails_host_ipf_rules():
-    pass
-
-
-def test_jails_host_ipnat_rules():
+def test_jails_host_pf_conf():
     pass
 
 

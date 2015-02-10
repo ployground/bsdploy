@@ -1,0 +1,45 @@
+---
+- name: Check for old ipnat_rules setting
+  fail:
+    msg: "ipnat_rules is not supported anymore, see documentation on pf_nat_rules"
+  when: ipnat_rules is defined
+  tags: pf-conf
+
+- name: Remove ipfilter from rc.conf
+  lineinfile:
+    dest: /etc/rc.conf
+    regexp: ^ipfilter_enable=
+    state: absent
+  notify: restart network
+- name: Remove ipfilter_rules from rc.conf
+  lineinfile:
+    dest: /etc/rc.conf
+    regexp: ^ipfilter_rules=
+    state: absent
+  notify: restart network
+
+- name: Remove ipmon from rc.conf
+  lineinfile:
+    dest: /etc/rc.conf
+    regexp: ^ipmon_enable=
+    state: absent
+  notify: restart network
+- name: Remove ipmon_flags from rc.conf
+  lineinfile:
+    dest: /etc/rc.conf
+    regexp: ^ipmon_flags=
+    state: absent
+  notify: restart network
+
+- name: Remove ipnat from rc.conf
+  lineinfile:
+    dest: /etc/rc.conf
+    regexp: ^ipnat_enable=
+    state: absent
+  notify: restart network
+- name: Remove ipnat_rules from rc.conf
+  lineinfile:
+    dest: /etc/rc.conf
+    regexp: ^ipnat_rules=
+    state: absent
+  notify: restart network

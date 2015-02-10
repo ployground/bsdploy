@@ -142,7 +142,7 @@ def test_quickstart_calls(qs_path, tempdir):
         (subprocess.check_call, ('ploy configure demo_jail',)),
         (subprocess.check_call, ('mkdir host_vars',)),
         ('create', '%s/host_vars/jailhost.yml' % tempdir.directory),
-        (subprocess.check_call, ('ploy configure jailhost -t ipnat_rules',)),
+        (subprocess.check_call, ('ploy configure jailhost -t pf-conf',)),
         (subprocess.check_call, ("ploy ssh jailhost 'ifconfig em0'",))]
     assert tempdir['etc/ploy.conf'].content().splitlines() == [
         '[vb-instance:ploy-demo]',
@@ -172,8 +172,8 @@ def test_quickstart_calls(qs_path, tempdir):
         '    - name: Setup nginx to start immediately and on boot',
         '      service: name=nginx enabled=yes state=started']
     assert tempdir['host_vars/jailhost.yml'].content().splitlines() == [
-        'ipnat_rules:',
-        '    - "rdr em0 {{ ansible_em0.ipv4[0].address }}/32 port 80 -> {{ hostvars[\'jailhost-demo_jail\'][\'ploy_ip\'] }} port 80"']
+        'pf_nat_rules:',
+        '    - "rdr on {{ ansible_default_ipv4.interface }} proto tcp from any to {{ ansible_default_ipv4.interface }} port 80 -> {{ hostvars[\'jailhost-demo_jail\'][\'ploy_ip\'] }} port 80"']
 
 
 @pytest.yield_fixture
