@@ -6,6 +6,7 @@
     line: ntpd_enable=\"YES\"
   notify: restart ntpd
   tags: ntpd
+
 - name: Disable public use of ntpd
   copy:
     content: |

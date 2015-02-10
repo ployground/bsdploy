@@ -1,10 +1,10 @@
 ---
 - name: Enable pf in rc.conf
-  lineinfile:
-    dest: /etc/rc.conf
-    regexp: ^pf_enable=
-    line: pf_enable=\"YES\"
+  service:
+    name: pf
+    enabled: yes
   notify: restart network
+
 - name: Setup pf.conf
   template:
     src: pf.conf
@@ -13,8 +13,7 @@
   tags: pf-conf
 
 - name: Enable gateway in rc.conf
-  lineinfile:
-    dest: /etc/rc.conf
-    regexp: ^gateway_enable=
-    line: gateway_enable=\"YES\"
+  service:
+    name: gateway
+    enabled: yes
   notify: restart network
