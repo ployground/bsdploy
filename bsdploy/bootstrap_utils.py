@@ -276,8 +276,9 @@ class BootstrapUtils:
     def install_pkg(self, root, chroot=None, packages=[]):
         assert isinstance(chroot, bool)
         chroot_prefix = 'chroot %s ' % root if chroot else ''
-        try:
-            pkg = self.bootstrap_files['pkg.txz']
+
+        pkg = self.bootstrap_files.get('pkg.txz')
+        if pkg is not None:
             print("\nInstalling pkg")
             if not exists(pkg.local):
                 run('fetch -o {0.remote} {0.url}'.format(pkg))
@@ -287,8 +288,7 @@ class BootstrapUtils:
             # run pkg2ng for which the shared library path needs to be updated
             run(chroot_prefix + '/etc/rc.d/ldconfig start')
             run(chroot_prefix + 'pkg2ng')
-        except KeyError:
-            pass
+
         if packages:
             run(chroot_prefix + 'pkg install %s' % ' '.join(packages))
 
