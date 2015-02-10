@@ -11,10 +11,7 @@
 - { include: pf.yml, tags: pf }
 
 - name: Add lo1 to rc.conf
-  lineinfile:
-    dest: /etc/rc.conf
-    regexp: ^cloned_interfaces=
-    line: cloned_interfaces=\"lo1\"
+  command: sysrc cloned_interfaces=lo1
   notify: restart network
 
 - meta: flush_handlers
@@ -22,7 +19,7 @@
 # The sysctl module in ansible adds spaces around the equal sign in
 # /etc/sysctl.conf which breaks in FreeBSD 10, so we do this manually
 - name: Enable security.jail.allow_raw_sockets
-  lineinfile:
+  command:
     dest: /etc/sysctl.conf
     regexp: ^security.jail.allow_raw_sockets\s*=
     line: security.jail.allow_raw_sockets=1
@@ -42,30 +39,19 @@
   - ezjail
 
 - name: Set default jail interface
-  lineinfile:
-    dest: /etc/rc.conf
-    regexp: ^jail_interface=
-    line: jail_interface=\"lo1\"
+  command: sysrc jail_interface=lo1
   notify: restart ezjail
 - name: Set default jail parameters
-  lineinfile:
-    dest: /etc/rc.conf
-    regexp: ^jail_parameters=
-    line: jail_parameters=\"allow.raw_sockets=1 allow.sysvipc=1\"
+  command: sysrc jail_parameters="allow.raw_sockets=1 allow.sysvipc=1"
   notify: restart ezjail
 - name: Set default jail exec stop
-  lineinfile:
-    dest: /etc/rc.conf
-    regexp: ^jail_exec_stop=
-    line: jail_exec_stop=\"/bin/sh /etc/rc.shutdown\"
+  command: sysrc jail_exec_stop="/bin/sh /etc/rc.shutdown"
   notify: restart ezjail
 
 - name: Enable ezjail in rc.conf
-  lineinfile:
-    dest: /etc/rc.conf
-    regexp: ^ezjail_enable=
-    line: ezjail_enable=\"YES\"
+  command: sysrc ezjail_enable=YES
   notify: restart ezjail
+
 - name: Setup ezjail.conf
   template: src=ezjail.conf dest=/usr/local/etc/ezjail.conf
   notify: restart ezjail

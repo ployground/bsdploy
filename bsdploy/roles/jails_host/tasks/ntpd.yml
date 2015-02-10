@@ -1,9 +1,8 @@
 ---
 - name: Enable ntpd in rc.conf
-  lineinfile:
-    dest: /etc/rc.conf
-    regexp: ^ntpd_enable=
-    line: ntpd_enable=\"YES\"
+  service:
+    name: ntpd
+    enabled: yes
   notify: restart ntpd
   tags: ntpd
 
