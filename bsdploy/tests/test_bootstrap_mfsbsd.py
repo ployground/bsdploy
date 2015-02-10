@@ -131,7 +131,7 @@ def test_bootstrap(bootstrap, put_mock, run_mock, tempdir, yesno_mock):
         ('sysctl -n kern.disks', {}, 'ada0 cd0\n'),
         ('ifconfig -l', {}, 'em0 lo0'),
         ('destroygeom -d ada0 -p system -p tank', {}, ''),
-        ('zfsinstall -d ada0 -p system -u /cdrom/9.2-RELEASE-amd64 -s 1024M -z 20G', {}, ''),
+        ('zfsinstall -d ada0 -p system -V 28 -u /cdrom/9.2-RELEASE-amd64 -s 1024M -z 20G', {}, ''),
         ('gpart add -t freebsd-zfs -l tank_ada0 ada0', {}, ''),
         ('cp /etc/resolv.conf /mnt/etc/resolv.conf', {}, ''),
         ('mkdir -p "/mnt/usr/local/etc/pkg/repos"', {'shell': False}, ''),
