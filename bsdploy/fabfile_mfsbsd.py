@@ -101,7 +101,7 @@ def _bootstrap():
         devices_args=devices_args,
         system_pool_name=system_pool_name,
         data_pool_name=data_pool_name))
-    run('{zfsinstall} {devices_args} -p {system_pool_name} -u {bsd_url} {swap_arg} {system_pool_arg}'.format(
+    run('{zfsinstall} {devices_args} -p {system_pool_name} -V 28 -u {bsd_url} {swap_arg} {system_pool_arg}'.format(
         zfsinstall=bu.zfsinstall,
         devices_args=devices_args,
         system_pool_name=system_pool_name,
