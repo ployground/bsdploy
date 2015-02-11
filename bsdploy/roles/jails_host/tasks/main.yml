@@ -86,7 +86,7 @@
     state=present
     mountpoint=/usr/jails
 
-- name: upload ezjail world installer
+- name: Upload ezjail world installer
   copy:
     src: ezjail-install.sh
     dest: /usr/local/bin/ezjail-install.sh
