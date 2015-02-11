@@ -9,7 +9,7 @@
   template:
     src: pf.conf
     dest: /etc/pf.conf
-  notify: restart pf
+  notify: restart network
   tags: pf-conf
 
 - name: Enable gateway in rc.conf
