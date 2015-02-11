@@ -103,7 +103,7 @@
     group: wheel
 
 - name: Initialize ezjail with host world
-  command: sh /usr/local/bin/ezjail-install.sh creates=/usr/jails/basejail
+  command: sh /usr/local/bin/ezjail-install.sh creates=/usr/jails/basejail/usr
 
 - name: Create pkg cache folder
   file: dest=/var/cache/pkg/All/ state=directory owner=root group=wheel
