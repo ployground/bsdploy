@@ -86,6 +86,15 @@
     state=present
     mountpoint=/usr/jails
 
+- name: Basejail ZFS file systems
+  zfs:
+    name="{{ ploy_bootstrap_data_pool_name }}/jails/{{item}}"
+    state=present
+    mountpoint=/usr/jails/{{item}}
+  with_items:
+    - basejail
+    - newjail
+
 - name: Upload ezjail world installer
   copy:
     src: ezjail-install.sh

@@ -75,6 +75,7 @@ def test_roles(ctrl, monkeypatch):
         'Setup rc.conf lines for data zpool',
         'Set data zpool options',
         'Jails ZFS file system',
+        'Basejail ZFS file systems',
         'Upload ezjail world installer',
         'Initialize ezjail with host world',
         'Create pkg cache folder',
