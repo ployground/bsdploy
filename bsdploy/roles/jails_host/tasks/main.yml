@@ -116,7 +116,6 @@
 
 #
 # configure bsdploy_base flavour
-# TODO: rename to ``bsdploy_base``
 #
 
 - name: rc.conf for bsdploy_base flavour
