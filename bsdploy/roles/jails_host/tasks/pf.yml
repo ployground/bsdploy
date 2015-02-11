@@ -13,7 +13,5 @@
   tags: pf-conf
 
 - name: Enable gateway in rc.conf
-  service:
-    name: gateway
-    enabled: yes
+  command: sysrc gateway_enable=YES
   notify: restart network
