@@ -86,8 +86,15 @@
     state=present
     mountpoint=/usr/jails
 
-- name: Initialize ezjail (may take a while)
-  command: "ezjail-admin install -h {{ ploy_ezjail_install_host }} -r {{ ploy_ezjail_install_release|default(ansible_distribution_release) }} creates=/usr/jails/basejail"
+- name: upload ezjail world installer
+  copy:
+    src: ezjail-install.sh
+    dest: /usr/local/bin/ezjail-install.sh
+    owner: root
+    group: wheel
+
+- name: Initialize ezjail with host world
+  command: sh /usr/local/bin/ezjail-install.sh creates=/usr/jails/basejail
 
 - name: Create pkg cache folder
   file: dest=/var/cache/pkg/All/ state=directory owner=root group=wheel
