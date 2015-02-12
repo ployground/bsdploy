@@ -25,7 +25,7 @@ Conceptually, the provider of a jailhost is a separate entity from the jailhost 
 	instance = ploy-demo
 	[...]
 
-	[instance:webserver]
+	[ez-instance:webserver]
 	master = jailhost
 	[...]
 
