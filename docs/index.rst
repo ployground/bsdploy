@@ -1,6 +1,12 @@
 .. include:: ../README.rst
 
 
+.. warning::
+   BSDploy is  intended to be used to set up *new* hosts that will then be fully managed by it.
+   While technically possible, it is *not* intended to be run against or to manage existing systems
+   that have been bootstrapped without BSDploy.
+   Running BSDploy against hosts that have not been bootstrapped by it can result in loss of data.
+
 Dive in
 -------
 
