@@ -13,7 +13,13 @@ Strictly speaking, BSDploy only needs Python for the initial configuration of th
 
 BSDploy can take care of these requirements for you during bootstrapping but of course you can also use it to manage existing machines that already meet them.
 
-BSDploy supports FreeBSD >= 9.2, including 10.0.
+BSDploy supports FreeBSD >= 9.2, including 10.1.
+
+.. warning::
+   BSDploy is  intended to be used to set up *new* hosts that will then be fully managed by it.
+   While technically possible, it is *not* intended to be run against or to manage existing systems
+   that have been bootstrapped without BSDploy.
+   Running BSDploy against hosts that have not been bootstrapped by it can result in loss of data.
 
 
 Client Installation
