@@ -9,7 +9,7 @@ The Bootstrapping process assumes that the target host has been booted into an i
 Bootstrapping FreeBSD 9.x
 -------------------------
 
-The default version that BSDploy assumes is 10.0.
+The default version that BSDploy assumes is 10.1.
 If you want to install different versions, i.e. 9.2 you must:
 
 - use the iso image for that version::

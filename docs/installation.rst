@@ -7,19 +7,24 @@ BSDploy and its dependencies are written in `Python <http://python.org>`_ and th
 Server requirements
 ===================
 
-A FreeBSD system that wants to be managed by BSDploy will need to have `ezjail <http://erdgeist.org/arts/software/ezjail/>`_ installed, as well as `Python <http://python.org>`_ and must have SSH access enabled (either for root or with ``sudo`` configured).
-
-Strictly speaking, BSDploy only needs Python for the initial configuration of the jailhost. If you chose to perform that step yourself or use a pre-existing host, you won't need Python on the host, just ezjail.
-
-BSDploy can take care of these requirements for you during bootstrapping but of course you can also use it to manage existing machines that already meet them.
-
-BSDploy supports FreeBSD >= 9.2, including 10.1.
-
 .. warning::
    BSDploy is  intended to be used to set up *new* hosts that will then be fully managed by it.
    While technically possible, it is *not* intended to be run against or to manage existing systems
    that have been bootstrapped without BSDploy.
    Running BSDploy against hosts that have not been bootstrapped by it can result in loss of data.
+
+A FreeBSD system that wants to be managed by BSDploy will
+
+- need to have `ezjail <http://erdgeist.org/arts/software/ezjail/>`_ installed
+- as well as `Python <http://python.org>`_ 
+- must have SSH access enabled (either for root or with ``sudo`` configured).
+- have ZFS support (BSDploy does not support running on non-ZFS filesystems)
+
+Strictly speaking, BSDploy only needs Python for the initial configuration of the jailhost. If you chose to perform that step yourself or use a pre-existing host, you won't need Python on the host, just ezjail.
+
+Normally, BSDploy will take care of these requirements for you during  :doc:`bootstrapping </setup/bootstrapping>` but in situations where this is not possible, manually providing the abovementioned requirements should allow you to :doc:`apply BSDploy's host configuration </setup/configuration>` anyway.
+
+BSDploy supports FreeBSD >= 9.2, including 10.1.
 
 
 Client Installation
