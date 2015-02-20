@@ -68,11 +68,14 @@ class PloyBootstrapCmd(object):
         parser.add_argument(
             "-y", "--yes", action="store_true",
             help="Answer yes to all questions.")
+        parser.add_argument(
+            "-p", "--http-proxy",
+            help="Use http proxy during bootstrapping")
         args = parser.parse_args(argv)
         master = args.master if len(masters) == 1 else args.master[0]
         instance = self.ctrl.instances[master]
         instance.hooks.before_bsdploy_bootstrap(instance)
-        instance.do('bootstrap', **{'bootstrap-yes': args.yes})
+        instance.do('bootstrap', **{'bootstrap-yes': args.yes, 'http-proxy': args.http_proxy})
         instance.hooks.after_bsdploy_bootstrap(instance)
 
 
