@@ -281,6 +281,7 @@ class BootstrapUtils:
         if pkg is not None:
             print("\nInstalling pkg")
             if not exists(pkg.local):
+                # TODO: add proxy support
                 run('fetch -o {0.remote} {0.url}'.format(pkg))
             run('chmod 0600 {0.remote}'.format(pkg))
             run("tar -x -C {root}{chroot} --exclude '+*' -f {0.remote}".format(
@@ -431,6 +432,7 @@ class BootstrapUtils:
         packages = set(
             env.instance.config.get('bootstrap-packages', '').split())
         packages.update(['python27'])
+        # TODO: add http proxy support
         cmd = env.instance.config.get('bootstrap-local-download-cmd', 'wget -c -O "{0.local}" "{0.url}"')
         items = sorted(self.bootstrap_files.items())
         for filename, asset in items:
