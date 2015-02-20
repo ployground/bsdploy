@@ -31,7 +31,7 @@ def test_bootstrap_command(capsys, ctrl, monkeypatch):
     (out, err) = capsys.readouterr()
     out_lines = out.splitlines()
     assert out_lines == [
-        "do with ('bootstrap',), {'bootstrap-yes': False} called!"]
+        "do with ('bootstrap',), {'bootstrap-yes': False, 'http-proxy': None} called!"]
 
 
 def test_augment_ezjail_master(ctrl, ployconf, tempdir):
