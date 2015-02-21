@@ -110,6 +110,13 @@ class BootstrapUtils:
             return abspath(join(self.ploy_conf_path, host_defined_path))
 
     @property
+    def env_vars(self):
+        env_vars = ''
+        if env.instance.config.get('http-proxy'):
+            env_vars = 'setenv http_proxy %s && ' % env.instance.config.get('http-proxy')
+        return env_vars
+
+    @property
     def download_path(self):
         return abspath(join(self.ploy_conf_path, '..', 'downloads'))
 
