@@ -108,7 +108,7 @@ def _bootstrap():
         system_pool_name=system_pool_name,
         bsd_url=bu.bsd_url,
         swap_arg=swap_arg,
-        system_pool_arg=system_pool_arg))
+        system_pool_arg=system_pool_arg), shell=False)
     # create partitions for data pool, but only if the system pool doesn't use
     # the whole disk anyway
     if system_pool_arg:
