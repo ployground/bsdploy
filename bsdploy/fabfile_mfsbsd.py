@@ -120,7 +120,7 @@ def _bootstrap():
     if 'devfs on /rw/dev' not in bu.mounts:
         run('mount -t devfs devfs /mnt/dev')
     # setup bare essentials
-    run('cp /etc/resolv.conf /mnt/etc/resolv.conf')
+    run('cp /etc/resolv.conf /mnt/etc/resolv.conf', warn_only=True)
     bu.create_bootstrap_directories()
     bu.upload_bootstrap_files(template_context)
 
