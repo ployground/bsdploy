@@ -97,6 +97,13 @@ You can use the following optional parameters to configure the bootstrapping pro
         # match against meta-information - this shouldn't be cached quite so aggressively
         refresh_pattern -i (quarterly|latest)\/.*(\.txz) 1440 100% 10080 ignore-private ignore-must-revalidate override-expire ignore-no-cache
 
+    Also you will probably want to adjust the following:
+
+    .. code-block:: sh
+
+        maximum_object_size_in_memory 32 KB
+        maximum_object_size 2000 MB
+
 
 Bootstrap rc.conf
 -----------------
