@@ -75,7 +75,10 @@ class PloyBootstrapCmd(object):
         master = args.master if len(masters) == 1 else args.master[0]
         instance = self.ctrl.instances[master]
         instance.hooks.before_bsdploy_bootstrap(instance)
-        instance.do('bootstrap', **{'bootstrap-yes': args.yes, 'http-proxy': args.http_proxy})
+        bootstrap_args = {'bootstrap-yes': args.yes}
+        if args.http_proxy:
+            bootstrap_args['http-proxy'] = args.http_proxy
+        instance.do('bootstrap', **bootstrap_args)
         instance.hooks.after_bsdploy_bootstrap(instance)
 
 
