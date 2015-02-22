@@ -74,6 +74,7 @@ def test_roles(ctrl, monkeypatch):
         'Setup rc.conf lines for data zpool',
         'Set data zpool options',
         'Jails ZFS file system',
+        'Initialize ezjail (using http proxy)',
         'Initialize ezjail (may take a while)',
         'Create pkg cache folder',
         'Download pkg.txz',
