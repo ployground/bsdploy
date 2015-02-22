@@ -114,6 +114,7 @@ class BootstrapUtils:
         env_vars = ''
         if env.instance.config.get('http-proxy'):
             env_vars = 'setenv http_proxy %s && ' % env.instance.config.get('http-proxy')
+            env_vars += 'setenv https_proxy %s && ' % env.instance.config.get('http-proxy')
         return env_vars
 
     @property
