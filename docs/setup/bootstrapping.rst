@@ -88,6 +88,16 @@ You can use the following optional parameters to configure the bootstrapping pro
 - ``http_proxy``: If set, that proxy will be used for all ``pkg`` operations performed on that host, as well as for downloading any assets during bootstrapping (``base.tbz`` etc.)
 
 
+.. note:: Regarding the http proxy setting it is noteworthy, that ``pkg`` servers have rather restrictive caching policies in their response headers, so that most proxies' default configurations will produce misses. Here's an example for how to configure squid to produce better results:
+
+    .. code-block:: sh
+
+        # match against download urls for specific packages - their content never changes for the same url, so we cache aggressively
+        refresh_pattern -i (quarterly|latest)\/All\/.*(\.txz) 1440 100% 1051200 ignore-private ignore-must-revalidate override-expire ignore-no-cache
+        # match against meta-information - this shouldn't be cached quite so aggressively
+        refresh_pattern -i (quarterly|latest)\/.*(\.txz) 1440 100% 10080 ignore-private ignore-must-revalidate override-expire ignore-no-cache
+
+
 Bootstrap rc.conf
 -----------------
 
