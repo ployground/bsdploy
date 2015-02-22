@@ -131,12 +131,12 @@ def test_bootstrap(bootstrap, put_mock, run_mock, tempdir, yesno_mock):
         ('sysctl -n kern.disks', {}, 'ada0 cd0\n'),
         ('ifconfig -l', {}, 'em0 lo0'),
         ('destroygeom -d ada0 -p system -p tank', {}, ''),
-        ('zfsinstall -d ada0 -p system -V 28 -u /cdrom/9.2-RELEASE-amd64 -s 1024M -z 20G', {}, ''),
+        ('zfsinstall -d ada0 -p system -V 28 -u /cdrom/9.2-RELEASE-amd64 -s 1024M -z 20G', {'shell': False}, ''),
         ('gpart add -t freebsd-zfs -l tank_ada0 ada0', {}, ''),
-        ('cp /etc/resolv.conf /mnt/etc/resolv.conf', {}, ''),
+        ('cp /etc/resolv.conf /mnt/etc/resolv.conf', {'warn_only': True}, ''),
         ('mkdir -p "/mnt/usr/local/etc/pkg/repos"', {'shell': False}, ''),
         ('mkdir -p "/mnt/root/.ssh" && chmod 0600 "/mnt/root/.ssh"', {'shell': False}, ''),
-        ('chroot /mnt pkg install python27', {}, ''),
+        ('chroot /mnt pkg install python27', {'shell': False}, ''),
         ('echo autoboot_delay=-1 >> /mnt/boot/loader.conf', {}, ''),
         ('reboot', {}, '')]
     yesno_mock.expected = [
