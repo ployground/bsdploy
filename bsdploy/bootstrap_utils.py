@@ -112,9 +112,9 @@ class BootstrapUtils:
     @property
     def env_vars(self):
         env_vars = ''
-        if env.instance.config.get('http-proxy'):
-            env_vars = 'setenv http_proxy %s && ' % env.instance.config.get('http-proxy')
-            env_vars += 'setenv https_proxy %s && ' % env.instance.config.get('http-proxy')
+        if env.instance.config.get('http_proxy'):
+            env_vars = 'setenv http_proxy %s && ' % env.instance.config.get('http_proxy')
+            env_vars += 'setenv https_proxy %s && ' % env.instance.config.get('http_proxy')
         return env_vars
 
     @property
@@ -257,8 +257,8 @@ class BootstrapUtils:
             if bf.to_be_fetched:
                 if to_be_fetched_count == 0:
                     print("\nThe following files will be downloaded on the host during bootstrap:")
-                    if env.instance.config.get('http-proxy'):
-                        print("\nUsing http proxy {http-proxy}".format(**env.instance.config))
+                    if env.instance.config.get('http_proxy'):
+                        print("\nUsing http proxy {http_proxy}".format(**env.instance.config))
                 to_be_fetched_count += 1
                 print('{0.url} -> {0.remote}'.format(bf))
         if to_be_fetched_count == 0:
