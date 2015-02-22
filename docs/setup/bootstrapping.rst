@@ -85,7 +85,7 @@ You can use the following optional parameters to configure the bootstrapping pro
 
 - ``firstboot-update``: By default bootstrapping will install and enable the `firstboot-freebsd-update <http://www.freshports.org/sysutils/firstboot-freebsd-update/>`_ package. This will update the installed system automatically (meaning non-interactively) to the latest patchlevel upon first boot. If for some reason you do not wish this to happen, you can disable it by setting this value to ``false``.
 
-- ``http_proxy``: If set, that proxy will be used for downloading any assets during bootstrapping (base system, packages etc.)
+- ``http_proxy``: If set, that proxy will be used for all ``pkg`` operations performed on that host, as well as for downloading any assets during bootstrapping (``base.tbz`` etc.)
 
 
 Bootstrap rc.conf

@@ -6,6 +6,7 @@
     remote: '/mnt/etc/make.conf'
 'pkg.conf':
     remote: '/mnt/usr/local/etc/pkg.conf'
+    use_jinja: True
 'FreeBSD.conf':
     directory: '/mnt/usr/local/etc/pkg/repos'
     remote: '/mnt/usr/local/etc/pkg/repos/FreeBSD.conf'
