@@ -9,6 +9,7 @@
   template:
     src: pf.conf
     dest: /etc/pf.conf
+    validate: '/sbin/pfctl -nf %s'
   notify: reload pf
   tags: pf-conf
 
