@@ -8,10 +8,10 @@ Server requirements
 ===================
 
 .. warning::
-   BSDploy is  intended to be used to set up *new* hosts that will then be fully managed by it.
-   While technically possible, it is *not* intended to be run against or to manage existing systems
-   that have been bootstrapped without BSDploy.
-   Running BSDploy against hosts that have not been bootstrapped by it can result in loss of data.
+   BSDploy is intended for initial configuration of a jail host before any jails have been installed.
+   While technically possible, BSDploy is not intended for managing existing systems with non-BSDploy jails.
+   Running against hosts that have not been bootstrapped by BSDploy can result in loss of data.
+
 
 A FreeBSD system that wants to be managed by BSDploy will
 
