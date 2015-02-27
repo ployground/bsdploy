@@ -101,13 +101,14 @@ def _bootstrap():
         devices_args=devices_args,
         system_pool_name=system_pool_name,
         data_pool_name=data_pool_name))
-    run('{zfsinstall} {devices_args} -p {system_pool_name} -V 28 -u {bsd_url} {swap_arg} {system_pool_arg}'.format(
+    run('{env_vars}{zfsinstall} {devices_args} -p {system_pool_name} -V 28 -u {bsd_url} {swap_arg} {system_pool_arg}'.format(
+        env_vars=bu.env_vars,
         zfsinstall=bu.zfsinstall,
         devices_args=devices_args,
         system_pool_name=system_pool_name,
         bsd_url=bu.bsd_url,
         swap_arg=swap_arg,
-        system_pool_arg=system_pool_arg))
+        system_pool_arg=system_pool_arg), shell=False)
     # create partitions for data pool, but only if the system pool doesn't use
     # the whole disk anyway
     if system_pool_arg:
@@ -119,7 +120,7 @@ def _bootstrap():
     if 'devfs on /rw/dev' not in bu.mounts:
         run('mount -t devfs devfs /mnt/dev')
     # setup bare essentials
-    run('cp /etc/resolv.conf /mnt/etc/resolv.conf')
+    run('cp /etc/resolv.conf /mnt/etc/resolv.conf', warn_only=True)
     bu.create_bootstrap_directories()
     bu.upload_bootstrap_files(template_context)
 

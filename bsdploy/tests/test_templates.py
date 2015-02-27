@@ -16,3 +16,7 @@ def test_jails_host_freebsd_conf():
 
 def test_zfs_auto_snapshot_010_zfs_snapshot():
     pass
+
+
+def test_jails_host_pkg_conf():
+    pass
