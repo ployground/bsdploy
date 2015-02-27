@@ -165,6 +165,7 @@
 - name: Create pkg cache folder
   file: dest=/var/cache/pkg/All/ state=directory owner=root group=wheel
 
+# TODO: is this still necessary? and if yes, it should be proxy aware...
 - name: Download pkg.txz
   get_url: dest=/var/cache/pkg/All/pkg.txz url={{ pkg_txz_url }}
 
