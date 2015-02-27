@@ -182,7 +182,7 @@
 
 - copy: src=make.conf dest=/usr/jails/flavours/bsdploy_base/etc/make.conf owner=root group=wheel
 - file: dest=/usr/jails/flavours/bsdploy_base/usr/local/etc/pkg/repos state=directory owner=root group=wheel
-- copy: src=pkg.conf dest=/usr/jails/flavours/bsdploy_base/usr/local/etc/pkg.conf owner=root group=wheel
+- template: src=pkg.conf dest=/usr/jails/flavours/bsdploy_base/usr/local/etc/pkg.conf owner=root group=wheel
 - template: src=FreeBSD.conf dest=/usr/jails/flavours/bsdploy_base/usr/local/etc/pkg/repos/FreeBSD.conf owner=root group=wheel
 
 
