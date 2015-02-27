@@ -29,5 +29,6 @@ def test_bootstrap(bootstrap, capsys, put_mock, run_mock, tempdir, yesno_mock):
         ("su root -c '/tmp/enable_root_login_on_daemonology.sh'", {}, ''),
         ('rm /tmp/enable_root_login_on_daemonology.sh', {}, ''),
         ('mkdir -p "/usr/local/etc/pkg/repos"', {'shell': False}, ''),
+        ('pkg update', {'shell': False}, ''),
         ('pkg install python27', {'shell': False}, '')]
     bootstrap()
