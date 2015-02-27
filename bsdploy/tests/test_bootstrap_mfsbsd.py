@@ -136,6 +136,7 @@ def test_bootstrap(bootstrap, put_mock, run_mock, tempdir, yesno_mock):
         ('cp /etc/resolv.conf /mnt/etc/resolv.conf', {'warn_only': True}, ''),
         ('mkdir -p "/mnt/usr/local/etc/pkg/repos"', {'shell': False}, ''),
         ('mkdir -p "/mnt/root/.ssh" && chmod 0600 "/mnt/root/.ssh"', {'shell': False}, ''),
+        ('chroot /mnt pkg update', {'shell': False}, ''),
         ('chroot /mnt pkg install python27', {'shell': False}, ''),
         ('echo autoboot_delay=-1 >> /mnt/boot/loader.conf', {}, ''),
         ('reboot', {}, '')]

@@ -298,7 +298,8 @@ class BootstrapUtils:
             # run pkg2ng for which the shared library path needs to be updated
             run(chroot_prefix + '/etc/rc.d/ldconfig start')
             run(chroot_prefix + 'pkg2ng')
-            run(self.env_vars + chroot_prefix + 'pkg update', shell=False)
+
+        run(self.env_vars + chroot_prefix + 'pkg update', shell=False)
 
         if packages:
             run(self.env_vars + chroot_prefix + 'pkg install %s' % ' '.join(packages), shell=False)
