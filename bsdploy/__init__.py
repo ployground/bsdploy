@@ -70,7 +70,7 @@ class PloyBootstrapCmd(object):
             help="Answer yes to all questions.")
         parser.add_argument(
             "-p", "--http-proxy",
-            help="Use http proxy during bootstrapping")
+            help="Use http proxy for bootstrapping and pkg installation")
         args = parser.parse_args(argv)
         master = args.master if len(masters) == 1 else args.master[0]
         instance = self.ctrl.instances[master]
