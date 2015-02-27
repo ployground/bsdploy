@@ -19,14 +19,18 @@
 # The sysctl module in ansible adds spaces around the equal sign in
 # /etc/sysctl.conf which breaks in FreeBSD 10, so we do this manually
 - name: Enable security.jail.allow_raw_sockets
-  sysctl:
-    name: security.jail.allow_raw_sockets
-    value: 1
+  command:
+    dest: /etc/sysctl.conf
+    regexp: ^security.jail.allow_raw_sockets\s*=
+    line: security.jail.allow_raw_sockets=1
+  notify: reload sysctl
   tags: sysctl
 - name: Enable security.jail.sysvipc_allowed
-  sysctl:
-    name: security.jail.sysvipc_allowed
-    value: 1
+  lineinfile:
+    dest: /etc/sysctl.conf
+    regexp: ^security.jail.sysvipc_allowed\s*=
+    line: security.jail.sysvipc_allowed=1
+  notify: reload sysctl
   tags: sysctl
 
 - name: Ensure helper packages are installed
