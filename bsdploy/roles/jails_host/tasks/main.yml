@@ -156,6 +156,7 @@
   when: ploy_http_proxy is defined
   environment:
     http_proxy: "{{ploy_http_proxy}}"
+    https_proxy: "{{ploy_http_proxy}}"
 
 - name: Initialize ezjail (may take a while)
   command: "ezjail-admin install -h {{ ploy_ezjail_install_host }} -r {{ ploy_ezjail_install_release|default(ansible_distribution_release) }} creates=/usr/jails/basejail"
