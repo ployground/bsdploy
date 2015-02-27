@@ -12,6 +12,7 @@ Server requirements
    While technically possible, BSDploy is not intended for managing existing systems with non-BSDploy jails.
    Running against hosts that have not been bootstrapped by BSDploy can result in loss of data.
 
+
 A FreeBSD system that wants to be managed by BSDploy will
 
 - need to have `ezjail <http://erdgeist.org/arts/software/ezjail/>`_ installed

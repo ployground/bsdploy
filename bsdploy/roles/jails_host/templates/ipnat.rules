@@ -1,6 +1,0 @@
-{% for network in ipnat_jail_networks %}
-map {{ ipnat_interface }} {{ network }} -> 0/32
-{% endfor %}
-{% for rule in ipnat_rules %}
-{{ rule }}
-{% endfor %}
