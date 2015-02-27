@@ -85,6 +85,25 @@ You can use the following optional parameters to configure the bootstrapping pro
 
 - ``firstboot-update``: By default bootstrapping will install and enable the `firstboot-freebsd-update <http://www.freshports.org/sysutils/firstboot-freebsd-update/>`_ package. This will update the installed system automatically (meaning non-interactively) to the latest patchlevel upon first boot. If for some reason you do not wish this to happen, you can disable it by setting this value to ``false``.
 
+- ``http_proxy``: If set, that proxy will be used for all ``pkg`` operations performed on that host, as well as for downloading any assets during bootstrapping (``base.tbz`` etc.)
+
+
+.. note:: Regarding the http proxy setting it is noteworthy, that ``pkg`` servers have rather restrictive caching policies in their response headers, so that most proxies' default configurations will produce misses. Here's an example for how to configure squid to produce better results:
+
+    .. code-block:: sh
+
+        # match against download urls for specific packages - their content never changes for the same url, so we cache aggressively
+        refresh_pattern -i (quarterly|latest)\/All\/.*(\.txz) 1440 100% 1051200 ignore-private ignore-must-revalidate override-expire ignore-no-cache
+        # match against meta-information - this shouldn't be cached quite so aggressively
+        refresh_pattern -i (quarterly|latest)\/.*(\.txz) 1440 100% 10080 ignore-private ignore-must-revalidate override-expire ignore-no-cache
+
+    Also you will probably want to adjust the following:
+
+    .. code-block:: sh
+
+        maximum_object_size_in_memory 32 KB
+        maximum_object_size 2000 MB
+
 
 Bootstrap rc.conf
 -----------------

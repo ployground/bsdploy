@@ -110,6 +110,14 @@ class BootstrapUtils:
             return abspath(join(self.ploy_conf_path, host_defined_path))
 
     @property
+    def env_vars(self):
+        env_vars = ''
+        if env.instance.config.get('http_proxy'):
+            env_vars = 'setenv http_proxy %s && ' % env.instance.config.get('http_proxy')
+            env_vars += 'setenv https_proxy %s && ' % env.instance.config.get('http_proxy')
+        return env_vars
+
+    @property
     def download_path(self):
         return abspath(join(self.ploy_conf_path, '..', 'downloads'))
 
@@ -249,6 +257,8 @@ class BootstrapUtils:
             if bf.to_be_fetched:
                 if to_be_fetched_count == 0:
                     print("\nThe following files will be downloaded on the host during bootstrap:")
+                    if env.instance.config.get('http_proxy'):
+                        print("\nUsing http proxy {http_proxy}".format(**env.instance.config))
                 to_be_fetched_count += 1
                 print('{0.url} -> {0.remote}'.format(bf))
         if to_be_fetched_count == 0:
@@ -281,16 +291,17 @@ class BootstrapUtils:
         if pkg is not None:
             print("\nInstalling pkg")
             if not exists(pkg.local):
-                run('fetch -o {0.remote} {0.url}'.format(pkg))
+                run(self.env_vars + 'fetch -o {0.remote} {0.url}'.format(pkg), shell=False)
             run('chmod 0600 {0.remote}'.format(pkg))
             run("tar -x -C {root}{chroot} --exclude '+*' -f {0.remote}".format(
                 pkg, root=root, chroot=' --chroot' if chroot else ''))
             # run pkg2ng for which the shared library path needs to be updated
             run(chroot_prefix + '/etc/rc.d/ldconfig start')
             run(chroot_prefix + 'pkg2ng')
+            run(self.env_vars + chroot_prefix + 'pkg update', shell=False)
 
         if packages:
-            run(chroot_prefix + 'pkg install %s' % ' '.join(packages))
+            run(self.env_vars + chroot_prefix + 'pkg install %s' % ' '.join(packages), shell=False)
 
     @lazy
     def mounts(self):

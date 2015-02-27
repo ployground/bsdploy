@@ -22,3 +22,4 @@ ploy_jail_host_pkg_repository: |
         mirror_type: "srv",
         enabled: yes
     }
+ipnat_interface: "{{ansible_default_ipv4.interface}}"
