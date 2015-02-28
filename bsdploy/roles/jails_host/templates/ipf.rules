@@ -1,2 +1,0 @@
-pass in quick on {{ ipnat_interface }} all
-pass out quick on {{ ipnat_interface }} all

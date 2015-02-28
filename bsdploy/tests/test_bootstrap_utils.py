@@ -180,6 +180,7 @@ def test_default_rc_conf(bu, tempdir):
         'sshd_enable="YES"',
         'syslogd_flags="-ss"',
         'zfs_enable="YES"',
+        'pf_enable="YES"',
         ''])
 
 

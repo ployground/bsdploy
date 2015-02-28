@@ -2,6 +2,7 @@
 /build/
 /develop-eggs/
 /dist/
+/eggs/
 /include/
 /htmlcov/
 /lib/

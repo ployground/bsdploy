@@ -1,0 +1,41 @@
+---
+- name: Enable pf in rc.conf
+  service:
+    name: pf
+    enabled: yes
+- name: Check for /etc/pf.conf
+  stat:
+    path: /etc/pf.conf
+  register: stat_etc_pf_conf
+- name: Default pf.conf
+  copy:
+    content: |
+      pass in all
+      pass out all
+    dest: /etc/pf.conf
+  when: stat_etc_pf_conf.stat.exists == False
+- name: Stat of /dev/pf
+  stat:
+    path: /dev/pf
+  register: stat_dev_pf
+- name: Checking pf
+  fail:
+    msg: "The pf service is not running, you have to start it manually"
+  when: stat_dev_pf.stat.exists == False
+- name: Setup pf.conf
+  template:
+    src: pf.conf
+    dest: /etc/pf.conf
+    validate: '/sbin/pfctl -nf %s'
+  tags: pf-conf
+  register: setup_pf_conf_result
+- name: Reload pf.conf
+  raw: service pf reload
+  when: setup_pf_conf_result.changed
+  tags: pf-conf
+
+- name: Enable gateway in rc.conf
+  sysrc:
+    name: gateway_enable
+    value: "YES"
+  notify: restart network
