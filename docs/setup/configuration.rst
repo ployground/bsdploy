@@ -19,6 +19,38 @@ Unlike bootstrapping, this final step is implemented using ansible playbooks and
 Among other things, this will create an additional zpool named ``tank`` (by default) which will be used to contain the jails.
 
 
+Configuring as non-root
+-----------------------
+
+While bootstrapping currently *must* be performed as ``root`` (due to the fact that mfsBSD itself requires root login) some users may not want to enable root login for their systems.
+
+If want to manage a jailhost with a non-root user, you must perform the following steps manually:
+
+- install ``sudo`` on the jailhost
+- create a user account and enable SSH access for it
+- enable passwordless ``sudo`` access for it
+- disable SSH login for root (currently, automatically enabled during bootstrapping)
+
+Additionally, you *must* configure the system using a playbook (i.e. simply assigning one or more roles won't work in this case) and in that playbook you must set the username and enable ``sudo``, i.e. like so:
+
+.. code-block:: yaml
+
+    ---
+    - hosts: jailhost
+      user: tomster
+      sudo: yes
+      roles:
+        # apply the built-in bsdploy role jails_host
+        - jails_host
+
+And, of course, once bootstrapped, you need to set the same username in ``ploy.conf``:
+
+.. code-block:: ini
+
+    [ez-master:jailhost]
+    user = tomster
+
+
 Full-Disk encryption with GELI
 ------------------------------
 
