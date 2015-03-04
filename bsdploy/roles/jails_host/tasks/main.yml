@@ -156,4 +156,4 @@
   changed_when: _cp_settings_result.stdout|default() != ''
   with_items:
     - { src: "/etc/resolv.conf", dest: "/usr/jails/flavours/bsdploy_base/etc/resolv.conf" }
-    - { src: "/{{ploy_root_home_path}/.ssh/authorized_keys", dest: "/usr/jails/flavours/bsdploy_base{{ploy_root_home_path}}/.ssh/authorized_keys" }
+    - { src: "/{{ploy_root_home_path}}/.ssh/authorized_keys", dest: "/usr/jails/flavours/bsdploy_base{{ploy_root_home_path}}/.ssh/authorized_keys" }
