@@ -124,7 +124,7 @@
   file:
     dest: "/usr/jails/flavours/bsdploy_base/{{ploy_root_home_path}}/.ssh"
     state: directory
-    mode: 0600
+    mode: "0600"
     owner: "{{ploy_root_user_name}}"
     group: wheel
 
