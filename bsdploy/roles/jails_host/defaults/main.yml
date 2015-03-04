@@ -6,7 +6,7 @@ ploy_bootstrap_geli: no
 ploy_bootstrap_zpool_version: 28
 ploy_ezjail_install_host: "ftp.freebsd.org"
 jails_dir: /usr/jails
-jails_zfs_root: tank/jails
+jails_zfs_root:  "{{ ploy_bootstrap_data_pool_name }}/jails"
 zfs_checksum: fletcher4
 pkg_txz_url: http://pkg.freebsd.org/freebsd:10:x86:64/quarterly/Latest/pkg.txz
 jails_pkg_url: "pkg+http://pkg.freeBSD.org/${ABI}/latest"
