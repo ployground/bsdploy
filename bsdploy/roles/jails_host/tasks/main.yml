@@ -121,7 +121,13 @@
   command: "tar -x -C /usr/jails/flavours/bsdploy_base --chroot --exclude '+*' -f /var/cache/pkg/All/pkg.txz creates=/usr/jails/flavours/bsdploy_base/usr/local/sbin/pkg"
 
 - name: The .ssh directory for root in bsdploy_base flavour
-  file: dest=/usr/jails/flavours/bsdploy_base/root/.ssh state=directory mode=0600 owner=root group=wheel
+  file:
+    dest: "/usr/jails/flavours/bsdploy_base/{{ploy_root_home_path}}/.ssh"
+    state: directory
+    mode: 0600
+    owner: "{{ploy_root_user_name}}"
+    group: wheel
+
 - name: The etc directory in bsdploy_base flavour
   file: dest=/usr/jails/flavours/bsdploy_base/etc state=directory owner=root group=wheel
 - name: The etc/ssh directory in bsdploy_base flavour
@@ -150,4 +156,4 @@
   changed_when: _cp_settings_result.stdout|default() != ''
   with_items:
     - { src: "/etc/resolv.conf", dest: "/usr/jails/flavours/bsdploy_base/etc/resolv.conf" }
-    - { src: "/root/.ssh/authorized_keys", dest: "/usr/jails/flavours/bsdploy_base/root/.ssh/authorized_keys" }
+    - { src: "/{{ploy_root_home_path}/.ssh/authorized_keys", dest: "/usr/jails/flavours/bsdploy_base{{ploy_root_home_path}}/.ssh/authorized_keys" }
