@@ -7,6 +7,7 @@
 - [change] [BACKWARDS INCOMPATIBLE] switched from ipfilter to pf - you must convert any existing ``ipnat_rules`` to the new ``pf_nat_rules``.
 - [feature] provide defaults for VirtualBox instances (less boilerplate)
 - [fix] set full /etc/ntp.conf instead of trying to fiddle with an existing one.
+- [feature] Support configuration as non-root user (see https://github.com/ployground/bsdploy/issues/62)
 
 
 1.3 - 2014-11-28
