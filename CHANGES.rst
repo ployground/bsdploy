@@ -1,5 +1,5 @@
-2.0 - Unreleased
-================
+2.0.0 - 2015-03-05
+==================
 
 - [feature] add support for http proxies
 - [change] deactivate pkg's *auto update* feature by default
@@ -8,6 +8,7 @@
 - [feature] provide defaults for VirtualBox instances (less boilerplate)
 - [fix] set full /etc/ntp.conf instead of trying to fiddle with an existing one.
 - [feature] Support configuration as non-root user (see https://github.com/ployground/bsdploy/issues/62)
+- [change] switched to semantic versioning (see http://semver.org)
 
 
 1.3 - 2014-11-28
