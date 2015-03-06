@@ -19,7 +19,11 @@ Once defined, you can start the jail straight away. There is no explicit ``creat
 	INFO: Creating instance 'webserver'
 	INFO: Starting instance 'webserver' with startup script, this can take a while.
 
-You can find out about the state of a jail by running ``ploy status JAILNAME``. In addtition there are also ``stop`` and ``terminate`` which do exactly what you think they do.
+You can find out about the state of a jail by running ``ploy status JAILNAME``. 
+
+A jail can be stopped with  ``ploy stop JAILNAME``.
+
+A jail can be completely removed with ``ploy terminate JAILNAME``.  This will destroy the ZFS filesystem specific to that jail.
 
 
 SSH Access
