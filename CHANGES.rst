@@ -1,6 +1,7 @@
 2.x.y - Unreleased
 ==================
 
+- [fix] fixed setting of virtualbox defaults, so they can be properly overwritten
 
 
 2.0.0 - 2015-03-05
