@@ -129,6 +129,89 @@ def test_augment_non_ezjail_instance(ctrl, ployconf):
     assert dict(ctrl.instances['foo'].config) == {}
 
 
+@pytest.mark.parametrize("config, expected", [
+    ([], {'vboxnet0': {'ip': '192.168.56.1'}}),
+    (['[vb-hostonlyif:vboxnet0]'], {'vboxnet0': {'ip': '192.168.56.1'}}),
+    (['[vb-hostonlyif:vboxnet0]', 'ip = 192.168.57.1'],
+     {'vboxnet0': {'ip': '192.168.57.1'}}),
+    (['[vb-hostonlyif:vboxnet1]', 'ip = 192.168.57.1'],
+     {'vboxnet0': {'ip': '192.168.56.1'}, 'vboxnet1': {'ip': '192.168.57.1'}})])
+def test_virtualbox_hostonlyif(ctrl, config, expected, ployconf):
+    import ploy_virtualbox
+    ctrl.plugins['virtualbox'] = ploy_virtualbox.plugin
+    ployconf.fill([
+        '[vb-instance:vb]'] + config)
+    # trigger augmentation
+    ctrl.instances['vb']
+    assert ctrl.config['vb-hostonlyif'] == expected
+
+
+@pytest.mark.parametrize("config, expected", [
+    ([],
+     {'vboxnet0': {
+         'ip': '192.168.56.2', 'netmask': '255.255.255.0',
+         'lowerip': '192.168.56.100', 'upperip': '192.168.56.254'}}),
+    (['[vb-dhcpserver:vboxnet0]'],
+     {'vboxnet0': {
+         'ip': '192.168.56.2', 'netmask': '255.255.255.0',
+         'lowerip': '192.168.56.100', 'upperip': '192.168.56.254'}}),
+    (['[vb-dhcpserver:vboxnet0]', 'ip = 192.168.57.2'],
+     {'vboxnet0': {
+         'ip': '192.168.57.2', 'netmask': '255.255.255.0',
+         'lowerip': '192.168.56.100', 'upperip': '192.168.56.254'}}),
+    (['[vb-dhcpserver:vboxnet0]', 'netmask = 255.255.0.0'],
+     {'vboxnet0': {
+         'ip': '192.168.56.2', 'netmask': '255.255.0.0',
+         'lowerip': '192.168.56.100', 'upperip': '192.168.56.254'}}),
+    (['[vb-dhcpserver:vboxnet0]', 'lowerip = 192.168.56.50'],
+     {'vboxnet0': {
+         'ip': '192.168.56.2', 'netmask': '255.255.255.0',
+         'lowerip': '192.168.56.50', 'upperip': '192.168.56.254'}}),
+    (['[vb-dhcpserver:vboxnet0]', 'upperip = 192.168.56.200'],
+     {'vboxnet0': {
+         'ip': '192.168.56.2', 'netmask': '255.255.255.0',
+         'lowerip': '192.168.56.100', 'upperip': '192.168.56.200'}}),
+    (['[vb-dhcpserver:vboxnet0]', 'ip = 192.168.57.2', 'netmask = 255.255.0.0', 'lowerip = 192.168.56.50', 'upperip = 192.168.56.200'],
+     {'vboxnet0': {
+         'ip': '192.168.57.2', 'netmask': '255.255.0.0',
+         'lowerip': '192.168.56.50', 'upperip': '192.168.56.200'}}),
+    (['[vb-dhcpserver:vboxnet1]', 'ip = 192.168.57.2'],
+     {'vboxnet0': {
+         'ip': '192.168.56.2', 'netmask': '255.255.255.0',
+         'lowerip': '192.168.56.100', 'upperip': '192.168.56.254'},
+      'vboxnet1': {
+         'ip': '192.168.57.2'}})])
+def test_virtualbox_dhcpserver(ctrl, config, expected, ployconf):
+    import ploy_virtualbox
+    ctrl.plugins['virtualbox'] = ploy_virtualbox.plugin
+    ployconf.fill([
+        '[vb-instance:vb]'] + config)
+    # trigger augmentation
+    ctrl.instances['vb']
+    assert ctrl.config['vb-dhcpserver'] == expected
+
+
+@pytest.mark.parametrize("config, expected", [
+    ([], {}),
+    (['storage = --medium vb-disk:defaultdisk'],
+     {'defaultdisk': {'size': '102400'}}),
+    (['storage = --medium vb-disk:defaultdisk', '[vb-disk:defaultdisk]'],
+     {'defaultdisk': {'size': '102400'}}),
+    (['storage = --medium vb-disk:defaultdisk', '[vb-disk:defaultdisk]', 'size = 1024000'],
+     {'defaultdisk': {'size': '1024000'}}),
+    (['storage = --medium vb-disk:defaultdisk', '[vb-disk:otherdisk]'],
+     {'defaultdisk': {'size': '102400'},
+      'otherdisk': {}})])
+def test_virtualbox_defaultdisk(ctrl, config, expected, ployconf):
+    import ploy_virtualbox
+    ctrl.plugins['virtualbox'] = ploy_virtualbox.plugin
+    ployconf.fill([
+        '[vb-instance:vb]'] + config)
+    # trigger augmentation
+    ctrl.instances['vb']
+    assert ctrl.config.get('vb-disk', {}) == expected
+
+
 @pytest.mark.parametrize("instance, key, value, expected", [
     ('foo', 'ansible_python_interpreter', 'python2.7', 'python2.7'),
     ('foo', 'startup_script', 'foo', {'path': '{tempdir}/etc/foo'}),

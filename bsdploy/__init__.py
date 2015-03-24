@@ -86,6 +86,8 @@ def augment_instance(instance):
     from ploy_ansible import get_playbooks_directory, has_playbook
     from ploy.config import ConfigSection
 
+    main_config = instance.master.main_config
+
     # provide virtualbox specific convenience defaults:
     if instance.master.sectiongroupname == ('vb-instance'):
 
@@ -94,22 +96,23 @@ def augment_instance(instance):
             instance.config.setdefault(key, value)
 
         # default hostonly interface
-        if 'vb-hostonlyif' not in instance.master.main_config:
-            instance.master.main_config['vb-hostonlyif'] = ConfigSection(
-                vboxnet0=ConfigSection(virtualbox_hostonlyif_defaults))
+        hostonlyif = main_config.setdefault('vb-hostonlyif', ConfigSection())
+        vboxnet0 = hostonlyif.setdefault('vboxnet0', ConfigSection())
+        for key, value in virtualbox_hostonlyif_defaults.items():
+            vboxnet0.setdefault(key, value)
 
         # default dhcp server
-        if 'vb-dhcpserver' not in instance.master.main_config:
-            instance.master.main_config['vb-dhcpserver'] = ConfigSection(
-                vboxnet0=ConfigSection(virtualbox_dhcpserver_defaults))
+        dhcpserver = main_config.setdefault('vb-dhcpserver', ConfigSection())
+        vboxnet0 = dhcpserver.setdefault('vboxnet0', ConfigSection())
+        for key, value in virtualbox_dhcpserver_defaults.items():
+            vboxnet0.setdefault(key, value)
 
         # default virtual disk
         if 'vb-disk:defaultdisk' in instance.config.get('storage', {}):
-            try:
-                instance.master.main_config['vb-disk']['defaultdisk']
-            except KeyError:
-                instance.master.main_config['vb-disk'] = ConfigSection(
-                    defaultdisk=ConfigSection(virtualbox_bootdisk_defaults))
+            disks = main_config.setdefault('vb-disk', ConfigSection())
+            defaultdisk = disks.setdefault('defaultdisk', ConfigSection())
+            for key, value in virtualbox_bootdisk_defaults.items():
+                defaultdisk.setdefault(key, value)
 
     if not instance.master.sectiongroupname.startswith('ez-'):
         return
@@ -118,7 +121,7 @@ def augment_instance(instance):
         instance.config.setdefault(key, value)
 
     if 'fabfile' not in instance.config:
-        playbooks_directory = get_playbooks_directory(instance.master.main_config)
+        playbooks_directory = get_playbooks_directory(main_config)
         fabfile = path.join(playbooks_directory, instance.uid, 'fabfile.py')
         if path.exists(fabfile):
             instance.config['fabfile'] = fabfile
@@ -137,7 +140,7 @@ def augment_instance(instance):
             instance.config['roles'] = 'jails_host'
         if 'fingerprint' not in instance.config:
             host_defined_path = instance.config.get('bootstrap-files')
-            ploy_conf_path = instance.master.main_config.path
+            ploy_conf_path = main_config.path
             if host_defined_path is None:
                 bootstrap_path = path.join(ploy_conf_path, '..', 'bootstrap-files')
             else:
