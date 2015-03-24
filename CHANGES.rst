@@ -2,6 +2,7 @@
 ==================
 
 - [feature] files copied during bootstrap can be encrypted using the ``ploy vault`` commands. This is useful for the private ssh host keys in ``bootstrap-files``.
+- [fix] fixed setting of virtualbox defaults, so they can be properly overwritten
 
 
 2.0.0 - 2015-03-05
