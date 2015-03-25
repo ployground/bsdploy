@@ -83,9 +83,13 @@ class PloyBootstrapCmd(object):
 
 
 def augment_instance(instance):
-    from ploy_ansible import get_playbooks_directory, has_playbook
+    from ploy_ansible import get_ansible_version, get_playbooks_directory
+    from ploy_ansible import has_playbook
     from ploy.config import ConfigSection
 
+    if get_ansible_version() < (1, 5):
+        log.error("You have an Ansible version below 1.5.0, which isn't supported anymore.")
+        sys.exit(1)
     # provide virtualbox specific convenience defaults:
     if instance.master.sectiongroupname == ('vb-instance'):
 

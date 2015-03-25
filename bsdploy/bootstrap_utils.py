@@ -1,7 +1,7 @@
 from __future__ import print_function
-try:
+try:  # pragma: nocover
     from cStringIO import StringIO
-except ImportError:
+except ImportError:  # pragma: nocover
     from StringIO import StringIO
 from bsdploy import bsdploy_path
 from fabric.api import env, local, put, quiet, run, settings
@@ -232,7 +232,8 @@ class BootstrapUtils:
                     bootstrap_files[join(path, filename)] = BootstrapFile(
                         self, join(path, filename), **dict(
                             local=join(packages_path, join(path, filename)),
-                            remote=join('/mnt/var/cache/pkg/All', filename)))
+                            remote=join('/mnt/var/cache/pkg/All', filename),
+                            encrypted=False))
 
         if self.ssh_keys is not None:
             for ssh_key_name, ssh_key_options in list(self.ssh_keys):
@@ -243,16 +244,9 @@ class BootstrapUtils:
                     if not exists(pub_key):
                         print("Public key '%s' for '%s' missing." % (pub_key, ssh_key))
                         sys.exit(1)
-                    encrypted = False
-                    if hasattr(env.instance, 'get_vault_lib'):
-                        vaultlib = env.instance.get_vault_lib()
-                        with open(ssh_key) as f:
-                            data = f.read()
-                        encrypted = vaultlib.is_encrypted(data)
                     bootstrap_files[ssh_key_name] = BootstrapFile(
                         self, ssh_key_name, **dict(
                             local=ssh_key,
-                            encrypted=encrypted,
                             remote='/mnt/etc/ssh/%s' % ssh_key_name,
                             mode=0600))
                     bootstrap_files[pub_key_name] = BootstrapFile(
@@ -260,6 +254,13 @@ class BootstrapUtils:
                             local=pub_key,
                             remote='/mnt/etc/ssh/%s' % pub_key_name,
                             mode=0644))
+        if hasattr(env.instance, 'get_vault_lib'):
+            vaultlib = env.instance.get_vault_lib()
+            for bf in bootstrap_files.values():
+                if bf.encrypted is None and exists(bf.local):
+                    with open(bf.local) as f:
+                        data = f.read()
+                    bf.info['encrypted'] = vaultlib.is_encrypted(data)
         return bootstrap_files
 
     def print_bootstrap_files(self):

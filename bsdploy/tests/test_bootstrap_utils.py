@@ -169,6 +169,46 @@ def test_bootstrap_files_multiple_ssh_keys_use_second(bu, capsys, run_mock, temp
         assert f.read() == 'id_rsa'
 
 
+class TestFileEncryption:
+    @pytest.fixture
+    def ctrl(self, ctrl):
+        import ploy_ansible
+        ctrl.plugins['ansible'] = ploy_ansible.plugin
+        return ctrl
+
+    @pytest.fixture
+    def passwd_source(self, monkeypatch):
+        class DummySource:
+            passwd = 'dummy-vault-password'
+
+            def get(self, fail_on_error=True):
+                return self.passwd
+        src = DummySource()
+        monkeypatch.setattr('ploy_ansible.get_vault_password_source', lambda x: src)
+        return src
+
+    def test_bootstrap_files_encrypted(self, bu, env_mock, passwd_source, tempdir):
+        vaultlib = env_mock.instance.get_vault_lib()
+        tempdir['bootstrap-files/authorized_keys'].fill('id_dsa')
+        tempdir['bootstrap-files/secret.txt'].fill(vaultlib.encrypt('test-secret'))
+        bindata = ''.join(chr(x) for x in range(256))
+        tempdir['bootstrap-files/secret.bin'].fill(vaultlib.encrypt(bindata))
+        with open(tempdir['bootstrap-files/secret.txt'].path) as f:
+            assert 'test-secret' not in f.read()
+        tempdir['bootstrap-files/files.yml'].fill([
+            "'secret.txt':",
+            "    remote: /root/secret.txt"])
+        for name, bf in bu.bootstrap_files.items():
+            if name == 'secret.txt':
+                assert bf.encrypted
+                assert bf.open({}).read() == 'test-secret'
+            elif name == 'secret.bin':
+                assert bf.encrypted
+                assert bf.open({}).read() == bindata
+            else:
+                assert not bf.encrypted
+
+
 def test_default_rc_conf(bu, tempdir):
     tempdir['bootstrap-files/authorized_keys'].fill('id_dsa')
     bfs = bu.bootstrap_files

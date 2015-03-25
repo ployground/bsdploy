@@ -146,6 +146,13 @@ For example, to create a custom ``rc.conf`` for a particular instance, create a 
 
 Any file listed in the YAML file found inside that directory will take precedence during bootstrapping, but any file *not* found in there will be uploaded from the default location instead.
 
+Files encrypted using ``ploy vault encrypt`` are recognized and decrypted during upload.
+
+SSH host keys are generated locally via ``ssh-keygen`` and stored in ``bootstrap-files``.
+If your ``ssh-keygen`` doesn't support a key type (like ecdsa on OS X), then the key won't be created and FreeBSD will create it during first boot.
+The generated keys are used to verify the ssh connection, so it is best to add them into version control.
+Since the private ssh keys are sensitive data, you should encrypt them using ``ploy vault encrypt ...`` before adding them into version control.
+
 
 Bootstrap execution
 -------------------

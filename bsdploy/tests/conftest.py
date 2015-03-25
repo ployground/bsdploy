@@ -23,6 +23,17 @@ default_mounts = '\n'.join([
 
 
 @pytest.fixture
+def ctrl(ployconf, tempdir):
+    from ploy import Controller
+    import ploy.tests.dummy_plugin
+    ctrl = Controller(tempdir.directory)
+    ctrl.plugins = {
+        'dummy': ploy.tests.dummy_plugin.plugin}
+    ctrl.configfile = ployconf.path
+    return ctrl
+
+
+@pytest.fixture
 def fabric_integration():
     from ploy_fabric import _fabric_integration
     # this needs to be done before any other fabric module import
@@ -115,14 +126,11 @@ def local_mock(fabric_integration, monkeypatch):
 
 
 @pytest.fixture
-def env_mock(fabric_integration, monkeypatch, ployconf):
-    from fabric.utils import _AttributeDict
-    env = _AttributeDict()
-    env.instance = Mock()
-    env.instance.config = {}
-    env.instance.master.main_config.path = ployconf.directory
-    env.instance.get_vault_lib().is_encrypted.return_value = False
-    monkeypatch.setattr('bsdploy.bootstrap_utils.env', env)
+def env_mock(ctrl, fabric_integration, monkeypatch, ployconf):
+    from fabric.api import env
+    ployconf.fill([
+        '[dummy-instance:test_instance]'])
+    env.instance = ctrl.instances['test_instance']
     return env
 
 
