@@ -1,6 +1,7 @@
-2.x.y - Unreleased
+2.1.y - Unreleased
 ==================
 
+- [feature] files copied during bootstrap can be encrypted using the ``ploy vault`` commands. This is useful for the private ssh host keys in ``bootstrap-files``.
 
 
 2.0.0 - 2015-03-05

@@ -1,7 +1,7 @@
 from __future__ import print_function
-try:
+try:  # pragma: nocover
     from cStringIO import StringIO
-except ImportError:
+except ImportError:  # pragma: nocover
     from StringIO import StringIO
 from bsdploy import bsdploy_path
 from fabric.api import env, local, put, quiet, run, settings
@@ -74,14 +74,22 @@ class BootstrapFile(object):
         from ansible.utils.template import template_from_file
         return template_from_file
 
-    def read(self, context):
+    def open(self, context):
         if self.use_jinja:
             result = self.template_from_file(dirname(self.local), self.local, context)
             if isinstance(result, unicode):
                 result = result.encode('utf-8')
-            return result
+            return StringIO(result)
+        elif self.encrypted:
+            vaultlib = env.instance.get_vault_lib()
+            with open(self.local, 'r') as f:
+                result = f.read()
+            return StringIO(vaultlib.decrypt(result))
         else:
             return open(self.local, 'r')
+
+    def read(self, context):
+        return self.open(context).read()
 
 
 class BootstrapUtils:
@@ -224,7 +232,8 @@ class BootstrapUtils:
                     bootstrap_files[join(path, filename)] = BootstrapFile(
                         self, join(path, filename), **dict(
                             local=join(packages_path, join(path, filename)),
-                            remote=join('/mnt/var/cache/pkg/All', filename)))
+                            remote=join('/mnt/var/cache/pkg/All', filename),
+                            encrypted=False))
 
         if self.ssh_keys is not None:
             for ssh_key_name, ssh_key_options in list(self.ssh_keys):
@@ -245,6 +254,13 @@ class BootstrapUtils:
                             local=pub_key,
                             remote='/mnt/etc/ssh/%s' % pub_key_name,
                             mode=0644))
+        if hasattr(env.instance, 'get_vault_lib'):
+            vaultlib = env.instance.get_vault_lib()
+            for bf in bootstrap_files.values():
+                if bf.encrypted is None and exists(bf.local):
+                    with open(bf.local) as f:
+                        data = f.read()
+                    bf.info['encrypted'] = vaultlib.is_encrypted(data)
         return bootstrap_files
 
     def print_bootstrap_files(self):
@@ -277,11 +293,7 @@ class BootstrapUtils:
     def upload_bootstrap_files(self, context):
         for filename, bf in sorted(self.bootstrap_files.items()):
             if bf.remote and exists(bf.local):
-                if bf.use_jinja:
-                    local = StringIO(bf.read(context))
-                else:
-                    local = bf.local
-                put(local, bf.remote, mode=bf.mode)
+                put(bf.open(context), bf.remote, mode=bf.mode)
 
     def install_pkg(self, root, chroot=None, packages=[]):
         assert isinstance(chroot, bool)
