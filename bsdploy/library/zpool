@@ -155,16 +155,18 @@ class Zpool(object):
         data_devices = self.prepare_data_devices(devices)
         # check again in case the zpool wasn't active because of missing geli settings
         if not self.exists():
-            zpool_args = ['create']
-            if self.version:
-                zpool_args.extend(['-o', 'version=%s' % self.version])
-            zpool_args.extend(['-m', 'none', self.name])
-            if raid_mode:
-                zpool_args.append(raid_mode)
-            zpool_args.extend(data_devices)
-            (rc, out, err) = self.zpool(*zpool_args)
+            (rc, out, err) = self.zpool('import', '-f', self.name)
             if rc != 0:
-                self.module.fail_json(msg="Failed to create zpool with the following arguments:\n%s\n%s" % (' '.join(zpool_args), err))
+                zpool_args = ['create']
+                if self.version:
+                    zpool_args.extend(['-o', 'version=%s' % self.version])
+                zpool_args.extend(['-m', 'none', self.name])
+                if raid_mode:
+                    zpool_args.append(raid_mode)
+                zpool_args.extend(data_devices)
+                (rc, out, err) = self.zpool(*zpool_args)
+                if rc != 0:
+                    self.module.fail_json(msg="Failed to create zpool with the following arguments:\n%s\n%s" % (' '.join(zpool_args), err))
             self.changed = True
         self.cleanup_data_devices(data_devices)
         return result

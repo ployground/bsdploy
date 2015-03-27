@@ -1,6 +1,7 @@
 2.1.y - Unreleased
 ==================
 
+- [fix] import existing zpool in ``zpool`` ansible module if the name matches
 - [fix] try to attach geli device first in ``zpool`` ansible module, in case it already exists, only if that fails create it from scratch
 - [fix] properly handle multiple geli encrypted devices in ``zpool`` ansible module
 - [fix] also honor the ``ploy_jail_host_pkg_repository`` variable during bootstrapping (not just jailhost configuration)
