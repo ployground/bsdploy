@@ -77,7 +77,6 @@ def test_roles(ctrl, monkeypatch):
         'Enable ezjail in rc.conf',
         'Setup ezjail.conf',
         'Setup data zpool',
-        'Setup rc.conf lines for data zpool',
         'Set data zpool options',
         'Jails ZFS file system',
         'Initialize ezjail (using http proxy)',

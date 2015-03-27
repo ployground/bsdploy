@@ -33,7 +33,7 @@ class Zpool(object):
 
     def exists(self):
         (rc, out, err) = self.zpool('list', '-H', self.name)
-        return rc==0
+        return rc == 0
 
     def get_devices(self):
         devices = self.devices
@@ -70,7 +70,6 @@ class Zpool(object):
 
     def prepare_data_devices(self, devices):
         data_devices = []
-        rc_lines = []
         if self.geli:
             self.prepare_geli_passphrase()
             rc_devices = []
@@ -80,6 +79,7 @@ class Zpool(object):
                     'geli', 'init', '-s', '4096', '-l', '256',
                     '-J', self.geli_passphrase_location,
                     device])
+                self.changed = True
                 if rc != 0:
                     self.module.fail_json(msg="Failed to init geli device '%s'.\n%s" % (data_device, err))
                 (rc, out, err) = self.module.run_command([
@@ -90,17 +90,24 @@ class Zpool(object):
                     self.module.fail_json(msg="Failed to attach geli device '%s'.\n%s" % (data_device, err))
                 data_devices.append(data_device)
                 rc_devices.append(device)
-            rc_lines.append(dict(
-                regexp='^geli_devices=',
-                line='geli_devices=\\"%s\\"' % ' '.join(rc_devices)))
+            (rc, out, err) = self.module.run_command([
+                'sysrc', 'geli_devices'])
+            if rc != 0:
+                geli_devices = []
+            else:
+                geli_devices = out[14:].split()
+            geli_devices.extend(rc_devices)
+            (rc, out, err) = self.module.run_command([
+                'sysrc', 'geli_devices=%s' % ' '.join(sorted(set(geli_devices)))])
+            if rc != 0:
+                self.module.fail_json(msg="Failed to set geli_devices in rc.conf to '%s'.\n%s" % (' '.join(geli_devices), err))
             for rc_device in rc_devices:
-                rc_lines.append(dict(
-                    regexp='^geli_{rc_device}_flags='.format(
-                        rc_device=rc_device.replace('/', '_'),
-                        geli_passphrase_location=self.geli_passphrase_location),
-                    line='geli_{rc_device}_flags=\\"-j {geli_passphrase_location}\\"'.format(
-                        rc_device=rc_device.replace('/', '_'),
-                        geli_passphrase_location=self.geli_passphrase_location)))
+                key = 'geli_%s_flags' % rc_device.replace('/', '_')
+                value = '-j %s' % self.geli_passphrase_location
+                (rc, out, err) = self.module.run_command([
+                    'sysrc', '%s=%s' % (key, value)])
+                if rc != 0:
+                    self.module.fail_json(msg="Failed to set %s in rc.conf to '%s'.\n%s" % (key, value, err))
         else:
             for device in devices:
                 data_device = '{device}.nop'.format(device=device)
@@ -109,7 +116,7 @@ class Zpool(object):
                 if rc != 0:
                     self.module.fail_json(msg="Failed to create nop device '%s'.\n%s" % (data_device, err))
                 data_devices.append(data_device)
-        return data_devices, rc_lines
+        return data_devices
 
     def cleanup_data_devices(self, data_devices):
         if self.geli:
@@ -133,8 +140,7 @@ class Zpool(object):
             return result
         devices = self.get_devices()
         raid_mode = self.get_raid_mode(devices)
-        data_devices, rc_lines = self.prepare_data_devices(devices)
-        result['rc_lines'] = rc_lines
+        data_devices = self.prepare_data_devices(devices)
         zpool_args = ['create']
         if self.version:
             zpool_args.extend(['-o', 'version=%s' % self.version])
@@ -162,8 +168,6 @@ class Zpool(object):
             if self.exists():
                 self.destroy()
 
-        if 'rc_lines' not in result:
-            result['rc_lines'] = []
         result['changed'] = self.changed
         return result
 
@@ -189,6 +193,6 @@ def main():
         module.exit_json(**result)
 
 
-from ansible.module_utils.basic import *
+from ansible.module_utils.basic import *  # noqa
 if __name__ == "__main__":
     main()

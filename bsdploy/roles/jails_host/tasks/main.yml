@@ -73,15 +73,6 @@
     version: "{{ ploy_bootstrap_zpool_version }}"
     devices: "{{ ploy_bootstrap_data_pool_devices }}"
     raid_mode: "{{ ploy_bootstrap_raid_mode }}"
-  register: data_pool_result
-
-- name: Setup rc.conf lines for data zpool
-  lineinfile:
-    dest: /etc/rc.conf
-    regexp: "{{ item.regexp }}"
-    line: "{{ item.line }}"
-  with_items: data_pool_result.rc_lines
-  when: data_pool_result.rc_lines|default()
 
 - name: Set data zpool options
   zfs:
