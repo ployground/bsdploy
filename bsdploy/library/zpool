@@ -33,6 +33,8 @@ class Zpool(object):
 
     def exists(self):
         (rc, out, err) = self.zpool('list', '-H', self.name)
+        if self.geli and 'FAULTED' in out:
+            return False
         return rc == 0
 
     def get_devices(self):
@@ -75,6 +77,18 @@ class Zpool(object):
             rc_devices = []
             for device in devices:
                 data_device = '{device}.eli'.format(device=device)
+                data_devices.append(data_device)
+                rc_devices.append(device)
+                if os.path.exists(os.path.join('/dev', data_device)):
+                    continue
+                # try to attach geli device in case it's already existing
+                (rc, out, err) = self.module.run_command([
+                    'geli', 'attach',
+                    '-j', self.geli_passphrase_location,
+                    device])
+                if rc == 0:
+                    continue
+                # create new geli device
                 (rc, out, err) = self.module.run_command([
                     'geli', 'init', '-s', '4096', '-l', '256',
                     '-J', self.geli_passphrase_location,
@@ -88,8 +102,6 @@ class Zpool(object):
                     device])
                 if rc != 0:
                     self.module.fail_json(msg="Failed to attach geli device '%s'.\n%s" % (data_device, err))
-                data_devices.append(data_device)
-                rc_devices.append(device)
             (rc, out, err) = self.module.run_command([
                 'sysrc', 'geli_devices'])
             if rc != 0:
@@ -141,17 +153,19 @@ class Zpool(object):
         devices = self.get_devices()
         raid_mode = self.get_raid_mode(devices)
         data_devices = self.prepare_data_devices(devices)
-        zpool_args = ['create']
-        if self.version:
-            zpool_args.extend(['-o', 'version=%s' % self.version])
-        zpool_args.extend(['-m', 'none', self.name])
-        if raid_mode:
-            zpool_args.append(raid_mode)
-        zpool_args.extend(data_devices)
-        (rc, out, err) = self.zpool(*zpool_args)
-        if rc != 0:
-            self.module.fail_json(msg="Failed to create zpool with the following arguments:\n%s\n%s" % (' '.join(zpool_args), err))
-        self.changed = True
+        # check again in case the zpool wasn't active because of missing geli settings
+        if not self.exists():
+            zpool_args = ['create']
+            if self.version:
+                zpool_args.extend(['-o', 'version=%s' % self.version])
+            zpool_args.extend(['-m', 'none', self.name])
+            if raid_mode:
+                zpool_args.append(raid_mode)
+            zpool_args.extend(data_devices)
+            (rc, out, err) = self.zpool(*zpool_args)
+            if rc != 0:
+                self.module.fail_json(msg="Failed to create zpool with the following arguments:\n%s\n%s" % (' '.join(zpool_args), err))
+            self.changed = True
         self.cleanup_data_devices(data_devices)
         return result
 
