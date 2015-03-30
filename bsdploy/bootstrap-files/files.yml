@@ -12,5 +12,6 @@
 'FreeBSD.conf':
     directory: '/mnt/usr/local/etc/pkg/repos'
     remote: '/mnt/usr/local/etc/pkg/repos/FreeBSD.conf'
+    use_jinja: True
 'sshd_config':
     remote: '/mnt/etc/ssh/sshd_config'

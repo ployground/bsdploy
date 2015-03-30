@@ -57,7 +57,7 @@ def _bootstrap():
     else:
         print("\nWARNING! Found no suitable network interface!")
 
-    template_context = {}
+    template_context = {"ploy_jail_host_pkg_repository": "pkg+http://pkg.freeBSD.org/${ABI}/quarterly"}
     # first the config, so we don't get something essential overwritten
     template_context.update(env.instance.config)
     template_context.update(
