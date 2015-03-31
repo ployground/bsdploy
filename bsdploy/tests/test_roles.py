@@ -74,6 +74,7 @@ def test_roles(ctrl, monkeypatch):
         'Set default jail interface',
         'Set default jail parameters',
         'Set default jail exec stop',
+        'Enable jail_parallel_start',
         'Enable ezjail in rc.conf',
         'Setup ezjail.conf',
         'Setup data zpool',
