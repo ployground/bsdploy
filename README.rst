@@ -49,7 +49,7 @@ Here's what an abbreviated bootstrapping session of a simple website inside a ja
 Best of both worlds
 -------------------
 
-Combining a declarative approach for setting up the initial state of a system combined with an imperative approach for providing maintenance operations on that state has significant advantages:
+Combining a declarative approach for setting up the initial state of a system with an imperative approach for providing maintenance operations on that state has significant advantages:
 
 1. Since the imperative scripts have the luxury of running against a well-defined context, you can keep them short and concise without worrying about all those edge cases.
 
