@@ -10,10 +10,10 @@
 - { include: obsolete-ipf.yml, tags: pf }
 - { include: pf.yml, tags: pf }
 
-- name: Add lo1 to rc.conf
+- name: Setup cloned interfaces
   sysrc:
     name: cloned_interfaces
-    value: lo1
+    value: "{{ ploy_jail_host_cloned_interfaces }}"
   notify: restart network
 
 - meta: flush_handlers
@@ -43,7 +43,7 @@
 - name: Set default jail interface
   sysrc:
     name: jail_interface
-    value: lo1
+    value: "{{ ploy_jail_host_default_jail_interface }}"
   notify: restart ezjail
 - name: Set default jail parameters
   sysrc:
