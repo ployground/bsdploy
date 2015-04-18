@@ -7,6 +7,7 @@
 - [fix] also honor the ``ploy_jail_host_pkg_repository`` variable during bootstrapping (not just jailhost configuration)
 - [feature] files copied during bootstrap can be encrypted using the ``ploy vault`` commands. This is useful for the private ssh host keys in ``bootstrap-files``.
 - [fix] fixed setting of virtualbox defaults, so they can be properly overwritten
+- [feature] added new variables: ploy_jail_host_cloned_interfaces/ploy_jail_host_default_jail_interface to give more flexiblity around network interface setup
 
 
 2.0.0 - 2015-03-05
