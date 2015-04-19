@@ -29,6 +29,5 @@ ploy_jail_host_cloned_interfaces: lo1
 ploy_jail_host_default_jail_interface: lo1
 ploy_jail_host_interface_config: []
 #ploy_jail_host_interface_config:
-#  - interfaces:
-#    - interface: em0
-#      config: inet 192.168.1.2/24
+#  - interface: em0
+#    config: inet 192.168.1.2/24
