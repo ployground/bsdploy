@@ -82,6 +82,7 @@ def test_roles(ctrl, monkeypatch):
         'Initialize ezjail (using http proxy)',
         'Initialize ezjail (may take a while)',
         'Create pkg cache folder',
+        'Download pkg.txz using proxy',
         'Download pkg.txz',
         'Directory for jail flavour "bsdploy_base"',
         'Pkg in bsdploy_base flavour',
