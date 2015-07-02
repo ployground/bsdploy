@@ -16,6 +16,13 @@
     value: "{{ ploy_jail_host_cloned_interfaces }}"
   notify: restart network
 
+- name: Configure interfaces
+  sysrc:
+    name: ifconfig_{{ item.interface }}
+    value: "{{ item.config }}"
+  with_items: ploy_jail_host_interface_config
+  notify: restart network
+
 - meta: flush_handlers
 
 # The sysctl module in ansible adds spaces around the equal sign in

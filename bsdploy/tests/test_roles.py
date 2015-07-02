@@ -68,6 +68,7 @@ def test_roles(ctrl, monkeypatch):
         'Reload pf.conf',
         'Enable gateway in rc.conf',
         'Setup cloned interfaces',
+        'Configure interfaces',
         'Enable security.jail.allow_raw_sockets',
         'Enable security.jail.sysvipc_allowed',
         'Ensure helper packages are installed',
