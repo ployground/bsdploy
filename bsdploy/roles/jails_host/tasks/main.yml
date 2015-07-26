@@ -65,6 +65,10 @@
     name: jail_exec_stop
     value: "/bin/sh /etc/rc.shutdown"
   notify: restart ezjail
+- name: Enable jail_parallel_start
+  sysrc:
+    name: jail_parallel_start
+    value: "YES"
 
 - name: Enable ezjail in rc.conf
   service:
