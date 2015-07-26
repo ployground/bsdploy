@@ -9,6 +9,7 @@
 - [fix] fixed setting of virtualbox defaults, so they can be properly overwritten
 - [feature] added new variables: ploy_jail_host_cloned_interfaces/ploy_jail_host_default_jail_interface to give more flexiblity around network interface setup
 - [change] dropped support for Ansible versions < 1.8 (supports 1.8.x and 1.9.x now)
+- [fix] honour proxy setting while installing ezjail itself, not just during ezjail's install run (thanks mzs114! https://github.com/ployground/bsdploy/pull/81)
 
 
 2.0.0 - 2015-03-05
