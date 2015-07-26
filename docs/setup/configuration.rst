@@ -24,7 +24,7 @@ Configuring as non-root
 
 While bootstrapping currently *must* be performed as ``root`` (due to the fact that mfsBSD itself requires root login) some users may not want to enable root login for their systems.
 
-If want to manage a jailhost with a non-root user, you must perform the following steps manually:
+If you want to manage a jailhost with a non-root user, you must perform the following steps manually:
 
 - install ``sudo`` on the jailhost
 - create a user account and enable SSH access for it
