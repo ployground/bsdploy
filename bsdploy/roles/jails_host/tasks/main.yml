@@ -111,9 +111,17 @@
 - name: Create pkg cache folder
   file: dest=/var/cache/pkg/All/ state=directory owner=root group=wheel
 
-# TODO: is this still necessary? and if yes, it should be proxy aware...
+# TODO: is this still necessary?
+- name: Download pkg.txz using proxy
+  get_url: dest=/var/cache/pkg/All/pkg.txz url={{ pkg_txz_url }}
+  when: ploy_http_proxy is defined
+  environment:
+    http_proxy: "{{ploy_http_proxy}}"
+    https_proxy: "{{ploy_http_proxy}}"
+
 - name: Download pkg.txz
   get_url: dest=/var/cache/pkg/All/pkg.txz url={{ pkg_txz_url }}
+  when: ploy_http_proxy is not defined
 
 - name: Directory for jail flavour "bsdploy_base"
   file: dest=/usr/jails/flavours/bsdploy_base state=directory owner=root group=wheel
