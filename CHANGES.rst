@@ -1,4 +1,4 @@
-2.1.y - Unreleased
+2.1.0 - 2015-07-26
 ==================
 
 - [feature] enable jail_parallel_start in rc.conf of jail host
