@@ -70,6 +70,7 @@ def test_roles(ctrl, monkeypatch):
         'Setup cloned interfaces',
         'Enable security.jail.allow_raw_sockets',
         'Enable security.jail.sysvipc_allowed',
+        'Ensure helper packages are installed (using http proxy)',
         'Ensure helper packages are installed',
         'Set default jail interface',
         'Set default jail parameters',
