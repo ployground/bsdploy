@@ -8,7 +8,7 @@ develop: .installed.cfg
 
 # needed for tests
 bin/ansible: bin/pip
-	bin/pip install ansible
+	bin/pip install "ansible<2.0.0"
 
 bin/buildout: bin/pip
 	bin/pip install zc.buildout
