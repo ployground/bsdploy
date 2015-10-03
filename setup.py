@@ -52,7 +52,6 @@ setup(
             'pytest-pep8',
             'tox',
             'mock',
-            'readline',
         ],
     },
     entry_points="""
