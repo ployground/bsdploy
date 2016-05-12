@@ -1,4 +1,4 @@
-# convenience Makefile to setup a development verison
+# convenience Makefile to setup a development version
 # of bsdploy and its direct dependencies
 
 develop: .installed.cfg
