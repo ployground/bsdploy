@@ -1,6 +1,8 @@
 2.2.0 - Unreleased
 ==================
 
+- add fabric helpers to keep pkg up-to-date on the host, inside jails and for the bsdploy flavour
+
 
 2.1.0 - 2015-07-26
 ==================
