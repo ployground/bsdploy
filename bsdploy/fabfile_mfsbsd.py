@@ -1,7 +1,7 @@
 # coding: utf-8
 from bsdploy.bootstrap_utils import BootstrapUtils
 from contextlib import contextmanager
-from fabric.api import env, hide, run, settings
+from fabric.api import env, hide, run, settings, task
 from ploy.common import yesno
 from ploy.config import value_asbool
 
@@ -143,6 +143,7 @@ def _bootstrap():
             run('reboot')
 
 
+@task
 def bootstrap(**kwargs):
     """ bootstrap an instance booted into mfsbsd (http://mfsbsd.vx.sk)
     """
@@ -150,6 +151,7 @@ def bootstrap(**kwargs):
         _bootstrap()
 
 
+@task
 def fetch_assets(**kwargs):
     """ download bootstrap assets to control host.
     If present on the control host they will be uploaded to the target host during bootstrapping.
