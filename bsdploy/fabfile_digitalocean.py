@@ -18,11 +18,16 @@ def bootstrap(**kwargs):
     # (temporarily) set the user to `freebsd`
     original_host = env.host_string
     env.host_string = 'freebsd@%s' % env.instance.uid
+    # copy DO bsdclout-init results:
+    sudo("""cat /etc/rc.digitalocean.d/droplet.conf > /etc/rc.conf""")
+    sudo("""sysrc zfs_enable=YES""")
+    sudo("""sysrc sshd_enable=YES""")
     # enable and start pf
     sudo("""sysrc pf_enable=YES""")
     sudo("""sysrc -f /boot/loader.conf pfload=YES""")
     sudo('kldload pf', warn_only=True)
-    sudo('''touch /etc/pf.conf''')
+    sudo('''echo 'pass in all' > /etc/pf.conf''')
+    sudo('''echo 'pass out all' >> /etc/pf.conf''')
     sudo('''chmod 644 /etc/pf.conf''')
     sudo('service pf start')
     # overwrite sshd_config, because the DO version only contains defaults
