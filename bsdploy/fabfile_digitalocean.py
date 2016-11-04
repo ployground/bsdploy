@@ -1,6 +1,6 @@
 # coding: utf-8
 from bsdploy.bootstrap_utils import BootstrapUtils
-from fabric.api import env, sudo
+from fabric.api import env, sudo, run
 from time import sleep
 
 # a plain, default fabfile for jailhosts on digital ocean
@@ -38,6 +38,11 @@ def bootstrap(**kwargs):
     env.host_string = original_host
     # give sshd a chance to restart
     sleep(2)
+    # clean up DO cloudinit leftovers
+    run("rm /etc/rc.d/digitalocean")
+    run("rm -r /etc/rc.digitalocean.d")
+    run("rm -r /usr/local/bsd-cloudinit/")
+    run("pkg remove -y avahi-autoipd")
 
     # allow overwrites from the commandline
     env.instance.config.update(kwargs)
