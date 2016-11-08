@@ -97,7 +97,7 @@
 
 - name: Jails ZFS file system
   zfs:
-    name="{{ ploy_bootstrap_data_pool_name }}/jails"
+    name="{{ ploy_jails_zfs_root }}"
     state=present
     mountpoint=/usr/jails
 
