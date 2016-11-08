@@ -1,7 +1,9 @@
-2.2.0 - Unreleased
+2.2.0 - 2016-11-08
 ==================
 
-- add fabric helpers to keep pkg up-to-date on the host, inside jails and for the bsdploy flavour
+- [feature] add fabric helpers to keep pkg up-to-date on the host, inside jails and for the bsdploy flavour
+- [feature] add support for bootstrapping on Digital Ocean by setting `bootstrap` to `digitalocean` in the `ez-master` definition
+- [fix] allow setting a non-default zfs root for ezjail by setting `jails_zfs_root` in the `ez-master` definition
 
 
 2.1.0 - 2015-07-26
