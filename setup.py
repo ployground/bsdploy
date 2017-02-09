@@ -36,7 +36,7 @@ setup(
         'Topic :: System :: Installation/Setup',
         'Topic :: System :: Systems Administration',
     ],
-    license='Beerware Licence',
+    license="BSD 3-Clause License",
     zip_safe=False,
     packages=['bsdploy'],
     install_requires=install_requires,
