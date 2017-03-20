@@ -15,11 +15,14 @@ def bootstrap(**kwargs):
     the only thing we need to change is to allow root to login (without a password)
     enable pf and ensure it is running
     """
+
+    bu = BootstrapUtils()
     # (temporarily) set the user to `freebsd`
     original_host = env.host_string
     env.host_string = 'freebsd@%s' % env.instance.uid
     # copy DO bsdclout-init results:
-    sudo("""cat /etc/rc.digitalocean.d/droplet.conf > /etc/rc.conf""")
+    if bu.os_release.startswith('10'):
+        sudo("""cat /etc/rc.digitalocean.d/droplet.conf > /etc/rc.conf""")
     sudo("""sysrc zfs_enable=YES""")
     sudo("""sysrc sshd_enable=YES""")
     # enable and start pf
@@ -33,20 +36,21 @@ def bootstrap(**kwargs):
     # overwrite sshd_config, because the DO version only contains defaults
     # and a line explicitly forbidding root to log in
     sudo("""echo 'PermitRootLogin without-password' > /etc/ssh/sshd_config""")
+    # additionally, make sure the root user is unlocked!
+    sudo('pw unlock root')
     sudo("""service sshd fastreload""")
     # revert back to root
     env.host_string = original_host
     # give sshd a chance to restart
     sleep(2)
     # clean up DO cloudinit leftovers
-    run("rm /etc/rc.d/digitalocean")
-    run("rm -r /etc/rc.digitalocean.d")
-    run("rm -r /usr/local/bsd-cloudinit/")
-    run("pkg remove -y avahi-autoipd")
+    run("rm -f /etc/rc.d/digitalocean")
+    run("rm -rf /etc/rc.digitalocean.d")
+    run("rm -rf /usr/local/bsd-cloudinit/")
+    run("pkg remove -y avahi-autoipd || true")
 
     # allow overwrites from the commandline
     env.instance.config.update(kwargs)
 
-    bu = BootstrapUtils()
     bu.ssh_keys = None
     bu.upload_authorized_keys = False
