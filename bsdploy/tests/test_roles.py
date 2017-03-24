@@ -84,10 +84,7 @@ def test_roles(ctrl, monkeypatch):
         'Initialize ezjail (using http proxy)',
         'Initialize ezjail (may take a while)',
         'Create pkg cache folder',
-        'Download pkg.txz using proxy',
-        'Download pkg.txz',
         'Directory for jail flavour "bsdploy_base"',
-        'Pkg in bsdploy_base flavour',
         'The .ssh directory for root in bsdploy_base flavour',
         'The etc directory in bsdploy_base flavour',
         'The etc/ssh directory in bsdploy_base flavour',
@@ -98,6 +95,7 @@ def test_roles(ctrl, monkeypatch):
         'rc.conf for bsdploy_base flavour',
         'sshd_config for bsdploy_base flavour',
         'motd for bsdploy_base flavour',
+        'startup script for bsdploy_base flavour',
         'copy some settings from host to bsdploy_base flavour']
 
 
@@ -110,6 +108,7 @@ def test_all_role_templates_tested(ctrl, monkeypatch, request):
     pb.run()
     # import after running to avoid module import issues
     from ansible.utils import parse_kv, path_dwim_relative
+    from bsdploy.tests import test_templates
     templates = []
     for play, task in iter_tasks(plays):
         if task.module_name != 'template':
@@ -131,7 +130,7 @@ def test_all_role_templates_tested(ctrl, monkeypatch, request):
                 path=task.module_vars.get('_original_file'),
                 role_name=task.role_name,
                 name=module_args_dict['src'], task_name=task.name)))
-    test_names = [x.name for x in request.session.items]
+    test_names = [x for x in dir(test_templates) if x.startswith('test_')]
     for name, info in templates:
         test_name = 'test_%s_%s' % (info['role_name'], name)
         if not any(x for x in test_names if x.startswith(test_name)):  # pragma: nocover - only on failure
