@@ -60,7 +60,6 @@ def service(service=None, action='status'):
     sudo('service %s %s' % (service, action), warn_only=True)
 
 
-
 @task
 def pkg_upgrade():
     run('pkg-static update')
