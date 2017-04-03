@@ -1,6 +1,7 @@
 2.3.0 - Unreleased
 ==================
 
+- [fix] update bootstrapping for Digital Ocean to circumvent their latest attempts to lock out root
 
 
 2.2.0 - 2016-11-08
