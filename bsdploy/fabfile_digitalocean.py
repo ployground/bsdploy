@@ -1,6 +1,7 @@
 # coding: utf-8
 from bsdploy.bootstrap_utils import BootstrapUtils
-from fabric.api import env, sudo, run
+from fabric.api import env, sudo, run, put
+from os import path
 from time import sleep
 
 # a plain, default fabfile for jailhosts on digital ocean
@@ -38,6 +39,13 @@ def bootstrap(**kwargs):
     sudo("""echo 'PermitRootLogin without-password' > /etc/ssh/sshd_config""")
     # additionally, make sure the root user is unlocked!
     sudo('pw unlock root')
+    # overwrite the authorized keys for root, because DO creates its entries to explicitly
+    # disallow root login
+    bootstrap_files = env.instance.config.get('bootstrap-files', 'bootstrap-files')
+    put(path.abspath(path.join(env['config_base'], bootstrap_files, 'authorized_keys')), '/tmp/authorized_keys', use_sudo=True)
+    sudo('''mv /tmp/authorized_keys /root/.ssh/''')
+    sudo('''chown root:wheel /root/.ssh/authorized_keys''')
+
     sudo("""service sshd fastreload""")
     # revert back to root
     env.host_string = original_host
