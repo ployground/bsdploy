@@ -3,7 +3,7 @@
   lineinfile:
     dest: /etc/ssh/sshd_config
     regexp: ^ListenAddress
-    line: 'ListenAddress {{ ploy_jail_host_sshd_listenaddress }}'
+    line: 'ListenAddress {{ ploy_ip }}'
   notify: restart sshd
 
 - { include: ntpd.yml, tags: ntpd }
