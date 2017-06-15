@@ -94,7 +94,7 @@ class BootstrapFile(object):
 
 class BootstrapUtils:
     ssh_keys = frozenset([
-        ('ssh_host_key', '-t rsa1 -b 1024'),
+        ('ssh_host_key', '-t rsa -b 2048'),
         ('ssh_host_rsa_key', '-t rsa'),
         ('ssh_host_dsa_key', '-t dsa'),
         ('ssh_host_ecdsa_key', '-t ecdsa')])
