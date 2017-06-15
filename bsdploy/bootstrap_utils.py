@@ -322,6 +322,11 @@ class BootstrapUtils:
             return run('mount')
 
     @lazy
+    def os_release(self):
+        with settings(quiet()):
+            return run('uname -r')
+
+    @lazy
     def sysctl_devices(self):
         with settings(quiet()):
             return run('sysctl -n kern.disks').strip().split()

@@ -1,6 +1,7 @@
 # coding: utf-8
 from bsdploy.bootstrap_utils import BootstrapUtils
-from fabric.api import env, sudo, run
+from fabric.api import env, sudo, run, put
+from os import path
 from time import sleep
 
 # a plain, default fabfile for jailhosts on digital ocean
@@ -15,11 +16,14 @@ def bootstrap(**kwargs):
     the only thing we need to change is to allow root to login (without a password)
     enable pf and ensure it is running
     """
+
+    bu = BootstrapUtils()
     # (temporarily) set the user to `freebsd`
     original_host = env.host_string
     env.host_string = 'freebsd@%s' % env.instance.uid
     # copy DO bsdclout-init results:
-    sudo("""cat /etc/rc.digitalocean.d/droplet.conf > /etc/rc.conf""")
+    if bu.os_release.startswith('10'):
+        sudo("""cat /etc/rc.digitalocean.d/droplet.conf > /etc/rc.conf""")
     sudo("""sysrc zfs_enable=YES""")
     sudo("""sysrc sshd_enable=YES""")
     # enable and start pf
@@ -33,20 +37,28 @@ def bootstrap(**kwargs):
     # overwrite sshd_config, because the DO version only contains defaults
     # and a line explicitly forbidding root to log in
     sudo("""echo 'PermitRootLogin without-password' > /etc/ssh/sshd_config""")
+    # additionally, make sure the root user is unlocked!
+    sudo('pw unlock root')
+    # overwrite the authorized keys for root, because DO creates its entries to explicitly
+    # disallow root login
+    bootstrap_files = env.instance.config.get('bootstrap-files', 'bootstrap-files')
+    put(path.abspath(path.join(env['config_base'], bootstrap_files, 'authorized_keys')), '/tmp/authorized_keys', use_sudo=True)
+    sudo('''mv /tmp/authorized_keys /root/.ssh/''')
+    sudo('''chown root:wheel /root/.ssh/authorized_keys''')
+
     sudo("""service sshd fastreload""")
     # revert back to root
     env.host_string = original_host
     # give sshd a chance to restart
     sleep(2)
     # clean up DO cloudinit leftovers
-    run("rm /etc/rc.d/digitalocean")
-    run("rm -r /etc/rc.digitalocean.d")
-    run("rm -r /usr/local/bsd-cloudinit/")
-    run("pkg remove -y avahi-autoipd")
+    run("rm -f /etc/rc.d/digitalocean")
+    run("rm -rf /etc/rc.digitalocean.d")
+    run("rm -rf /usr/local/bsd-cloudinit/")
+    run("pkg remove -y avahi-autoipd || true")
 
     # allow overwrites from the commandline
     env.instance.config.update(kwargs)
 
-    bu = BootstrapUtils()
     bu.ssh_keys = None
     bu.upload_authorized_keys = False
