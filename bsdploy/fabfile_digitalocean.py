@@ -1,6 +1,6 @@
 # coding: utf-8
 from bsdploy.bootstrap_utils import BootstrapUtils
-from fabric.api import env, sudo, run, put
+from fabric.api import env, sudo, run, put, task
 from os import path
 from time import sleep
 
@@ -10,6 +10,7 @@ from time import sleep
 env.shell = '/bin/sh -c'
 
 
+@task
 def bootstrap(**kwargs):
     """Digital Oceans FreeBSD droplets are pretty much already pre-bootstrapped,
     including having python2.7 and sudo etc. pre-installed.
