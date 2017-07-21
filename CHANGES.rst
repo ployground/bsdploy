@@ -2,7 +2,7 @@
 ==================
 
 - [fix] fix pf round-robin lockups. thanks to @igalic for reporting and fixing this issue
-
+- [fix] update default ssh host key type from 1024 bit RSA1 to 2048 bit RSA. thanks to @s4ms0n for reporting and pinpointing this issue
 
 
 
