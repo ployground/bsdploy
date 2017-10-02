@@ -11,7 +11,7 @@ install_requires = [
     'PyYAML',
     'jinja2',
     'setuptools',
-    'ploy>=1.2.0',
+    'ploy>=1.3.0',
     'ploy_ansible>=1.3.0',
     'ploy_ezjail>=1.2.0',
     'ploy_fabric>=1.1.0',

@@ -1,3 +1,4 @@
+from glob import glob
 from os import path
 import argparse
 import logging
@@ -143,16 +144,18 @@ def augment_instance(instance):
             sys.exit(1)
         if not has_playbook(instance):
             instance.config['roles'] = 'jails_host'
-        if 'fingerprint' not in instance.config:
+        if 'ssh-fingerprints' not in instance.config:
             host_defined_path = instance.config.get('bootstrap-files')
             ploy_conf_path = main_config.path
             if host_defined_path is None:
                 bootstrap_path = path.join(ploy_conf_path, '..', 'bootstrap-files')
             else:
                 bootstrap_path = path.join(ploy_conf_path, host_defined_path)
-            ssh_key = path.abspath(path.join(bootstrap_path, 'ssh_host_rsa_key.pub'))
-            if path.exists(ssh_key):
-                instance.config['fingerprint'] = ssh_key
+            key_paths = []
+            for ssh_key in glob(path.join(bootstrap_path, 'ssh_host*_key.pub')):
+                ssh_key = path.abspath(ssh_key)
+                key_paths.append(ssh_key)
+            instance.config['ssh-fingerprints'] = "\n".join(key_paths)
     else:
         # for jails
         instance.config.setdefault('startup_script', path.join(
