@@ -142,6 +142,8 @@ class BootstrapUtils:
                     "ssh-keygen %s -f %s -N ''" % (ssh_keygen_args, ssh_key),
                     capture=True)
                 if result.failed:
+                    print("Generation of %s with '%s' failed." % (
+                        ssh_key_name, ssh_keygen_args))
                     continue
             with settings(quiet()):
                 fingerprint = local(
