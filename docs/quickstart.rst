@@ -49,7 +49,7 @@ Inside it create a file named ``ploy.conf`` with the following contents::
     vm-natpf2 = ssh,tcp,,44003,,22
     storage =
         --medium vb-disk:defaultdisk
-        --type dvddrive --medium http://mfsbsd.vx.sk/files/iso/10/amd64/mfsbsd-se-10.1-RELEASE-amd64.iso --medium_sha1 03af247c1058a78a251c46ad5a13dc7b84a7ee7d
+        --type dvddrive --medium http://mfsbsd.vx.sk/files/iso/10/amd64/mfsbsd-se-10.3-RELEASE-amd64.iso --medium_sha1 564758b0dfebcabfa407491c9b7c4b6a09d9603e
 
 
 This creates a VirtualBox instance named ``ploy-demo``. By default BSDploy provides it with a so-called "host only interface" but since that cannot be used to connect to the internet we explicitly configure a second one using NAT (mfsBSD will configure it via DHCP) and in addtion we create a port forwarding from ``localhost`` port ``44003`` to port ``22`` on the box - in essence allowing us to SSH into it via localhost.
@@ -86,7 +86,7 @@ Next it will give you one last chance to abort before it commences to wipe the t
 To make sure that everything has worked so far, let's take a look at the host by logging into it via SSH. ``bsdploy`` provides a command for that, too::
 
     % ploy ssh jailhost
-    FreeBSD 10.1-RELEASE (GENERIC) #0 r274401: Tue Nov 11 21:02:49 UTC 2014
+    FreeBSD 10.3-RELEASE (GENERIC) #0 r297264: Fri Mar 25 02:10:02 UTC 2016
 
     Welcome to FreeBSD!
     [...]
@@ -212,7 +212,7 @@ Rather conveniently `ploy_ezjail <https://github.com/ployground/ploy_ezjail>`_ h
 Log out from the jailhost and run this::
 
     # ploy ssh demo_jail
-    FreeBSD 10.1-RELEASE (GENERIC) #0 r274401: Tue Nov 11 21:02:49 UTC 2014
+    FreeBSD 10.3-RELEASE (GENERIC) #0 r297264: Fri Mar 25 02:10:02 UTC 2016
 
     Gehe nicht über Los.
     root@demo_jail:~ # 

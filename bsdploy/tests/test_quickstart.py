@@ -150,7 +150,7 @@ def test_quickstart_calls(qs_path, tempdir):
         'vm-natpf2 = ssh,tcp,,44003,,22',
         'storage =',
         '    --medium vb-disk:defaultdisk',
-        '    --type dvddrive --medium http://mfsbsd.vx.sk/files/iso/10/amd64/mfsbsd-se-10.1-RELEASE-amd64.iso --medium_sha1 03af247c1058a78a251c46ad5a13dc7b84a7ee7d',
+        '    --type dvddrive --medium http://mfsbsd.vx.sk/files/iso/10/amd64/mfsbsd-se-10.3-RELEASE-amd64.iso --medium_sha1 564758b0dfebcabfa407491c9b7c4b6a09d9603e',
         '',
         '[ez-master:jailhost]',
         'instance = ploy-demo',
