@@ -95,7 +95,6 @@ def test_roles(ctrl, monkeypatch):
         'rc.conf for bsdploy_base flavour',
         'sshd_config for bsdploy_base flavour',
         'motd for bsdploy_base flavour',
-        'startup script for bsdploy_base flavour',
         'copy some settings from host to bsdploy_base flavour']
 
 
