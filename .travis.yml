@@ -3,7 +3,7 @@ python: 2.7
 sudo: false
 env:
   - TOX_ENV=py27
-  - TOX_ENV=ansible18
+  - TOX_ENV=py27-ansible18
 install:
   - pip install setuptools-git
   - pip install tox
