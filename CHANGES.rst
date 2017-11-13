@@ -1,4 +1,4 @@
-2.3.0 - Unreleased
+2.3.0 - 2017-11-13
 ==================
 
 - [fix] fix pf round-robin lockups. thanks to @igalic for reporting and fixing this issue
