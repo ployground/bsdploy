@@ -147,8 +147,6 @@
   copy: src=base_flavour_sshd_config dest=/usr/jails/flavours/bsdploy_base/etc/ssh/sshd_config owner=root group=wheel
 - name: motd for bsdploy_base flavour
   copy: src=base_flavour_motd dest=/usr/jails/flavours/bsdploy_base/etc/motd owner=root group=wheel
-- name: startup script for bsdploy_base flavour
-  copy: src=base_flavour_startup dest=/usr/jails/flavours/bsdploy_base/ezjail.flavour mode="666" owner=root group=wheel
 - name: copy some settings from host to bsdploy_base flavour
   shell: cmp -s {{ item.src }} {{ item.dest }} || cp -v {{ item.src }} {{ item.dest }}
   register: _cp_settings_result

@@ -4,4 +4,5 @@ chmod 0600 /var/log/startup.log
 set -e
 set -x
 pkg update
-pkg install python27
+pkg upgrade
+pkg install python2
