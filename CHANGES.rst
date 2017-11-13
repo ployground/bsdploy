@@ -3,6 +3,7 @@
 
 - [fix] fix pf round-robin lockups. thanks to @igalic for reporting and fixing this issue
 - [feature] add ed25519 support in bootstrap needed for paramiko>=2. you should check whether you have ``ssh_host_ed25519_key*`` files on your host which you might want to copy to your bootstrap files directory alongside the other ``ssh_host_*_key*`` files
+- [change] removed local rsa1 host key generation
 
 
 2.2.0 - 2016-11-08
