@@ -1,3 +1,4 @@
+from glob import glob
 from os import path
 import argparse
 import logging
@@ -82,6 +83,25 @@ class PloyBootstrapCmd(object):
         instance.hooks.after_bsdploy_bootstrap(instance)
 
 
+def get_bootstrap_path(instance):
+    host_defined_path = instance.config.get('bootstrap-files')
+    ploy_conf_path = instance.master.main_config.path
+    if host_defined_path is None:
+        bootstrap_path = path.join(ploy_conf_path, '..', 'bootstrap-files')
+    else:
+        bootstrap_path = path.join(ploy_conf_path, host_defined_path)
+    return bootstrap_path
+
+
+def get_ssh_key_paths(instance):
+    bootstrap_path = get_bootstrap_path(instance)
+    key_paths = []
+    for ssh_key in glob(path.join(bootstrap_path, 'ssh_host*_key.pub')):
+        ssh_key = path.abspath(ssh_key)
+        key_paths.append(ssh_key)
+    return key_paths
+
+
 def augment_instance(instance):
     from ploy_ansible import get_ansible_version, get_playbooks_directory
     from ploy_ansible import has_playbook
@@ -143,16 +163,9 @@ def augment_instance(instance):
             sys.exit(1)
         if not has_playbook(instance):
             instance.config['roles'] = 'jails_host'
-        if 'fingerprint' not in instance.config:
-            host_defined_path = instance.config.get('bootstrap-files')
-            ploy_conf_path = main_config.path
-            if host_defined_path is None:
-                bootstrap_path = path.join(ploy_conf_path, '..', 'bootstrap-files')
-            else:
-                bootstrap_path = path.join(ploy_conf_path, host_defined_path)
-            ssh_key = path.abspath(path.join(bootstrap_path, 'ssh_host_rsa_key.pub'))
-            if path.exists(ssh_key):
-                instance.config['fingerprint'] = ssh_key
+        if 'ssh-host-keys' not in instance.config:
+            key_paths = get_ssh_key_paths(instance)
+            instance.config['ssh-host-keys'] = "\n".join(key_paths)
     else:
         # for jails
         instance.config.setdefault('startup_script', path.join(

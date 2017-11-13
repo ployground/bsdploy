@@ -39,7 +39,7 @@ For the ezjail initialization you have to add the following setting with a FreeB
 
     ansible-ploy_ezjail_install_host = http://ftp4.de.freebsd.org
 
-The ``_mfsbsd`` context manager takes care of setting the ``bootstrap-fingerprint`` etc for mfsBSD.
+The ``_mfsbsd`` context manager takes care of setting the ``bootstrap-host-keys`` etc for mfsBSD.
 The ``_bootstrap`` function then runs the regular bootstrapping.
 
 For the jails you can use a startup script like this:

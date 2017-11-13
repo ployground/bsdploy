@@ -97,7 +97,8 @@ class BootstrapUtils:
         ('ssh_host_key', '-t rsa1 -b 1024'),
         ('ssh_host_rsa_key', '-t rsa'),
         ('ssh_host_dsa_key', '-t dsa'),
-        ('ssh_host_ecdsa_key', '-t ecdsa')])
+        ('ssh_host_ecdsa_key', '-t ecdsa'),
+        ('ssh_host_ed25519_key', '-t ed25519')])
     upload_authorized_keys = True
     bootstrap_files_yaml = 'files.yml'
 
@@ -141,6 +142,8 @@ class BootstrapUtils:
                     "ssh-keygen %s -f %s -N ''" % (ssh_keygen_args, ssh_key),
                     capture=True)
                 if result.failed:
+                    print("Generation of %s with '%s' failed." % (
+                        ssh_key_name, ssh_keygen_args))
                     continue
             with settings(quiet()):
                 fingerprint = local(

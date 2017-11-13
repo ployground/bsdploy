@@ -13,7 +13,7 @@ Unlike with :doc:`plain instances <provisioning-plain>` the configuration doesn'
     vm-natpf1 = ssh,tcp,,44003,,22
     storage =
         --medium vb-disk:defaultdisk
-        --type dvddrive --medium http://mfsbsd.vx.sk/files/iso/10/amd64/mfsbsd-se-10.1-RELEASE-amd64.iso --medium_sha1 03af247c1058a78a251c46ad5a13dc7b84a7ee7d
+        --type dvddrive --medium http://mfsbsd.vx.sk/files/iso/10/amd64/mfsbsd-se-10.3-RELEASE-amd64.iso --medium_sha1 564758b0dfebcabfa407491c9b7c4b6a09d9603e
 
 
 VirtualBox instances are configured using the ``vb-instance`` prefix and you can set parameters of the virtual machine by prefixing them with ``vm-``. For additional details on which parameters are available and what they mean, refer to `the plugin's documentation <http://ploy.readthedocs.org/en/latest/ploy_virtualbox/README.html#instances>`_ and the documentation of the VirtualBox commandline tool `VBoxManage <http://www.virtualbox.org/manual/ch08.html>`_, in particualar for `VBoxManage createvm <http://www.virtualbox.org/manual/ch08.html#vboxmanage-createvm>`_ and `VBoxManage modifyvm <http://www.virtualbox.org/manual/ch08.html#vboxmanage-modifyvm>`_.

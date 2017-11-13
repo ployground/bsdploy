@@ -23,7 +23,7 @@ Strictly speaking, BSDploy only needs Python for the initial configuration of th
 
 Normally, BSDploy will take care of these requirements for you during  :doc:`bootstrapping </setup/bootstrapping>` but in situations where this is not possible, manually providing the abovementioned requirements should allow you to :doc:`apply BSDploy's host configuration </setup/configuration>` anyway.
 
-BSDploy supports FreeBSD >= 9.2, including 10.1.
+BSDploy supports FreeBSD >= 9.2, including 10.3.
 
 
 Client Installation

@@ -19,6 +19,8 @@ def create_ssh_host_keys(tempdir):
     tempdir['bootstrap-files/ssh_host_dsa_key.pub'].fill('dsa.pub')
     tempdir['bootstrap-files/ssh_host_ecdsa_key'].fill('ecdsa')
     tempdir['bootstrap-files/ssh_host_ecdsa_key.pub'].fill('ecdsa.pub')
+    tempdir['bootstrap-files/ssh_host_ed25519_key'].fill('ed25519')
+    tempdir['bootstrap-files/ssh_host_ed25519_key.pub'].fill('ed25519.pub')
     tempdir['bootstrap-files/ssh_host_key'].fill('rsa1')
     tempdir['bootstrap-files/ssh_host_key.pub'].fill('rsa1.pub')
     tempdir['bootstrap-files/ssh_host_rsa_key'].fill('rsa')
@@ -57,6 +59,8 @@ def test_bootstrap_ask_to_continue(bootstrap, capsys, run_mock, tempdir, yesno_m
         "%(tempdir)s/bootstrap-files/ssh_host_dsa_key.pub -(template:False)-> /mnt/etc/ssh/ssh_host_dsa_key.pub" % format_info,
         "%(tempdir)s/bootstrap-files/ssh_host_ecdsa_key -(template:False)-> /mnt/etc/ssh/ssh_host_ecdsa_key" % format_info,
         "%(tempdir)s/bootstrap-files/ssh_host_ecdsa_key.pub -(template:False)-> /mnt/etc/ssh/ssh_host_ecdsa_key.pub" % format_info,
+        "%(tempdir)s/bootstrap-files/ssh_host_ed25519_key -(template:False)-> /mnt/etc/ssh/ssh_host_ed25519_key" % format_info,
+        "%(tempdir)s/bootstrap-files/ssh_host_ed25519_key.pub -(template:False)-> /mnt/etc/ssh/ssh_host_ed25519_key.pub" % format_info,
         "%(tempdir)s/bootstrap-files/ssh_host_key -(template:False)-> /mnt/etc/ssh/ssh_host_key" % format_info,
         "%(tempdir)s/bootstrap-files/ssh_host_key.pub -(template:False)-> /mnt/etc/ssh/ssh_host_key.pub" % format_info,
         "%(tempdir)s/bootstrap-files/ssh_host_rsa_key -(template:False)-> /mnt/etc/ssh/ssh_host_rsa_key" % format_info,
@@ -118,6 +122,8 @@ def test_bootstrap(bootstrap, put_mock, run_mock, tempdir, yesno_mock):
         (("%(tempdir)s/bootstrap-files/ssh_host_dsa_key.pub" % format_info, '/mnt/etc/ssh/ssh_host_dsa_key.pub'), {'mode': 0644}),
         (("%(tempdir)s/bootstrap-files/ssh_host_ecdsa_key" % format_info, '/mnt/etc/ssh/ssh_host_ecdsa_key'), {'mode': 0600}),
         (("%(tempdir)s/bootstrap-files/ssh_host_ecdsa_key.pub" % format_info, '/mnt/etc/ssh/ssh_host_ecdsa_key.pub'), {'mode': 0644}),
+        (("%(tempdir)s/bootstrap-files/ssh_host_ed25519_key" % format_info, '/mnt/etc/ssh/ssh_host_ed25519_key'), {'mode': 0600}),
+        (("%(tempdir)s/bootstrap-files/ssh_host_ed25519_key.pub" % format_info, '/mnt/etc/ssh/ssh_host_ed25519_key.pub'), {'mode': 0644}),
         (("%(tempdir)s/bootstrap-files/ssh_host_key" % format_info, '/mnt/etc/ssh/ssh_host_key'), {'mode': 0600}),
         (("%(tempdir)s/bootstrap-files/ssh_host_key.pub" % format_info, '/mnt/etc/ssh/ssh_host_key.pub'), {'mode': 0644}),
         (("%(tempdir)s/bootstrap-files/ssh_host_rsa_key" % format_info, '/mnt/etc/ssh/ssh_host_rsa_key'), {'mode': 0600}),
