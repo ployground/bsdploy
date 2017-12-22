@@ -150,6 +150,10 @@ def augment_instance(instance):
         fabfile = path.join(playbooks_directory, instance.uid, 'fabfile.py')
         if path.exists(fabfile):
             instance.config['fabfile'] = fabfile
+        else:
+            fabfile = path.join(playbooks_directory, instance.id, 'fabfile.py')
+            if path.exists(fabfile):
+                instance.config['fabfile'] = fabfile
 
     if instance.master.instance is instance:
         # for hosts

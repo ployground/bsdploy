@@ -1,3 +1,9 @@
+2.4.0 - Unreleased
+==================
+
+- [feature] the ``fabfile`` option is set if ``[instance-name]/fabfile.py`` exists when the more specific ``[master-name]-[instance-name]/fabfile.py`` doesn't exist.
+
+
 2.3.0 - 2017-11-13
 ==================
 
