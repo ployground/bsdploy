@@ -9,7 +9,7 @@ import pytest
 def pytest_addoption(parser):
     parser.addoption(
         "--quickstart-bsdploy", help="Run the quickstart with this bsdploy sdist",
-        action="store", dest="quickstart_bsdploy")
+        action="store", dest="quickstart_bsdploy", default=False)
     parser.addoption(
         "--ansible-version", help="The ansible version to use for quickstart tests, defaults to newest",
         action="store", dest="ansible_version")
