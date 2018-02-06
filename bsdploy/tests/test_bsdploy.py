@@ -240,8 +240,9 @@ def test_augment_overwrite(ctrl, instance, key, value, expected, ployconf, tempd
         if isinstance(expected, tuple):
             key, expected = expected
         if isinstance(expected, dict):
-            for k, v in expected.items():
-                expected[k] = v.format(**format_info)
+            expected = {
+                k: v.format(**format_info)
+                for k, v in expected.items()}
         else:
             expected = expected.format(**format_info)
         assert config[key] == expected

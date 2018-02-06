@@ -71,7 +71,15 @@ class BootstrapFile(object):
     def template_from_file(self):
         from ploy_ansible import inject_ansible_paths
         inject_ansible_paths()
-        from ansible.utils.template import template_from_file
+        from ansible.parsing.dataloader import DataLoader
+        from ansible.template import Templar
+        loader = DataLoader()
+
+        def template_from_file(basedir, path, variables, vault_password=None):
+            templar = Templar(loader, variables=variables)
+            with open(path) as f:
+                template = f.read()
+            return templar.template(template)
         return template_from_file
 
     def open(self, context):
@@ -257,12 +265,12 @@ class BootstrapUtils:
                             remote='/mnt/etc/ssh/%s' % pub_key_name,
                             mode=0644))
         if hasattr(env.instance, 'get_vault_lib'):
-            vaultlib = env.instance.get_vault_lib()
+            from ansible.parsing.vault import is_encrypted
             for bf in bootstrap_files.values():
                 if bf.encrypted is None and exists(bf.local):
                     with open(bf.local) as f:
                         data = f.read()
-                    bf.info['encrypted'] = vaultlib.is_encrypted(data)
+                    bf.info['encrypted'] = is_encrypted(data)
         return bootstrap_files
 
     def print_bootstrap_files(self):

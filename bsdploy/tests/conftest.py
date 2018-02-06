@@ -1,9 +1,5 @@
 from mock import Mock
-from ploy.tests.conftest import ployconf, tempdir
 import pytest
-
-
-(ployconf, tempdir)  # shutup pyflakes
 
 
 def pytest_addoption(parser):
@@ -15,11 +11,13 @@ def pytest_addoption(parser):
         action="store", dest="ansible_version")
 
 
-default_mounts = '\n'.join([
-    '/dev/md0 on / (ufs, local, read-only)',
-    'devfs on /dev (devfs, local, multilabel)',
-    'tmpfs on /rw (tmpfs, local)',
-    'devfs on /rw/dev (devfs, local, multilabel)'])
+@pytest.fixture
+def default_mounts():
+    return '\n'.join([
+        '/dev/md0 on / (ufs, local, read-only)',
+        'devfs on /dev (devfs, local, multilabel)',
+        'tmpfs on /rw (tmpfs, local)',
+        'devfs on /rw/dev (devfs, local, multilabel)'])
 
 
 @pytest.fixture
@@ -44,12 +42,15 @@ class RunResult(str):
     pass
 
 
-def run_result(out, rc):
-    result = RunResult(out)
-    result.return_code = rc
-    result.succeeded = rc == 0
-    result.failed = rc != 0
-    return result
+@pytest.fixture
+def run_result():
+    def run_result(out, rc):
+        result = RunResult(out)
+        result.return_code = rc
+        result.succeeded = rc == 0
+        result.failed = rc != 0
+        return result
+    return run_result
 
 
 @pytest.fixture

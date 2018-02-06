@@ -25,9 +25,17 @@ def _mfsbsd(env, kwargs={}):
                 # mfsbsd 10.3
                 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDnxIsRrqK2Zj73DPB3doYO8eDue2mVcae9oQNAwGz1o7VBmOpAZiscxOz1kg/M/CD3VRchgT5OcbciqJGaWeNyZHzHbVpIzUCycSI28WVpG7B4jXZTcq6vGGBpD22Ms6rTczigEJmshVR3rNxHmswwImmEwR6o1KVRCOAY2gL8Ik6OOKAqWqY8mstx059MsY9usDl2FDn57T8fZ4QMd+DQBEKwhkhqHs8n2WSlJlZqCuWDBNDH0RskDizrZRz+g4ciRwAM5e2dzgaOvtlfT42WD1kxwJIVFJi/1R0O+Xw2/kGyRweJXCqdUbfynFaTm1yen+IUPzNH/jBMtxUiL25r',
                 # mfsbsd 10.3 se
-                'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCqSVYJPcXOqPEv/RYV5WiDbr9K/Bz5OeU2Hayo+oBMkxwFuv9KSZGHmZ/EbJOVKhdjDtRDgenxluLU6d5F/vWyGK1M1rdzEFuWfUdfe5Htvz1KEgj/nY5x8OC1h5xme1OwCcFF7oAf7GV6YQtsKF0CZoGwSJEuGb988r8le0VqKy/u4nRiTH+pLHcZzgx6khIl1ty+mBTLgAC7tTgXhB7l83lr/HqU+ZLWZbNohbdEdDWJYVdWHWVMdETc6PG8/DISNfdKuq3YfDyQ/0uZ/uGMJKr7y/J/cabi5VRdVZvdqqbEPLW2zjDtXtRh6+yE4NZETSYx+Wu/DZcn8OsR9pr/']))
-        env.instance.config['password-fallback'] = True
-        env.instance.config['password'] = 'mfsroot'
+                'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCqSVYJPcXOqPEv/RYV5WiDbr9K/Bz5OeU2Hayo+oBMkxwFuv9KSZGHmZ/EbJOVKhdjDtRDgenxluLU6d5F/vWyGK1M1rdzEFuWfUdfe5Htvz1KEgj/nY5x8OC1h5xme1OwCcFF7oAf7GV6YQtsKF0CZoGwSJEuGb988r8le0VqKy/u4nRiTH+pLHcZzgx6khIl1ty+mBTLgAC7tTgXhB7l83lr/HqU+ZLWZbNohbdEdDWJYVdWHWVMdETc6PG8/DISNfdKuq3YfDyQ/0uZ/uGMJKr7y/J/cabi5VRdVZvdqqbEPLW2zjDtXtRh6+yE4NZETSYx+Wu/DZcn8OsR9pr/',
+                # mfsbsd 11.1
+                'ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBGV77dtuCFh+JXk3gewNaCaW7imdDIXU1xQoW0nmYXJorzEwS8iSEbsbZxN/h8u8nTumPipNy6JeTS21CHIC19A=',
+                'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBm28fXoW82ISHhm+T4EXc5QU5Fq0tyreJa79UohGwvw',
+                'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDY+mdQA1uESkvs6V/6SLs+g/8ge9om35ehSzyfZgDZldw5EXlimWzMsI2/eZHgyUJQIZkuP7V/otrWAX5D4K9paqcbUUnDkSenB27VcLFzNq67xWL3kevYMNFFb1Mfg4l9Yiq5mOO8mWDveuQlAR+0CqVo6wOAmCw857x0/raeBruh56zU6i64927sW745BQruFNd+beBW/Sr5yuML8yXWu1LoWOrc+MGVfxbGTcbNEu4CE4voYkxZ9uX+KhSkUO0Sg5fxOrxUDrNeY2oJB74os3WafHuODUaPrXNGOkBpSxF5B/BbqgfCX3H/GQ2gl3NvKT9eRzfwwyoks567Kv1f',
+                # mfsbsd 11.1 se
+                'ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEvG5hTrYKjRtaIrQED+jd/y/Craqzz/11+ky1P/lyv/e8NH2iX9iPKcVLNQa4G9z2aOBVLFc3GQSyySuFlAB/Q=',
+                'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAuuvF9hyDyop83H/zYLDqimiR18X+NsAU9UpoDOGHVZ',
+                'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDAI6Yj/xqZt1yrtgsOHv45mfS8gVPh5IVK+n6hjmnV+RlbwFksA7lFsjY8SRasJko4iqJmxRSmT1bJ/fuOegqFaEa2LwSaEM/J7rx9lHroKO6rtx81Ja54IY8bRscNxaxl+LFFw8F0v4F9hIfzhooLCXVaLgH/y0ScW7gjft9J6omUcfZPIvdMJuOYIHIRqLjL+HnmZSZEh0GWpMraCts3ud+na2gcHuWYMmUpbEeQIkG3FsgTsLlpkrpQLApo7fHNo1FxIbufiopdQ4zDDQFNZod9jRbV1GwUVTAHot6uOZg+oxnCKnHriKaY2/N8QISkVDsEMmGR9Ib5eQkJK9Mv']))
+        env.instance.config.setdefault('password-fallback', True)
+        env.instance.config.setdefault('password', b'mfsroot')
         # allow overwrites from the commandline
         env.instance.config.update(kwargs)
 

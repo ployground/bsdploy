@@ -5,16 +5,16 @@ here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.rst')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
 
-version = "2.4.0.dev0"
+version = "3.0.0b1"
 
 install_requires = [
     'PyYAML',
     'jinja2',
     'setuptools',
-    'ploy>=1.5.0',
-    'ploy_ansible>=1.3.0',
-    'ploy_ezjail>=1.2.0',
-    'ploy_fabric>=1.1.0',
+    'ploy>=2dev',
+    'ploy_ansible>=2.0.0b2',
+    'ploy_ezjail>=2dev',
+    'ploy_fabric>=2dev',
 ]
 
 setup(
@@ -46,7 +46,7 @@ setup(
             'repoze.sphinx.autointerface',
             'coverage',
             'jarn.mkrelease',
-            'ploy_virtualbox>=1.1.0',
+            'ploy_virtualbox>=2dev',
             'pytest >= 2.4.2',
             'pytest-flakes',
             'pytest-pep8',

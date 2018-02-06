@@ -1,5 +1,4 @@
 from bsdploy import bsdploy_path
-from bsdploy.tests.conftest import default_mounts, run_result
 import pytest
 
 
@@ -25,7 +24,7 @@ def create_ssh_host_keys(tempdir):
     tempdir['bootstrap-files/ssh_host_rsa_key.pub'].fill('rsa.pub')
 
 
-def test_bootstrap_ask_to_continue(bootstrap, capsys, run_mock, tempdir, yesno_mock):
+def test_bootstrap_ask_to_continue(bootstrap, capsys, default_mounts, run_mock, run_result, tempdir, yesno_mock):
     format_info = dict(
         bsdploy_path=bsdploy_path,
         tempdir=tempdir.directory)
@@ -78,10 +77,10 @@ def test_bootstrap_ask_to_continue(bootstrap, capsys, run_mock, tempdir, yesno_m
         "Continue?"]
 
 
-def test_bootstrap_no_newline_at_end_of_rc_conf(bootstrap, capsys, local_mock, run_mock, tempdir):
+def test_bootstrap_no_newline_at_end_of_rc_conf(bootstrap, capsys, default_mounts, local_mock, run_mock, run_result, tempdir):
     tempdir['bootstrap-files/authorized_keys'].fill('id_dsa')
     create_ssh_host_keys(tempdir)
-    tempdir['bootstrap-files/rc.conf'].fill('foo')
+    tempdir['bootstrap-files/rc.conf'].fill('foo', allow_conf=True)
     run_mock.expected = [
         ('mount', {}, default_mounts),
         ('test -e /dev/cd0 && mount_cd9660 /dev/cd0 /cdrom || true', {}, '\n'),
@@ -100,7 +99,7 @@ def test_bootstrap_no_newline_at_end_of_rc_conf(bootstrap, capsys, local_mock, r
         '']
 
 
-def test_bootstrap(bootstrap, put_mock, run_mock, tempdir, yesno_mock):
+def test_bootstrap(bootstrap, default_mounts, put_mock, run_mock, run_result, tempdir, yesno_mock):
     format_info = dict(
         bsdploy_path=bsdploy_path,
         tempdir=tempdir.directory)

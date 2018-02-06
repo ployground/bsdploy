@@ -1,6 +1,5 @@
 from ansible.errors import AnsibleUndefinedVariable
 from bsdploy import bootstrap_utils
-from bsdploy.tests.conftest import default_mounts, run_result
 import os
 import pytest
 
@@ -29,7 +28,7 @@ def test_interfaces_missing(bu, run_mock):
     assert bu.phys_interfaces == []
 
 
-def test_devices(bu, run_mock):
+def test_devices(bu, default_mounts, run_mock):
     run_mock.expected = [
         ('sysctl -n kern.disks', {}, 'ada0 cd0\n'),
         ('mount', {}, default_mounts),
@@ -39,7 +38,7 @@ def test_devices(bu, run_mock):
     assert bu.devices == set(['ada0'])
 
 
-def test_devices_cdrom_mounted(bu, run_mock):
+def test_devices_cdrom_mounted(bu, default_mounts, run_mock):
     run_mock.expected = [
         ('sysctl -n kern.disks', {}, 'ada0 cd0\n'),
         ('mount', {}, '\n'.join([
@@ -50,7 +49,7 @@ def test_devices_cdrom_mounted(bu, run_mock):
     assert bu.devices == set(['ada0'])
 
 
-def test_devices_usb_mounted(bu, run_mock):
+def test_devices_usb_mounted(bu, default_mounts, run_mock):
     run_mock.expected = [
         ('sysctl -n kern.disks', {}, 'ada0 da0\n'),
         ('mount', {}, '\n'.join([
@@ -61,7 +60,7 @@ def test_devices_usb_mounted(bu, run_mock):
     assert bu.devices == set(['ada0'])
 
 
-def test_devices_different_cdrom(bu, run_mock, env_mock):
+def test_devices_different_cdrom(bu, default_mounts, run_mock, env_mock):
     run_mock.expected = [
         ('sysctl -n kern.disks', {}, 'ada0 cd1\n'),
         ('mount', {}, default_mounts),
@@ -72,7 +71,7 @@ def test_devices_different_cdrom(bu, run_mock, env_mock):
     assert bu.devices == set(['ada0'])
 
 
-def test_devices_different_usb(bu, run_mock, env_mock):
+def test_devices_different_usb(bu, default_mounts, run_mock, env_mock):
     run_mock.expected = [
         ('sysctl -n kern.disks', {}, 'ada0 cd0 da1\n'),
         ('mount', {}, default_mounts),
@@ -83,7 +82,7 @@ def test_devices_different_usb(bu, run_mock, env_mock):
     assert bu.devices == set(['ada0'])
 
 
-def test_devices_from_config(bu, run_mock, env_mock):
+def test_devices_from_config(bu, default_mounts, run_mock, env_mock):
     env_mock.instance.config = {'bootstrap-system-devices': 'ada0'}
     run_mock.expected = [
         ('sysctl -n kern.disks', {}, 'ada0 cd0\n'),
@@ -94,7 +93,7 @@ def test_devices_from_config(bu, run_mock, env_mock):
     assert bu.devices == set(['ada0'])
 
 
-def test_bsd_url(bu, run_mock):
+def test_bsd_url(bu, run_mock, run_result):
     run_mock.expected = [
         ('mount', {}, ''),
         ('test -e /dev/cd0 && mount_cd9660 /dev/cd0 /cdrom || true', {}, '\n'),
@@ -103,7 +102,7 @@ def test_bsd_url(bu, run_mock):
     assert bu.bsd_url == '/cdrom/9.2-RELEASE-amd64'
 
 
-def test_bsd_url_not_found(bu, run_mock):
+def test_bsd_url_not_found(bu, run_mock, run_result):
     run_mock.expected = [
         ('mount', {}, ''),
         ('test -e /dev/cd0 && mount_cd9660 /dev/cd0 /cdrom || true', {}, '\n'),
@@ -179,7 +178,9 @@ class TestFileEncryption:
     @pytest.fixture
     def passwd_source(self, monkeypatch):
         class DummySource:
+            id = 'dummy-id'
             passwd = 'dummy-vault-password'
+            bytes = bytes(passwd)
 
             def get(self, fail_on_error=True):
                 return self.passwd
@@ -237,7 +238,7 @@ def test_default_rc_conf(bu, tempdir):
 ])
 def test_bootstrap_files_template(bu, input, context, expected, tempdir):
     tempdir['bootstrap-files/authorized_keys'].fill('id_dsa')
-    tempdir['bootstrap-files/rc.conf'].fill(input)
+    tempdir['bootstrap-files/rc.conf'].fill(input, allow_conf=True)
     bfs = bu.bootstrap_files
     if isinstance(expected, basestring):
         result = bfs['rc.conf'].read(context)
