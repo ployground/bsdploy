@@ -93,11 +93,11 @@ def iter_quickstart_calls(actions, tempdir):
                         continue
                     bootstrap = line.endswith('bootstrap')
                     if bootstrap:
-                        yield (action[0], time.sleep, (90,), {})
+                        yield (action[0], wait_for_ssh, ('localhost', 44003), {})
                         line = '%s -y' % line
                     yield (action[0], subprocess.check_call, (line,), dict(shell=True))
                     if bootstrap:
-                        yield (action[0], time.sleep, (90,), {})
+                        yield (action[0], wait_for_ssh, ('localhost', 44003), {})
         elif action[0] == 'create':
             name = action[1][-1]
             content = list(action[2])
@@ -131,9 +131,9 @@ def test_quickstart_calls(qs_path, tempdir):
         ('create', '%s/etc/ploy.conf' % tempdir.directory),
         (subprocess.check_call, ('ploy start ploy-demo',)),
         ('add', '%s/etc/ploy.conf' % tempdir.directory),
-        (time.sleep, (90,)),
+        (wait_for_ssh, ('localhost', 44003)),
         (subprocess.check_call, ('ploy bootstrap -y',)),
-        (time.sleep, (90,)),
+        (wait_for_ssh, ('localhost', 44003)),
         ('add', '%s/etc/ploy.conf' % tempdir.directory),
         (subprocess.check_call, ('ploy configure jailhost',)),
         ('add', '%s/etc/ploy.conf' % tempdir.directory),
@@ -195,6 +195,25 @@ def virtualenv(tempdir):
     if 'VIRTUAL_ENV' in orig_env:
         os.environ['VIRTUAL_ENV'] = orig_env['VIRTUAL_ENV']
     os.chdir(origdir)
+
+
+def wait_for_ssh(host, port, timeout=90):
+    from contextlib import closing
+    import socket
+    while timeout > 0:
+        with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
+            try:
+                s.settimeout(1)
+                if s.connect_ex((host, port)) == 0:
+                    if s.recv(128).startswith('SSH-2'):
+                        return
+            except socket.timeout:
+                timeout -= 1
+                continue
+        time.sleep(1)
+        timeout -= 1
+    raise RuntimeError(
+        "SSH at %s:%s didn't become accessible" % (host, port))
 
 
 @pytest.mark.skipif("not config.option.quickstart_bsdploy")
