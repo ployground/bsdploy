@@ -3,7 +3,7 @@ try:  # pragma: nocover
     from cStringIO import StringIO
 except ImportError:  # pragma: nocover
     from StringIO import StringIO
-from bsdploy import bsdploy_path
+from bsdploy import bsdploy_path, get_bootstrap_path
 from fabric.api import env, local, put, quiet, run, settings
 from lazy import lazy
 from os.path import abspath, dirname, expanduser, exists, join
@@ -33,7 +33,7 @@ class BootstrapFile(object):
         if 'url' in self.info:
             return self.bu().download_path
         else:
-            return self.bu().custom_template_path
+            return self.bu().bootstrap_path
 
     @property
     def raw_fallback(self):
@@ -55,7 +55,7 @@ class BootstrapFile(object):
         if self.raw_fallback:
             return local_path
         if not exists(local_path) and not self.url:
-            local_path = join(self.bu().default_template_path, self.filename)
+            local_path = join(self.bu().default_bootstrap_path, self.filename)
         if not exists(local_path) and not self.url:
             return
         return local_path
@@ -114,16 +114,12 @@ class BootstrapUtils:
         return env.instance.master.main_config.path
 
     @property
-    def default_template_path(self):
+    def default_bootstrap_path(self):
         return join(bsdploy_path, 'bootstrap-files')
 
     @property
-    def custom_template_path(self):
-        host_defined_path = env.instance.config.get('bootstrap-files')
-        if host_defined_path is None:
-            return abspath(join(self.ploy_conf_path, '..', 'bootstrap-files'))
-        else:
-            return abspath(join(self.ploy_conf_path, host_defined_path))
+    def bootstrap_path(self):
+        return get_bootstrap_path(env.instance)
 
     @property
     def env_vars(self):
@@ -139,9 +135,9 @@ class BootstrapUtils:
 
     def generate_ssh_keys(self):
         for ssh_key_name, ssh_keygen_args in sorted(self.ssh_keys):
-            if not exists(self.custom_template_path):
-                os.mkdir(self.custom_template_path)
-            ssh_key = join(self.custom_template_path, ssh_key_name)
+            if not exists(self.bootstrap_path):
+                os.makedirs(self.bootstrap_path)
+            ssh_key = join(self.bootstrap_path, ssh_key_name)
             if exists(ssh_key):
                 continue
             with settings(quiet(), warn_only=True):
@@ -176,7 +172,7 @@ class BootstrapUtils:
 
         For files that cannot be downloaded (authorized_keys, rc.conf etc.) we allow the user to provide their
         own version in a ``bootstrap-files`` folder. The location of this folder can either be explicitly provided
-        via the ``bootstrap-files`` key in the host definition of the config file or it defaults to ``deployment/bootstrap-files``.
+        via the ``bootstrap-files`` key in the host definition of the config file or it defaults to ``deployment/[instance-uid]/bootstrap-files``.
 
         User provided files can be rendered as Jinja2 templates, by providing ``use_jinja: True`` in the YAML file.
         They will be rendered with the instance configuration dictionary as context.
@@ -186,8 +182,8 @@ class BootstrapUtils:
         we look in ``~/.ssh/identity.pub``.
         """
         bootstrap_file_yamls = [
-            abspath(join(self.default_template_path, self.bootstrap_files_yaml)),
-            abspath(join(self.custom_template_path, self.bootstrap_files_yaml))]
+            abspath(join(self.default_bootstrap_path, self.bootstrap_files_yaml)),
+            abspath(join(self.bootstrap_path, self.bootstrap_files_yaml))]
         bootstrap_files = dict()
         if self.upload_authorized_keys:
             bootstrap_files['authorized_keys'] = BootstrapFile(self, 'authorized_keys', **{
@@ -219,7 +215,7 @@ class BootstrapUtils:
                     yes = env.instance.config.get('bootstrap-yes', False)
                     if yes or yesno("Should we generate it using the key in '%s'?" % path):
                         if not exists(bf.expected_path):
-                            os.mkdir(bf.expected_path)
+                            os.makedirs(bf.expected_path)
                         with open(bf.local, 'wb') as out:
                             with open(path, 'rb') as f:
                                 out.write(f.read())
@@ -247,7 +243,7 @@ class BootstrapUtils:
 
         if self.ssh_keys is not None:
             for ssh_key_name, ssh_key_options in list(self.ssh_keys):
-                ssh_key = join(self.custom_template_path, ssh_key_name)
+                ssh_key = join(self.bootstrap_path, ssh_key_name)
                 if exists(ssh_key):
                     pub_key_name = '%s.pub' % ssh_key_name
                     pub_key = '%s.pub' % ssh_key
@@ -265,12 +261,12 @@ class BootstrapUtils:
                             remote='/mnt/etc/ssh/%s' % pub_key_name,
                             mode=0644))
         if hasattr(env.instance, 'get_vault_lib'):
-            from ansible.parsing.vault import is_encrypted
+            vaultlib = env.instance.get_vault_lib()
             for bf in bootstrap_files.values():
                 if bf.encrypted is None and exists(bf.local):
                     with open(bf.local) as f:
                         data = f.read()
-                    bf.info['encrypted'] = is_encrypted(data)
+                    bf.info['encrypted'] = vaultlib.is_encrypted(data)
         return bootstrap_files
 
     def print_bootstrap_files(self):

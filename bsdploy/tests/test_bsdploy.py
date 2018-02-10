@@ -35,7 +35,7 @@ def test_bootstrap_command(capsys, ctrl, monkeypatch):
 
 
 def test_augment_ezjail_master(ctrl, ployconf, tempdir):
-    tempdir['bootstrap-files/ssh_host_rsa_key.pub'].fill('rsa')
+    tempdir['jailhost/bootstrap-files/ssh_host_rsa_key.pub'].fill('rsa')
     config = dict(ctrl.instances['jailhost'].config)
     assert sorted(config.keys()) == [
         'ansible_python_interpreter', 'fabfile', 'fabric-shell',

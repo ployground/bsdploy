@@ -84,10 +84,13 @@ class PloyBootstrapCmd(object):
 
 
 def get_bootstrap_path(instance):
+    from ploy_ansible import get_playbooks_directory
     host_defined_path = instance.config.get('bootstrap-files')
-    ploy_conf_path = instance.master.main_config.path
+    main_config = instance.master.main_config
+    ploy_conf_path = main_config.path
     if host_defined_path is None:
-        bootstrap_path = path.join(ploy_conf_path, '..', 'bootstrap-files')
+        playbooks_directory = get_playbooks_directory(main_config)
+        bootstrap_path = path.join(playbooks_directory, instance.uid, 'bootstrap-files')
     else:
         bootstrap_path = path.join(ploy_conf_path, host_defined_path)
     return bootstrap_path
@@ -95,8 +98,9 @@ def get_bootstrap_path(instance):
 
 def get_ssh_key_paths(instance):
     bootstrap_path = get_bootstrap_path(instance)
+    glob_path = path.join(bootstrap_path, 'ssh_host*_key.pub')
     key_paths = []
-    for ssh_key in glob(path.join(bootstrap_path, 'ssh_host*_key.pub')):
+    for ssh_key in glob(glob_path):
         ssh_key = path.abspath(ssh_key)
         key_paths.append(ssh_key)
     return key_paths

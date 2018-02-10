@@ -128,7 +128,7 @@ def test_bootstrap_files_no_ssh_keys(bu, capsys, tempdir):
     (out, err) = capsys.readouterr()
     out_lines = out.splitlines()
     assert out_lines == [
-        "Found no public key in %(tempdir)s/.ssh, you have to create '%(tempdir)s/bootstrap-files/authorized_keys' manually" % format_info]
+        "Found no public key in %(tempdir)s/.ssh, you have to create '%(tempdir)s/default-test_instance/bootstrap-files/authorized_keys' manually" % format_info]
 
 
 def test_bootstrap_files_multiple_ssh_keys_but_none_used(bu, capsys, tempdir, yesno_mock):
@@ -144,7 +144,7 @@ def test_bootstrap_files_multiple_ssh_keys_but_none_used(bu, capsys, tempdir, ye
     (out, err) = capsys.readouterr()
     out_lines = out.splitlines()
     assert out_lines == [
-        "The '%(tempdir)s/bootstrap-files/authorized_keys' file is missing." % format_info,
+        "The '%(tempdir)s/default-test_instance/bootstrap-files/authorized_keys' file is missing." % format_info,
         "Should we generate it using the key in '%(tempdir)s/.ssh/id_dsa.pub'?" % format_info,
         "Should we generate it using the key in '%(tempdir)s/.ssh/id_rsa.pub'?" % format_info]
 
@@ -160,11 +160,11 @@ def test_bootstrap_files_multiple_ssh_keys_use_second(bu, capsys, run_mock, temp
     (out, err) = capsys.readouterr()
     out_lines = out.splitlines()
     assert out_lines == [
-        "The '%(tempdir)s/bootstrap-files/authorized_keys' file is missing." % format_info,
+        "The '%(tempdir)s/default-test_instance/bootstrap-files/authorized_keys' file is missing." % format_info,
         "Should we generate it using the key in '%(tempdir)s/.ssh/id_dsa.pub'?" % format_info,
         "Should we generate it using the key in '%(tempdir)s/.ssh/id_rsa.pub'?" % format_info]
-    assert os.path.exists(tempdir['bootstrap-files/authorized_keys'].path)
-    with open(tempdir['bootstrap-files/authorized_keys'].path) as f:
+    assert os.path.exists(tempdir['default-test_instance/bootstrap-files/authorized_keys'].path)
+    with open(tempdir['default-test_instance/bootstrap-files/authorized_keys'].path) as f:
         assert f.read() == 'id_rsa'
 
 
@@ -190,13 +190,13 @@ class TestFileEncryption:
 
     def test_bootstrap_files_encrypted(self, bu, env_mock, passwd_source, tempdir):
         vaultlib = env_mock.instance.get_vault_lib()
-        tempdir['bootstrap-files/authorized_keys'].fill('id_dsa')
-        tempdir['bootstrap-files/secret.txt'].fill(vaultlib.encrypt('test-secret'))
+        tempdir['default-test_instance/bootstrap-files/authorized_keys'].fill('id_dsa')
+        tempdir['default-test_instance/bootstrap-files/secret.txt'].fill(vaultlib.encrypt('test-secret'))
         bindata = ''.join(chr(x) for x in range(256))
-        tempdir['bootstrap-files/secret.bin'].fill(vaultlib.encrypt(bindata))
-        with open(tempdir['bootstrap-files/secret.txt'].path) as f:
+        tempdir['default-test_instance/bootstrap-files/secret.bin'].fill(vaultlib.encrypt(bindata))
+        with open(tempdir['default-test_instance/bootstrap-files/secret.txt'].path) as f:
             assert 'test-secret' not in f.read()
-        tempdir['bootstrap-files/files.yml'].fill([
+        tempdir['default-test_instance/bootstrap-files/files.yml'].fill([
             "'secret.txt':",
             "    remote: /root/secret.txt"])
         for name, bf in bu.bootstrap_files.items():
@@ -211,7 +211,7 @@ class TestFileEncryption:
 
 
 def test_default_rc_conf(bu, tempdir):
-    tempdir['bootstrap-files/authorized_keys'].fill('id_dsa')
+    tempdir['default-test_instance/bootstrap-files/authorized_keys'].fill('id_dsa')
     bfs = bu.bootstrap_files
     result = bfs['rc.conf'].read({
         'hostname': 'foo',
@@ -237,8 +237,8 @@ def test_default_rc_conf(bu, tempdir):
     ('    {% for x in xs -%}\n    foo_{{x}}\n{% endfor %}\n', {'xs': ['bar']}, '    foo_bar\n'),
 ])
 def test_bootstrap_files_template(bu, input, context, expected, tempdir):
-    tempdir['bootstrap-files/authorized_keys'].fill('id_dsa')
-    tempdir['bootstrap-files/rc.conf'].fill(input, allow_conf=True)
+    tempdir['default-test_instance/bootstrap-files/authorized_keys'].fill('id_dsa')
+    tempdir['default-test_instance/bootstrap-files/rc.conf'].fill(input, allow_conf=True)
     bfs = bu.bootstrap_files
     if isinstance(expected, basestring):
         result = bfs['rc.conf'].read(context)
@@ -251,7 +251,7 @@ def test_bootstrap_files_template(bu, input, context, expected, tempdir):
 
 def test_fetch_assets(bu, local_mock, tempdir):
     format_info = dict(tempdir=tempdir.directory)
-    tempdir['bootstrap-files/authorized_keys'].fill('id_dsa')
+    tempdir['default-test_instance/bootstrap-files/authorized_keys'].fill('id_dsa')
     local_mock.expected = [
         ('wget -c -O "%(tempdir)s/downloads/pkg.txz" "http://pkg.freebsd.org/freebsd:10:x86:64/quarterly/Latest/pkg.txz"' % format_info, {}, '')]
     bu.fetch_assets()
@@ -261,8 +261,8 @@ def test_fetch_assets_packagesite(bu, local_mock, tempdir):
     from bsdploy import bsdploy_path
     pytest.importorskip("lzma")
     format_info = dict(tempdir=tempdir.directory)
-    tempdir['bootstrap-files/authorized_keys'].fill('id_dsa')
-    tempdir['bootstrap-files/files.yml'].fill([
+    tempdir['default-test_instance/bootstrap-files/authorized_keys'].fill('id_dsa')
+    tempdir['default-test_instance/bootstrap-files/files.yml'].fill([
         "'packagesite.txz':",
         "    url: 'http://pkg.freebsd.org/freebsd:10:x86:64/quarterly/packagesite.txz'",
         "    remote: '/mnt/var/cache/pkg/packagesite.txz'"])
