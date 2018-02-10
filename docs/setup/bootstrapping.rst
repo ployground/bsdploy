@@ -83,7 +83,7 @@ You can use the following optional parameters to configure the bootstrapping pro
 
 - ``bootstrap-host-key``: Since the installer runs a different sshd configuration than the final installation, we need to provide its ssh host key explicitly. However, if you don't provide one, BSDploy will assume the (currently hardcoded) host key of the 10.3 mfsBSD installer . If you are using newer versions you must update the value to the content of ``/etc/ssh/ssh_host_rsa_key.pub`` in the mfsbsd image.
 
-- ``firstboot-update``: If set install and enable the `firstboot-freebsd-update <http://www.freshports.org/sysutils/firstboot-freebsd-update/>`_ package. This will update the installed system automatically (meaning non-interactively) to the latest patchlevel upon first boot. Disabled by default.
+- ``bootstrap-firstboot-update``: If set install and enable the `firstboot-freebsd-update <http://www.freshports.org/sysutils/firstboot-freebsd-update/>`_ package. This will update the installed system automatically (meaning non-interactively) to the latest patchlevel upon first boot. Disabled by default.
 
 - ``http_proxy``: If set, that proxy will be used for all ``pkg`` operations performed on that host, as well as for downloading any assets during bootstrapping (``base.tbz`` etc.)
 

@@ -136,7 +136,7 @@ def _bootstrap():
     bu.upload_bootstrap_files(template_context)
 
     bootstrap_packages = ['python27']
-    if value_asbool(env.instance.config.get('firstboot-update', 'false')):
+    if value_asbool(env.instance.config.get('bootstrap-firstboot-update', 'false')):
         bootstrap_packages.append('firstboot-freebsd-update')
         run('''touch /mnt/firstboot''')
         run('''sysrc -f /mnt/etc/rc.conf firstboot_freebsd_update_enable=YES''')
