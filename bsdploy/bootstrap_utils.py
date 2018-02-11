@@ -134,12 +134,20 @@ class BootstrapUtils:
         return abspath(join(self.ploy_conf_path, '..', 'downloads'))
 
     def generate_ssh_keys(self):
+        missing = []
         for ssh_key_name, ssh_keygen_args in sorted(self.ssh_keys):
-            if not exists(self.bootstrap_path):
-                os.makedirs(self.bootstrap_path)
             ssh_key = join(self.bootstrap_path, ssh_key_name)
             if exists(ssh_key):
                 continue
+            missing.append((ssh_key, ssh_key_name, ssh_keygen_args))
+        if missing:
+            yes = env.instance.config.get('bootstrap-yes', False)
+            print("\n".join("Missing %s." % x[0] for x in missing))
+            if not yes and not yesno("Should the above missing ssh host keys be generated in '%s'?" % self.bootstrap_path):
+                sys.exit(1)
+        if not exists(self.bootstrap_path):
+            os.makedirs(self.bootstrap_path)
+        for ssh_key, ssh_key_name, ssh_keygen_args in missing:
             with settings(quiet(), warn_only=True):
                 result = local(
                     "ssh-keygen %s -f %s -N ''" % (ssh_keygen_args, ssh_key),
