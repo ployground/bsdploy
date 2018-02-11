@@ -1,6 +1,9 @@
 3.0.0b1 - 2018-02-07
 ====================
 
+- [change] ask before automatically generating missing ssh host keys during bootstrap.
+- [change] the default location for ``bootstrap-files`` changed from ``[playbooks-directory]/bootstrap-files`` to ``[playbooks-directory]/[instance-uid]/bootstrap-files``.
+- [change] renamed ``firstboot-update`` to ``bootstrap-firstboot-update`` to match the other variables.
 - [change] switch to use ploy 2.0.0 and Ansible 2.4.x.
 - [feature] the ``fabfile`` option is set if ``[instance-name]/fabfile.py`` exists when the more specific ``[master-name]-[instance-name]/fabfile.py`` doesn't exist.
 

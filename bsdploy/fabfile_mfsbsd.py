@@ -1,4 +1,5 @@
 # coding: utf-8
+from __future__ import print_function
 from bsdploy.bootstrap_utils import BootstrapUtils
 from contextlib import contextmanager
 from fabric.api import env, hide, run, settings, task
@@ -92,20 +93,34 @@ def _bootstrap():
         else:
             if not yesno("\nDidn't find an '%s' setting in rc.conf. You sure that you want to continue?" % ifconfig):
                 return
+
+    print("\nThe generated rc_conf:\n%s" % rc_conf)
+    print("bootstrap-bsd-url:", bu.bsd_url)
+    system_pool_name = env.instance.config.get('bootstrap-system-pool-name', 'system')
+    print("bootstrap-system-pool-name:", system_pool_name)
+    data_pool_name = env.instance.config.get('bootstrap-data-pool-name', 'tank')
+    print("bootstrap-data-pool-name:", data_pool_name)
+    swap_size = env.instance.config.get('bootstrap-swap-size', '%iM' % (realmem * 2))
+    print("bootstrap-swap-size:", swap_size)
+    system_pool_size = env.instance.config.get('bootstrap-system-pool-size', '20G')
+    print("bootstrap-system-pool-size:", system_pool_size)
+    firstboot_update = value_asbool(env.instance.config.get('bootstrap-firstboot-update', 'false'))
+    print("bootstrap-firstboot-update:", firstboot_update)
+    autoboot_delay = env.instance.config.get('bootstrap-autoboot-delay', '-1')
+    print("bootstrap-autoboot-delay:", autoboot_delay)
+    bootstrap_reboot = value_asbool(env.instance.config.get('bootstrap-reboot', 'true'))
+    print("bootstrap-reboot:", bootstrap_reboot)
+
     yes = env.instance.config.get('bootstrap-yes', False)
     if not (yes or yesno("\nContinuing will destroy the existing data on the following devices:\n    %s\n\nContinue?" % ' '.join(bu.devices))):
         return
 
     # install FreeBSD in ZFS root
     devices_args = ' '.join('-d %s' % x for x in bu.devices)
-    system_pool_name = env.instance.config.get('bootstrap-system-pool-name', 'system')
-    data_pool_name = env.instance.config.get('bootstrap-data-pool-name', 'tank')
     swap_arg = ''
-    swap_size = env.instance.config.get('bootstrap-swap-size', '%iM' % (realmem * 2))
     if swap_size:
         swap_arg = '-s %s' % swap_size
     system_pool_arg = ''
-    system_pool_size = env.instance.config.get('bootstrap-system-pool-size', '20G')
     if system_pool_size:
         system_pool_arg = '-z %s' % system_pool_size
     run('destroygeom {devices_args} -p {system_pool_name} -p {data_pool_name}'.format(
@@ -136,7 +151,7 @@ def _bootstrap():
     bu.upload_bootstrap_files(template_context)
 
     bootstrap_packages = ['python27']
-    if value_asbool(env.instance.config.get('firstboot-update', 'false')):
+    if firstboot_update:
         bootstrap_packages.append('firstboot-freebsd-update')
         run('''touch /mnt/firstboot''')
         run('''sysrc -f /mnt/etc/rc.conf firstboot_freebsd_update_enable=YES''')
@@ -145,11 +160,10 @@ def _bootstrap():
     # ansible playbooks
     bu.install_pkg('/mnt', chroot=True, packages=bootstrap_packages)
     # set autoboot delay
-    autoboot_delay = env.instance.config.get('bootstrap-autoboot-delay', '-1')
     run('echo autoboot_delay=%s >> /mnt/boot/loader.conf' % autoboot_delay)
     bu.generate_remote_ssh_keys()
     # reboot
-    if value_asbool(env.instance.config.get('bootstrap-reboot', 'true')):
+    if bootstrap_reboot:
         with settings(hide('warnings'), warn_only=True):
             run('reboot')
 
