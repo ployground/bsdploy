@@ -75,6 +75,7 @@ class PloyBootstrapCmd(object):
         args = parser.parse_args(argv)
         master = args.master if len(masters) == 1 else args.master[0]
         instance = self.ctrl.instances[master]
+        instance.config.setdefault('ssh-timeout', 90)
         instance.hooks.before_bsdploy_bootstrap(instance)
         bootstrap_args = {'bootstrap-yes': args.yes}
         if args.http_proxy:
