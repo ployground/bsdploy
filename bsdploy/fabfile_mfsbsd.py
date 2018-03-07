@@ -37,6 +37,8 @@ def _mfsbsd(env, kwargs={}):
                 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDAI6Yj/xqZt1yrtgsOHv45mfS8gVPh5IVK+n6hjmnV+RlbwFksA7lFsjY8SRasJko4iqJmxRSmT1bJ/fuOegqFaEa2LwSaEM/J7rx9lHroKO6rtx81Ja54IY8bRscNxaxl+LFFw8F0v4F9hIfzhooLCXVaLgH/y0ScW7gjft9J6omUcfZPIvdMJuOYIHIRqLjL+HnmZSZEh0GWpMraCts3ud+na2gcHuWYMmUpbEeQIkG3FsgTsLlpkrpQLApo7fHNo1FxIbufiopdQ4zDDQFNZod9jRbV1GwUVTAHot6uOZg+oxnCKnHriKaY2/N8QISkVDsEMmGR9Ib5eQkJK9Mv']))
         env.instance.config.setdefault('password-fallback', True)
         env.instance.config.setdefault('password', b'mfsroot')
+        if 'bootstrap-ssh-fingerprints' in env.instance.config:
+            env.instance.config['ssh-fingerprints'] = env.instance.config['bootstrap-ssh-fingerprints']
         # allow overwrites from the commandline
         env.instance.config.update(kwargs)
 

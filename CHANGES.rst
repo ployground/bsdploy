@@ -2,6 +2,7 @@
 ====================
 
 - [change] renamed ``bootstrap-host-keys`` to ``bootstrap-ssh-host-keys``.
+- [change] reintroduce ``bootstrap-ssh-fingerprints`` to allow overriding of ``ssh-fingerprints`` for bootstrapping.
 
 
 3.0.0b2 - 2018-02-11
