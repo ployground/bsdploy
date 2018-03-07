@@ -16,7 +16,7 @@ If you want to install different versions, i.e. 9.2 you must:
 
     % ploy-download http://mfsbsd.vx.sk/files/iso/9/amd64/mfsbsd-se-9.2-RELEASE-amd64.iso 4ef70dfd7b5255e36f2f7e1a5292c7a05019c8ce downloads/
 
-- set ``bootstrap-host-key`` in ``ploy.conf`` to content of ``/etc/ssh/ssh_host_rsa_key.pub`` in the mfsbsd image
+- set ``bootstrap-ssh-host-key`` in ``ploy.conf`` to content of ``/etc/ssh/ssh_host_rsa_key.pub`` in the mfsbsd image
   (each mfsbsd release has it's own hardcoded ssh host key)
 - create a file named ``files.yml`` in ``bootstrap-files`` with the following contents:
 
@@ -81,7 +81,7 @@ You can use the following optional parameters to configure the bootstrapping pro
 
 - ``bootstrap-bsd-url``: If you don't want to use the installation files found on the installer image (or if your boot image doesn't contain any) you can provide an explicit alternative (i.e. ``http://ftp4.de.freebsd.org/pub/FreeBSD/releases/amd64/9.2-RELEASE/``) and this will be used to fetch the system from.
 
-- ``bootstrap-host-key``: Since the installer runs a different sshd configuration than the final installation, we need to provide its ssh host key explicitly. However, if you don't provide one, BSDploy will assume the (currently hardcoded) host key of the 10.3 mfsBSD installer . If you are using newer versions you must update the value to the content of ``/etc/ssh/ssh_host_rsa_key.pub`` in the mfsbsd image.
+- ``bootstrap-ssh-host-key``: Since the installer runs a different sshd configuration than the final installation, we need to provide its ssh host key explicitly. However, if you don't provide one, BSDploy will assume the (currently hardcoded) host key of the 10.3 mfsBSD installer . If you are using newer versions you must update the value to the content of ``/etc/ssh/ssh_host_rsa_key.pub`` in the mfsbsd image.
 
 - ``bootstrap-firstboot-update``: If set install and enable the `firstboot-freebsd-update <http://www.freshports.org/sysutils/firstboot-freebsd-update/>`_ package. This will update the installed system automatically (meaning non-interactively) to the latest patchlevel upon first boot. Disabled by default.
 

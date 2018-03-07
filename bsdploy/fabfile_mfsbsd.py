@@ -19,9 +19,9 @@ def _mfsbsd(env, kwargs={}):
     try:
         env.shell = '/bin/sh -c'
 
-        # default ssh settings for mfsbsd with possible overwrite by bootstrap-host-keys
+        # default ssh settings for mfsbsd with possible overwrite by bootstrap-ssh-host-keys
         env.instance.config['ssh-host-keys'] = env.instance.config.get(
-            'bootstrap-host-keys',
+            'bootstrap-ssh-host-keys',
             '\n'.join([
                 # mfsbsd 10.3
                 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDnxIsRrqK2Zj73DPB3doYO8eDue2mVcae9oQNAwGz1o7VBmOpAZiscxOz1kg/M/CD3VRchgT5OcbciqJGaWeNyZHzHbVpIzUCycSI28WVpG7B4jXZTcq6vGGBpD22Ms6rTczigEJmshVR3rNxHmswwImmEwR6o1KVRCOAY2gL8Ik6OOKAqWqY8mstx059MsY9usDl2FDn57T8fZ4QMd+DQBEKwhkhqHs8n2WSlJlZqCuWDBNDH0RskDizrZRz+g4ciRwAM5e2dzgaOvtlfT42WD1kxwJIVFJi/1R0O+Xw2/kGyRweJXCqdUbfynFaTm1yen+IUPzNH/jBMtxUiL25r',

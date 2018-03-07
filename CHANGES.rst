@@ -1,3 +1,9 @@
+3.0.0b3 - Unreleased
+====================
+
+- [change] renamed ``bootstrap-host-keys`` to ``bootstrap-ssh-host-keys``.
+
+
 3.0.0b2 - 2018-02-11
 ====================
 
