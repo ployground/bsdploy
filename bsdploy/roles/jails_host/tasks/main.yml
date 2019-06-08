@@ -131,10 +131,14 @@
 - name: The etc/ssh directory in bsdploy_base flavour
   file: dest=/usr/jails/flavours/bsdploy_base/etc/ssh state=directory owner=root group=wheel
 
-- copy: src=make.conf dest=/usr/jails/flavours/bsdploy_base/etc/make.conf owner=root group=wheel
-- file: dest=/usr/jails/flavours/bsdploy_base/usr/local/etc/pkg/repos state=directory owner=root group=wheel
-- template: src=pkg.conf dest=/usr/jails/flavours/bsdploy_base/usr/local/etc/pkg.conf owner=root group=wheel
-- template: src=FreeBSD.conf dest=/usr/jails/flavours/bsdploy_base/usr/local/etc/pkg/repos/FreeBSD.conf owner=root group=wheel
+- name: /etc/make.conf in bsdploy_base flavour
+  copy: src=make.conf dest=/usr/jails/flavours/bsdploy_base/etc/make.conf owner=root group=wheel
+- name: /usr/local/etc/pkg/repos directory in bsdploy_base flavour
+  file: dest=/usr/jails/flavours/bsdploy_base/usr/local/etc/pkg/repos state=directory owner=root group=wheel
+- name: /usr/local/etc/pkg.conf in bsdploy_base flavour
+  template: src=pkg.conf dest=/usr/jails/flavours/bsdploy_base/usr/local/etc/pkg.conf owner=root group=wheel
+- name: /usr/local/etc/pkg/repos/FreeBSD.conf in bsdploy_base flavour
+  template: src=FreeBSD.conf dest=/usr/jails/flavours/bsdploy_base/usr/local/etc/pkg/repos/FreeBSD.conf owner=root group=wheel
 
 
 #

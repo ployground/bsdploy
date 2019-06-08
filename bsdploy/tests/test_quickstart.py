@@ -220,6 +220,8 @@ def test_quickstart_functional(request, qs_path, confext, ployconf, tempdir, vir
         pytest.fail("The path given by --quickstart-bsdploy needs to be absolute.")
     if request.config.option.ansible_version:
         subprocess.check_call(['pip', 'install', 'ansible==%s' % request.config.option.ansible_version])
-    subprocess.check_call(['pip', 'install', '-i' 'https://d.rzon.de:8141/fschulze/dev/', '--pre', 'ansible==2.4.3', request.config.option.quickstart_bsdploy])
+    else:
+        subprocess.check_call(['pip', 'install', 'ansible'])
+    subprocess.check_call(['pip', 'install', '-i' 'https://d.rzon.de:8141/fschulze/dev/', '--pre', request.config.option.quickstart_bsdploy])
     for action, func, args, kw in iter_quickstart_calls(parse_qs(qs_path), confext, ployconf, tempdir):
         func(*args, **kw)

@@ -41,20 +41,41 @@ def _iter_tasks(block):
 
 
 def iter_tasks(plays):
-    for play in plays:
-        for task in _iter_tasks(play.compile()):
-            if task.action == 'meta':
-                meta_action = task.args.get('_raw_params')
-                if meta_action == 'flush_handlers':  # pragma: nocover - branch coverage only on failure
-                    continue
-                raise ValueError  # pragma: nocover - only on failure
-            yield play, task
+    from ploy_ansible import ANSIBLE1
+    if ANSIBLE1:
+        for play in plays:
+            for task in play.tasks():
+                if task.meta:
+                    if task.meta == 'flush_handlers':  # pragma: nocover - branch coverage only on failure
+                        continue
+                    raise ValueError  # pragma: nocover - only on failure
+                yield play, task
+    else:
+        for play in plays:
+            for task in _iter_tasks(play.compile()):
+                if task.action == 'meta':
+                    meta_action = task.args.get('_raw_params')
+                    if meta_action == 'flush_handlers':  # pragma: nocover - branch coverage only on failure
+                        continue
+                    raise ValueError  # pragma: nocover - only on failure
+                yield play, task
 
 
-def test_roles(ctrl):
+def get_plays(pb, monkeypatch):
+    from ploy_ansible import ANSIBLE1
+    if ANSIBLE1:
+        plays = []
+        monkeypatch.setattr('ansible.playbook.PlayBook._run_play', plays.append)
+        pb.run()
+        return plays
+    else:
+        return pb.get_plays()
+
+
+def test_roles(ctrl, monkeypatch):
     instance = ctrl.instances['jailhost']
     pb = instance.get_playbook()
-    plays = pb.get_plays()
+    plays = get_plays(pb, monkeypatch)
     tasks = []
     for play, task in iter_tasks(plays):
         tasks.append(task.name)
@@ -98,21 +119,21 @@ def test_roles(ctrl):
         'The .ssh directory for root in bsdploy_base flavour',
         'The etc directory in bsdploy_base flavour',
         'The etc/ssh directory in bsdploy_base flavour',
-        '',
-        '',
-        '',
-        '',
+        '/etc/make.conf in bsdploy_base flavour',
+        '/usr/local/etc/pkg/repos directory in bsdploy_base flavour',
+        '/usr/local/etc/pkg.conf in bsdploy_base flavour',
+        '/usr/local/etc/pkg/repos/FreeBSD.conf in bsdploy_base flavour',
         'rc.conf for bsdploy_base flavour',
         'sshd_config for bsdploy_base flavour',
         'motd for bsdploy_base flavour',
         'copy some settings from host to bsdploy_base flavour']
 
 
-def test_all_role_templates_tested(ctrl, request):
+def test_all_role_templates_tested(ctrl, monkeypatch, request):
     instance = ctrl.instances['jailhost']
     instance.config['roles'] = ' '.join(get_all_roles())
     pb = instance.get_playbook()
-    plays = pb.get_plays()
+    plays = get_plays(pb, monkeypatch)
     # import after running to avoid module import issues
     from bsdploy.tests import test_templates
     templates = []

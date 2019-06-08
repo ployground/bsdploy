@@ -69,8 +69,11 @@ class BootstrapFile(object):
 
     @lazy
     def template_from_file(self):
-        from ploy_ansible import inject_ansible_paths
+        from ploy_ansible import ANSIBLE1, inject_ansible_paths
         inject_ansible_paths()
+        if ANSIBLE1:
+            from ansible.utils.template import template_from_file
+            return template_from_file
         from ansible.parsing.dataloader import DataLoader
         from ansible.template import Templar
         loader = DataLoader()
