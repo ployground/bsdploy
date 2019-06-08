@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import pytest
 
@@ -25,7 +26,7 @@ def ctrl(ployconf, tempdir):
 
 def test_bootstrap_command(capsys, ctrl, monkeypatch):
     def do(self, *args, **kwargs):
-        print "do with %r, %r called!" % (args, kwargs)
+        print("do with %r, %r called!" % (args, kwargs))
     monkeypatch.setattr('ploy_fabric.do', do)
     ctrl(['./bin/ploy', 'bootstrap'])
     (out, err) = capsys.readouterr()

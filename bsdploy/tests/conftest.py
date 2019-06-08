@@ -1,3 +1,4 @@
+from __future__ import print_function
 from mock import Mock
 import pytest
 
@@ -153,7 +154,7 @@ def yesno_mock(monkeypatch):
             expected = '', False
         cmd, result = expected
         assert question == cmd
-        print question
+        print(question)
         return result
 
     yesno.side_effect = _yesno
