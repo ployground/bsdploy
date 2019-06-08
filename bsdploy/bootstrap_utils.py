@@ -265,12 +265,12 @@ class BootstrapUtils:
                         self, ssh_key_name, **dict(
                             local=ssh_key,
                             remote='/mnt/etc/ssh/%s' % ssh_key_name,
-                            mode=0600))
+                            mode=0o600))
                     bootstrap_files[pub_key_name] = BootstrapFile(
                         self, pub_key_name, **dict(
                             local=pub_key,
                             remote='/mnt/etc/ssh/%s' % pub_key_name,
-                            mode=0644))
+                            mode=0o644))
         if hasattr(env.instance, 'get_vault_lib'):
             vaultlib = env.instance.get_vault_lib()
             for bf in bootstrap_files.values():
@@ -417,7 +417,7 @@ class BootstrapUtils:
         zfsinstall = env.instance.config.get('bootstrap-zfsinstall')
         if zfsinstall:
             dest = '/root/bin/bsdploy_zfsinstall'
-            put(abspath(join(self.ploy_conf_path, zfsinstall)), dest, mode=0755)
+            put(abspath(join(self.ploy_conf_path, zfsinstall)), dest, mode=0o755)
             return dest
         else:
             return 'zfsinstall'
