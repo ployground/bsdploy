@@ -44,7 +44,7 @@ def _mfsbsd(env, kwargs={}):
                 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICtdH4RvvStuu51nq8oiHRbyBB6UUISEA2iyMbg2t4IO',
                 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD28UisgIiBqrlR+47V8v6ek5+fe58iaVIzLvsrEWDREh8QkSR01ZfxXb70oet/5hbRS5Fnnc1evw+5lNLAj3xHN0B1nGL4u3mUdoZX7w3I7llHG6A77Y0UmdgA9GF4xAxSRp75Cv5Ru7AQ4yczIc3J7KKjQgVwGFEdsbUnKENao4+yoHsFOG3eX63Zoqkxv1DphUfVT04IaUf6eyoJBOGmVhplDMWBIxkDG54JiFl/8CjyMEWpnYotmFsDfgfLkgmeyHad+lCvBsEM44QtZGO4F4nko8eFhOH2pwpDeczpgboC3CNjvuHW4ubp/6NUX+IAb812g8+IoCRafCyar1G5']))
         env.instance.config.setdefault('password-fallback', True)
-        env.instance.config.setdefault('password', b'mfsroot')
+        env.instance.config.setdefault('password', 'mfsroot')
         if 'bootstrap-ssh-fingerprints' in env.instance.config:
             env.instance.config['ssh-fingerprints'] = env.instance.config['bootstrap-ssh-fingerprints']
         # allow overwrites from the commandline
@@ -87,7 +87,7 @@ def _bootstrap():
         interfaces=bu.phys_interfaces,
         hostname=env.instance.id)
 
-    rc_conf = bu.bootstrap_files['rc.conf'].read(template_context)
+    rc_conf = bu.bootstrap_files['rc.conf'].read(template_context).decode('utf-8')
     if not rc_conf.endswith('\n'):
         print("\nERROR! Your rc.conf doesn't end in a newline:\n==========\n%s<<<<<<<<<<\n" % rc_conf)
         return

@@ -1,6 +1,7 @@
 3.0.0b3 - Unreleased
 ====================
 
+- [feature] Python 3.x support with Ansible >= 2.4.x.
 - [feature] the sysrc module supports ``dst`` option to use another file then the default ``/etc/rc.conf``.
 - [change] renamed ``bootstrap-host-keys`` to ``bootstrap-ssh-host-keys``.
 - [change] reintroduce ``bootstrap-ssh-fingerprints`` to allow overriding of ``ssh-fingerprints`` for bootstrapping.

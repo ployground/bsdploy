@@ -1,8 +1,5 @@
 from __future__ import print_function
-try:  # pragma: nocover
-    from cStringIO import StringIO
-except ImportError:  # pragma: nocover
-    from StringIO import StringIO
+from io import BytesIO
 from bsdploy import bsdploy_path, get_bootstrap_path
 from fabric.api import env, local, put, quiet, run, settings
 from lazy import lazy
@@ -16,6 +13,18 @@ import os
 import sys
 import weakref
 import yaml
+
+
+try:
+    string_types = basestring
+except NameError:
+    string_types = str
+
+
+try:
+    unicode
+except NameError:
+    unicode = str
 
 
 class BootstrapFile(object):
@@ -38,7 +47,7 @@ class BootstrapFile(object):
     @property
     def raw_fallback(self):
         paths = self.info.get('fallback', [])
-        if isinstance(paths, basestring):
+        if isinstance(paths, string_types):
             paths = [paths]
         return paths
 
@@ -90,12 +99,12 @@ class BootstrapFile(object):
             result = self.template_from_file(dirname(self.local), self.local, context)
             if isinstance(result, unicode):
                 result = result.encode('utf-8')
-            return StringIO(result)
+            return BytesIO(result)
         elif self.encrypted:
             vaultlib = env.instance.get_vault_lib()
             with open(self.local, 'r') as f:
                 result = f.read()
-            return StringIO(vaultlib.decrypt(result))
+            return BytesIO(vaultlib.decrypt(result))
         else:
             return open(self.local, 'r')
 

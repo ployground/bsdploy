@@ -178,8 +178,8 @@ class TestFileEncryption:
     @pytest.fixture
     def passwd_source(self, monkeypatch):
         class DummySource:
-            id = 'dummy-id'
-            passwd = 'dummy-vault-password'
+            id = b'dummy-id'
+            passwd = b'dummy-vault-password'
             bytes = bytes(passwd)
 
             def get(self, fail_on_error=True):
@@ -191,9 +191,9 @@ class TestFileEncryption:
     def test_bootstrap_files_encrypted(self, bu, env_mock, passwd_source, tempdir):
         vaultlib = env_mock.instance.get_vault_lib()
         tempdir['default-test_instance/bootstrap-files/authorized_keys'].fill('id_dsa')
-        tempdir['default-test_instance/bootstrap-files/secret.txt'].fill(vaultlib.encrypt('test-secret'))
+        tempdir['default-test_instance/bootstrap-files/secret.txt'].fill_binary(vaultlib.encrypt('test-secret'))
         bindata = ''.join(chr(x) for x in range(256))
-        tempdir['default-test_instance/bootstrap-files/secret.bin'].fill(vaultlib.encrypt(bindata))
+        tempdir['default-test_instance/bootstrap-files/secret.bin'].fill_binary(vaultlib.encrypt(bindata))
         with open(tempdir['default-test_instance/bootstrap-files/secret.txt'].path) as f:
             assert 'test-secret' not in f.read()
         tempdir['default-test_instance/bootstrap-files/files.yml'].fill([
@@ -202,7 +202,7 @@ class TestFileEncryption:
         for name, bf in bu.bootstrap_files.items():
             if name == 'secret.txt':
                 assert bf.encrypted
-                assert bf.open({}).read() == 'test-secret'
+                assert bf.open({}).read() == b'test-secret'
             elif name == 'secret.bin':
                 assert bf.encrypted
                 assert bf.open({}).read() == bindata
@@ -216,34 +216,34 @@ def test_default_rc_conf(bu, tempdir):
     result = bfs['rc.conf'].read({
         'hostname': 'foo',
         'interfaces': []})
-    assert result == '\n'.join([
-        'hostname="foo"',
-        'sshd_enable="YES"',
-        'syslogd_flags="-ss"',
-        'zfs_enable="YES"',
-        'pf_enable="YES"',
-        ''])
+    assert result == b'\n'.join([
+        b'hostname="foo"',
+        b'sshd_enable="YES"',
+        b'syslogd_flags="-ss"',
+        b'zfs_enable="YES"',
+        b'pf_enable="YES"',
+        b''])
 
 
 @pytest.mark.parametrize("input, context, expected", [
-    ('foo', {}, 'foo'),
+    ('foo', {}, b'foo'),
     ('{{ foo }}', {}, AnsibleUndefinedVariable),
-    ('{{ foo }}', {'foo': 'bar'}, 'bar'),
-    ('    {% for x in xs %}bar\nfoo_{{x}}\n{% endfor %}\n', {'xs': []}, '    \n'),
-    ('    {% for x in xs %}bar\nfoo_{{x}}\n{% endfor %}\n', {'xs': ['bar']}, '    bar\nfoo_bar\n'),
-    ('    {% for x in xs -%}\nfoo_{{x}}\n{% endfor %}\n', {'xs': ['bar']}, '    foo_bar\n'),
-    ('    {% for x in xs %}bar\n    foo_{{x}}\n{% endfor %}\n', {'xs': []}, '    \n'),
-    ('    {% for x in xs %}bar\n    foo_{{x}}\n{% endfor %}\n', {'xs': ['bar']}, '    bar\n    foo_bar\n'),
-    ('    {% for x in xs -%}\n    foo_{{x}}\n{% endfor %}\n', {'xs': ['bar']}, '    foo_bar\n'),
+    ('{{ foo }}', {'foo': 'bar'}, b'bar'),
+    ('    {% for x in xs %}bar\nfoo_{{x}}\n{% endfor %}\n', {'xs': []}, b'    \n'),
+    ('    {% for x in xs %}bar\nfoo_{{x}}\n{% endfor %}\n', {'xs': ['bar']}, b'    bar\nfoo_bar\n'),
+    ('    {% for x in xs -%}\nfoo_{{x}}\n{% endfor %}\n', {'xs': ['bar']}, b'    foo_bar\n'),
+    ('    {% for x in xs %}bar\n    foo_{{x}}\n{% endfor %}\n', {'xs': []}, b'    \n'),
+    ('    {% for x in xs %}bar\n    foo_{{x}}\n{% endfor %}\n', {'xs': ['bar']}, b'    bar\n    foo_bar\n'),
+    ('    {% for x in xs -%}\n    foo_{{x}}\n{% endfor %}\n', {'xs': ['bar']}, b'    foo_bar\n'),
 ])
 def test_bootstrap_files_template(bu, input, context, expected, tempdir):
     tempdir['default-test_instance/bootstrap-files/authorized_keys'].fill('id_dsa')
     tempdir['default-test_instance/bootstrap-files/rc.conf'].fill(input, allow_conf=True)
     bfs = bu.bootstrap_files
-    if isinstance(expected, basestring):
+    if isinstance(expected, bytes):
         result = bfs['rc.conf'].read(context)
         assert result == expected
-        assert not isinstance(result, unicode)
+        assert isinstance(result, bytes)
     else:
         with pytest.raises(expected):
             bfs['rc.conf'].read(context)
@@ -266,8 +266,8 @@ def test_fetch_assets_packagesite(bu, local_mock, tempdir):
         "'packagesite.txz':",
         "    url: 'http://pkg.freebsd.org/freebsd:10:x86:64/quarterly/packagesite.txz'",
         "    remote: '/mnt/var/cache/pkg/packagesite.txz'"])
-    with open(os.path.join(bsdploy_path, 'tests', 'packagesite.txz')) as f:
-        tempdir['downloads/packagesite.txz'].fill(f.read())
+    with open(os.path.join(bsdploy_path, 'tests', 'packagesite.txz'), 'rb') as f:
+        tempdir['downloads/packagesite.txz'].fill_binary(f.read())
     local_mock.expected = [
         ('wget -c -O "%(tempdir)s/downloads/packagesite.txz" "http://pkg.freebsd.org/freebsd:10:x86:64/quarterly/packagesite.txz"' % format_info, {}, ''),
         ('wget -c -O "%(tempdir)s/downloads/packages/freebsd:10:x86:64/latest/All/python27-2.7.6_4.txz" "http://pkg.freebsd.org/freebsd:10:x86:64/latest/All/python27-2.7.6_4.txz"' % format_info, {}, ''),

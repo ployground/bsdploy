@@ -65,7 +65,7 @@ class PloyBootstrapCmd(object):
             metavar="master",
             help="Name of the jailhost from the config.",
             choices=masters,
-            default=masters.keys()[0] if len(masters) == 1 else None)
+            default=list(masters.keys())[0] if len(masters) == 1 else None)
         parser.add_argument(
             "-y", "--yes", action="store_true",
             help="Answer yes to all questions.")
