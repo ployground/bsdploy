@@ -8,6 +8,7 @@ CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
 version = "3.0.0b3"
 
 install_requires = [
+    'backports.lzma',
     'PyYAML',
     'jinja2',
     'setuptools',

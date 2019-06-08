@@ -424,12 +424,7 @@ class BootstrapUtils:
 
     def _fetch_packages(self, packagesite, packages):
         import tarfile
-        try:
-            import lzma
-        except ImportError:
-            print("ERROR: The lzma package couldn't be imported.")
-            print("You most likely need to install pyliblzma in your virtualenv.")
-            sys.exit(1)
+        import lzma
         packageinfo = {}
         print("Loading package information from '%s'." % packagesite)
         if SafeLoader.__name__ != 'CSafeLoader':
