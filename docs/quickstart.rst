@@ -49,7 +49,7 @@ Inside it create a file named ``ploy.conf`` with the following contents::
     vm-natpf2 = ssh,tcp,,44003,,22
     storage =
         --medium vb-disk:defaultdisk
-        --type dvddrive --medium http://mfsbsd.vx.sk/files/iso/11/amd64/mfsbsd-se-11.1-RELEASE-amd64.iso --medium_sha1 2fd80caf57c29d62859bccfa3b8ec7b5b244406e
+        --type dvddrive --medium https://mfsbsd.vx.sk/files/iso/12/amd64/mfsbsd-se-12.0-RELEASE-amd64.iso --medium_sha1 2fbf2be5a79cc8081d918475400581bd54bb30ae
 
 
 This creates a VirtualBox instance named ``ploy-demo``. By default BSDploy provides it with a so-called "host only interface" but since that cannot be used to connect to the internet we explicitly configure a second one using NAT (mfsBSD will configure it via DHCP) and in addtion we create a port forwarding from ``localhost`` port ``44003`` to port ``22`` on the box - in essence allowing us to SSH into it via localhost.

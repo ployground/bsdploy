@@ -152,7 +152,7 @@ def test_quickstart_calls(confext, qs_path, ployconf, tempdir):
         'vm-natpf2 = ssh,tcp,,44003,,22',
         'storage =',
         '    --medium vb-disk:defaultdisk',
-        '    --type dvddrive --medium http://mfsbsd.vx.sk/files/iso/11/amd64/mfsbsd-se-11.1-RELEASE-amd64.iso --medium_sha1 2fd80caf57c29d62859bccfa3b8ec7b5b244406e',
+        '    --type dvddrive --medium https://mfsbsd.vx.sk/files/iso/12/amd64/mfsbsd-se-12.0-RELEASE-amd64.iso --medium_sha1 2fbf2be5a79cc8081d918475400581bd54bb30ae',
         '',
         '[ez-master:jailhost]',
         'instance = ploy-demo',

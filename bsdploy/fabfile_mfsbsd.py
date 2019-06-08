@@ -34,7 +34,15 @@ def _mfsbsd(env, kwargs={}):
                 # mfsbsd 11.1 se
                 'ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEvG5hTrYKjRtaIrQED+jd/y/Craqzz/11+ky1P/lyv/e8NH2iX9iPKcVLNQa4G9z2aOBVLFc3GQSyySuFlAB/Q=',
                 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAuuvF9hyDyop83H/zYLDqimiR18X+NsAU9UpoDOGHVZ',
-                'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDAI6Yj/xqZt1yrtgsOHv45mfS8gVPh5IVK+n6hjmnV+RlbwFksA7lFsjY8SRasJko4iqJmxRSmT1bJ/fuOegqFaEa2LwSaEM/J7rx9lHroKO6rtx81Ja54IY8bRscNxaxl+LFFw8F0v4F9hIfzhooLCXVaLgH/y0ScW7gjft9J6omUcfZPIvdMJuOYIHIRqLjL+HnmZSZEh0GWpMraCts3ud+na2gcHuWYMmUpbEeQIkG3FsgTsLlpkrpQLApo7fHNo1FxIbufiopdQ4zDDQFNZod9jRbV1GwUVTAHot6uOZg+oxnCKnHriKaY2/N8QISkVDsEMmGR9Ib5eQkJK9Mv']))
+                'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDAI6Yj/xqZt1yrtgsOHv45mfS8gVPh5IVK+n6hjmnV+RlbwFksA7lFsjY8SRasJko4iqJmxRSmT1bJ/fuOegqFaEa2LwSaEM/J7rx9lHroKO6rtx81Ja54IY8bRscNxaxl+LFFw8F0v4F9hIfzhooLCXVaLgH/y0ScW7gjft9J6omUcfZPIvdMJuOYIHIRqLjL+HnmZSZEh0GWpMraCts3ud+na2gcHuWYMmUpbEeQIkG3FsgTsLlpkrpQLApo7fHNo1FxIbufiopdQ4zDDQFNZod9jRbV1GwUVTAHot6uOZg+oxnCKnHriKaY2/N8QISkVDsEMmGR9Ib5eQkJK9Mv',
+                # mfsbsd 12.0
+                'ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBM0Y/x3g2rByYjkN8oxuHDZV2VgNCqzrZY41QzNPG+FHBbJbNlhq4zjfj550RxxefwZySWkFHfHHnBOmICihRS8=',
+                'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPRcWIiTYNuxkh6pIAvULxFoYXmhqsDvMWzDqRKNpC7Z',
+                'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBq/bd0ioNAKwVCN+p5xn4bGdg3QzN3Jqw/OyzykMT08XRSIvfTRO0TzqEKF/wDyOQCm+V6Dm0Wx0/Ybg0lxf12az/sQrRPS8VmviJmcxqOIYSLG4G//7Kn+kkAUarXS8L0NdPyon1eT63tpX2twWiawmasWpkkJS4VFt8c4Obj+96AwFW8N9sLlk6iFskj+hdAAUVZjhy8TzPkBzHY5Cljnwui5vz6RVagX9/fkJHuCSFHrGZ/ouuTJCq0S91cr75fWCifINrGSurOaFv7hAc/7l689qLlfZ4Jc8Lxt5ZTeQOMTYMoKLX4lmCWC8mgCvASzn544kLGMUHC4AkrbcD',
+                # mfsbsd 12.0 se
+                'ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBNJR/RUd2QKYgcBY9987ymlLBGUsQe22A/W9NtJ0P+WPFbtigbcESxi2fjZS2tOw2BRS85r9dxCSxNGlwYjw09o=',
+                'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICtdH4RvvStuu51nq8oiHRbyBB6UUISEA2iyMbg2t4IO',
+                'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD28UisgIiBqrlR+47V8v6ek5+fe58iaVIzLvsrEWDREh8QkSR01ZfxXb70oet/5hbRS5Fnnc1evw+5lNLAj3xHN0B1nGL4u3mUdoZX7w3I7llHG6A77Y0UmdgA9GF4xAxSRp75Cv5Ru7AQ4yczIc3J7KKjQgVwGFEdsbUnKENao4+yoHsFOG3eX63Zoqkxv1DphUfVT04IaUf6eyoJBOGmVhplDMWBIxkDG54JiFl/8CjyMEWpnYotmFsDfgfLkgmeyHad+lCvBsEM44QtZGO4F4nko8eFhOH2pwpDeczpgboC3CNjvuHW4ubp/6NUX+IAb812g8+IoCRafCyar1G5']))
         env.instance.config.setdefault('password-fallback', True)
         env.instance.config.setdefault('password', b'mfsroot')
         if 'bootstrap-ssh-fingerprints' in env.instance.config:
