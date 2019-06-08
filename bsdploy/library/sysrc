@@ -19,10 +19,14 @@ class Sysrc(object):
         self.state = self.module.params.pop('state')
         self.name = self.module.params.pop('name')
         self.value = self.module.params.pop('value')
+        self.dst = self.module.params.pop('dst')
         self.cmd = self.module.get_bin_path('sysrc', required=True)
 
     def sysrc(self, *params):
-        return self.module.run_command([self.cmd] + list(params))
+        params = list(params)
+        if self.dst:
+            params = ['-f', self.dst] + params
+        return self.module.run_command([self.cmd] + params)
 
     def change_needed(self, *params):
         (rc, out, err) = self.sysrc('-c', *params)
@@ -57,7 +61,8 @@ MODULE_SPECS = dict(
     argument_spec=dict(
         name=dict(required=True, type='str'),
         value=dict(type='str'),
-        state=dict(default='present', choices=['present', 'absent'], type='str')),
+        state=dict(default='present', choices=['present', 'absent'], type='str'),
+        dst=dict(type='str')),
     supports_check_mode=True)
 
 
