@@ -404,7 +404,7 @@ class BootstrapUtils:
         bsd_url = env.instance.config.get('bootstrap-bsd-url')
         if not bsd_url:
             with settings(quiet(), warn_only=True):
-                result = run("find /cdrom/ /media/ -name 'base.txz' -exec dirname {} \;")
+                result = run("find /cdrom/ /media/ -name 'base.txz' -exec dirname {} \\;")
                 if result.return_code == 0:
                     bsd_url = result.strip()
         return bsd_url

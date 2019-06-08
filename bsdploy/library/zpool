@@ -172,7 +172,7 @@ class Zpool(object):
         return result
 
     def destroy(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def __call__(self):
         result = dict(name=self.name, state=self.state)
