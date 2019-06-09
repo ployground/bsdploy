@@ -201,7 +201,7 @@ def wait_for_ssh(host, port, timeout=90):
             try:
                 s.settimeout(1)
                 if s.connect_ex((host, port)) == 0:
-                    if s.recv(128).startswith('SSH-2'):
+                    if s.recv(128).startswith(b'SSH-2'):
                         return
             except socket.timeout:
                 timeout -= 1
