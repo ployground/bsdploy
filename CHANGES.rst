@@ -1,4 +1,4 @@
-3.0.0b3 - Unreleased
+3.0.0b3 - 2019-06-09
 ====================
 
 - [feature] Python 3.x support with Ansible >= 2.4.x.
