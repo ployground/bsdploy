@@ -133,6 +133,8 @@ def _bootstrap():
         run('''touch /mnt/firstboot''')
         run('''sysrc -f /mnt/etc/rc.conf firstboot_freebsd_update_enable=YES''')
 
+    # update from config
+    bootstrap_packages += env.instance.config.get('bootstrap-packages', '').split()
     # we need to install python here, because there is no way to install it via
     # ansible playbooks
     bu.install_pkg('/mnt', chroot=True, packages=bootstrap_packages)
