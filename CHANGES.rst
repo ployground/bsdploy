@@ -1,3 +1,9 @@
+3.0.0b4 - Unreleased
+====================
+
+- [feature] allow override of ``destroygeom`` via ``bootstrap-destroygeom``.
+
+
 3.0.0b3 - 2019-06-09
 ====================
 

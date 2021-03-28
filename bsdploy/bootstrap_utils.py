@@ -422,6 +422,16 @@ class BootstrapUtils:
         return bsd_url
 
     @lazy
+    def destroygeom(self):
+        destroygeom = env.instance.config.get('bootstrap-destroygeom')
+        if destroygeom:
+            dest = '/root/bsdploy_destroygeom'
+            put(abspath(join(self.ploy_conf_path, destroygeom)), dest, mode=0o755)
+            return dest
+        else:
+            return 'destroygeom'
+
+    @lazy
     def zfsinstall(self):
         zfsinstall = env.instance.config.get('bootstrap-zfsinstall')
         if zfsinstall:

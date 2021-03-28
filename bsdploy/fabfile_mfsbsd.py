@@ -106,6 +106,8 @@ def _bootstrap():
 
     print("\nThe generated rc_conf:\n%s" % rc_conf)
     print("bootstrap-bsd-url:", bu.bsd_url)
+    if 'bootstrap-destroygeom' in env.instance.config:
+        print("bootstrap-destroygeom:", env.instance.config['bootstrap-destroygeom'])
     system_pool_name = env.instance.config.get('bootstrap-system-pool-name', 'system')
     print("bootstrap-system-pool-name:", system_pool_name)
     data_pool_name = env.instance.config.get('bootstrap-data-pool-name', 'tank')
@@ -133,7 +135,8 @@ def _bootstrap():
     system_pool_arg = ''
     if system_pool_size:
         system_pool_arg = '-z %s' % system_pool_size
-    run('destroygeom {devices_args} -p {system_pool_name} -p {data_pool_name}'.format(
+    run('{destroygeom} {devices_args} -p {system_pool_name} -p {data_pool_name}'.format(
+        destroygeom=bu.destroygeom,
         devices_args=devices_args,
         system_pool_name=system_pool_name,
         data_pool_name=data_pool_name))
