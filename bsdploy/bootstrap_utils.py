@@ -435,7 +435,7 @@ class BootstrapUtils:
     def zfsinstall(self):
         zfsinstall = env.instance.config.get('bootstrap-zfsinstall')
         if zfsinstall:
-            dest = '/root/bin/bsdploy_zfsinstall'
+            dest = '/root/bsdploy_zfsinstall'
             put(abspath(join(self.ploy_conf_path, zfsinstall)), dest, mode=0o755)
             return dest
         else:

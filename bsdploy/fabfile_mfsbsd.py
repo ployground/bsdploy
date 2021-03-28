@@ -108,6 +108,8 @@ def _bootstrap():
     print("bootstrap-bsd-url:", bu.bsd_url)
     if 'bootstrap-destroygeom' in env.instance.config:
         print("bootstrap-destroygeom:", env.instance.config['bootstrap-destroygeom'])
+    if 'bootstrap-zfsinstall' in env.instance.config:
+        print("bootstrap-zfsinstall:", env.instance.config['bootstrap-zfsinstall'])
     system_pool_name = env.instance.config.get('bootstrap-system-pool-name', 'system')
     print("bootstrap-system-pool-name:", system_pool_name)
     data_pool_name = env.instance.config.get('bootstrap-data-pool-name', 'tank')
