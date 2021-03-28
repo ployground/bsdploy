@@ -7,7 +7,7 @@ develop: .installed.cfg
 	bin/buildout -v
 
 bin/buildout: bin/pip
-	bin/pip install -U zc.buildout
+	bin/pip install -U "zc.buildout>=3dev"
 
 # needed for tox
 bin/virtualenv: bin/pip
