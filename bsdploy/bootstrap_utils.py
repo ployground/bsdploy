@@ -303,8 +303,6 @@ class BootstrapUtils:
                         print("\nUsing http proxy {http_proxy}".format(**env.instance.config))
                 to_be_fetched_count += 1
                 print('{0.url} -> {0.remote}'.format(bf))
-        if to_be_fetched_count == 0:
-            print("\nNo files will be downloaded on the host during bootstrap.")
         print()
 
     def create_bootstrap_directories(self):
