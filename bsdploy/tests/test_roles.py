@@ -57,6 +57,8 @@ def iter_tasks(plays):
                     meta_action = task.args.get('_raw_params')
                     if meta_action == 'flush_handlers':  # pragma: nocover - branch coverage only on failure
                         continue
+                    if meta_action == 'role_complete':  # pragma: nocover - branch coverage only on failure
+                        continue
                     raise ValueError  # pragma: nocover - only on failure
                 yield play, task
 
