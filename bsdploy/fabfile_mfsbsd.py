@@ -127,7 +127,7 @@ def _bootstrap():
     bootstrap_packages = env.instance.config.get('bootstrap-packages', 'python27').split()
     if firstboot_update:
         bootstrap_packages.append('firstboot-freebsd-update')
-    print("bootstrap-packages:", bootstrap_packages)
+    print("bootstrap-packages:", ", ".join(bootstrap_packages))
 
     yes = env.instance.config.get('bootstrap-yes', False)
     if not (yes or yesno("\nContinuing will destroy the existing data on the following devices:\n    %s\n\nContinue?" % ' '.join(bu.devices))):
