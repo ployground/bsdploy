@@ -87,6 +87,8 @@ You can use the following optional parameters to configure the bootstrapping pro
 
 - ``bootstrap-firstboot-update``: If set install and enable the `firstboot-freebsd-update <http://www.freshports.org/sysutils/firstboot-freebsd-update/>`_ package. This will update the installed system automatically (meaning non-interactively) to the latest patchlevel upon first boot. Disabled by default.
 
+- ``bootstrap-password``: If set will use the provided password for bootstrapping. It is used to update the known hosts. You might still have to provide it manually for the SSH command used during bootstrap.
+
 - ``http_proxy``: If set, that proxy will be used for all ``pkg`` operations performed on that host, as well as for downloading any assets during bootstrapping (``base.tbz`` etc.)
 
 

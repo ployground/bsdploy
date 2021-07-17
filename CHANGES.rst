@@ -1,6 +1,7 @@
 3.0.0b4 - Unreleased
 ====================
 
+- [feature] support ``bootstrap-password`` option.
 - [feature] allow override of ``destroygeom`` via ``bootstrap-destroygeom``.
 - [feature] allow override of packages installed during bootstrap via ``bootstrap-packages``.
 

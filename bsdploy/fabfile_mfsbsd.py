@@ -63,6 +63,10 @@ def _mfsbsd(env, kwargs={}):
 
 
 def _bootstrap():
+    if 'bootstrap-password' in env.instance.config:
+        print("Using password for bootstrap SSH connection")
+        env.instance.config['password-fallback'] = True
+        env.instance.config['password'] = env.instance.config['bootstrap-password']
     bu = BootstrapUtils()
     bu.generate_ssh_keys()
     bu.print_bootstrap_files()
