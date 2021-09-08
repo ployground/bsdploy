@@ -1,4 +1,4 @@
-3.0.0b4 - Unreleased
+3.0.0b4 - 2020-09-08
 ====================
 
 - [feature] support ``bootstrap-password`` option.
