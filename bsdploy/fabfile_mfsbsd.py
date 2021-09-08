@@ -166,7 +166,7 @@ def _bootstrap():
                 data_pool_name=data_pool_name,
                 device=device))
     # mount devfs inside the new system
-    if 'devfs on /rw/dev' not in bu.mounts:
+    if 'devfs on /mnt/dev' not in bu.mounts:
         run('mount -t devfs devfs /mnt/dev')
     # setup bare essentials
     run('cp /etc/resolv.conf /mnt/etc/resolv.conf', warn_only=True)

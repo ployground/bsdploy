@@ -4,6 +4,7 @@
 - [feature] support ``bootstrap-password`` option.
 - [feature] allow override of ``destroygeom`` via ``bootstrap-destroygeom``.
 - [feature] allow override of packages installed during bootstrap via ``bootstrap-packages``.
+- [fix] correct path to devfs device in mfsbsd boostrap script.
 
 
 3.0.0b3 - 2019-06-09
