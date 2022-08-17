@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import pytest
 
@@ -25,7 +26,7 @@ def ctrl(ployconf, tempdir):
 
 def test_bootstrap_command(capsys, ctrl, monkeypatch):
     def do(self, *args, **kwargs):
-        print "do with %r, %r called!" % (args, kwargs)
+        print("do with %r, %r called!" % (args, kwargs))
     monkeypatch.setattr('ploy_fabric.do', do)
     ctrl(['./bin/ploy', 'bootstrap'])
     (out, err) = capsys.readouterr()
@@ -35,7 +36,7 @@ def test_bootstrap_command(capsys, ctrl, monkeypatch):
 
 
 def test_augment_ezjail_master(ctrl, ployconf, tempdir):
-    tempdir['bootstrap-files/ssh_host_rsa_key.pub'].fill('rsa')
+    tempdir['jailhost/bootstrap-files/ssh_host_rsa_key.pub'].fill('rsa')
     config = dict(ctrl.instances['jailhost'].config)
     assert sorted(config.keys()) == [
         'ansible_python_interpreter', 'fabfile', 'fabric-shell',
@@ -240,8 +241,9 @@ def test_augment_overwrite(ctrl, instance, key, value, expected, ployconf, tempd
         if isinstance(expected, tuple):
             key, expected = expected
         if isinstance(expected, dict):
-            for k, v in expected.items():
-                expected[k] = v.format(**format_info)
+            expected = {
+                k: v.format(**format_info)
+                for k, v in expected.items()}
         else:
             expected = expected.format(**format_info)
         assert config[key] == expected

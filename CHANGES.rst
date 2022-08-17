@@ -1,6 +1,33 @@
-2.4.0 - Unreleased
-==================
+3.0.0b4 - 2020-09-08
+====================
 
+- [feature] support ``bootstrap-password`` option.
+- [feature] allow override of ``destroygeom`` via ``bootstrap-destroygeom``.
+- [feature] allow override of packages installed during bootstrap via ``bootstrap-packages``.
+- [fix] correct path to devfs device in mfsbsd boostrap script.
+
+
+3.0.0b3 - 2019-06-09
+====================
+
+- [feature] Python 3.x support with Ansible >= 2.4.x.
+- [feature] the sysrc module supports ``dst`` option to use another file then the default ``/etc/rc.conf``.
+- [change] renamed ``bootstrap-host-keys`` to ``bootstrap-ssh-host-keys``.
+- [change] reintroduce ``bootstrap-ssh-fingerprints`` to allow overriding of ``ssh-fingerprints`` for bootstrapping.
+
+
+3.0.0b2 - 2018-02-11
+====================
+
+- [change] ask before automatically generating missing ssh host keys during bootstrap.
+- [change] the default location for ``bootstrap-files`` changed from ``[playbooks-directory]/bootstrap-files`` to ``[playbooks-directory]/[instance-uid]/bootstrap-files``.
+- [change] renamed ``firstboot-update`` to ``bootstrap-firstboot-update`` to match the other variables.
+
+
+3.0.0b1 - 2018-02-07
+====================
+
+- [change] switch to use ploy 2.0.0 and Ansible 2.4.x.
 - [feature] the ``fabfile`` option is set if ``[instance-name]/fabfile.py`` exists when the more specific ``[master-name]-[instance-name]/fabfile.py`` doesn't exist.
 
 - [fix]: honour the ``boottrap-packages`` setting for mfsbsd.

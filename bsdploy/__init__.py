@@ -65,7 +65,7 @@ class PloyBootstrapCmd(object):
             metavar="master",
             help="Name of the jailhost from the config.",
             choices=masters,
-            default=masters.keys()[0] if len(masters) == 1 else None)
+            default=list(masters.keys())[0] if len(masters) == 1 else None)
         parser.add_argument(
             "-y", "--yes", action="store_true",
             help="Answer yes to all questions.")
@@ -75,6 +75,7 @@ class PloyBootstrapCmd(object):
         args = parser.parse_args(argv)
         master = args.master if len(masters) == 1 else args.master[0]
         instance = self.ctrl.instances[master]
+        instance.config.setdefault('ssh-timeout', 90)
         instance.hooks.before_bsdploy_bootstrap(instance)
         bootstrap_args = {'bootstrap-yes': args.yes}
         if args.http_proxy:
@@ -84,10 +85,13 @@ class PloyBootstrapCmd(object):
 
 
 def get_bootstrap_path(instance):
+    from ploy_ansible import get_playbooks_directory
     host_defined_path = instance.config.get('bootstrap-files')
-    ploy_conf_path = instance.master.main_config.path
+    main_config = instance.master.main_config
+    ploy_conf_path = main_config.path
     if host_defined_path is None:
-        bootstrap_path = path.join(ploy_conf_path, '..', 'bootstrap-files')
+        playbooks_directory = get_playbooks_directory(main_config)
+        bootstrap_path = path.join(playbooks_directory, instance.uid, 'bootstrap-files')
     else:
         bootstrap_path = path.join(ploy_conf_path, host_defined_path)
     return bootstrap_path
@@ -95,21 +99,18 @@ def get_bootstrap_path(instance):
 
 def get_ssh_key_paths(instance):
     bootstrap_path = get_bootstrap_path(instance)
+    glob_path = path.join(bootstrap_path, 'ssh_host*_key.pub')
     key_paths = []
-    for ssh_key in glob(path.join(bootstrap_path, 'ssh_host*_key.pub')):
+    for ssh_key in glob(glob_path):
         ssh_key = path.abspath(ssh_key)
         key_paths.append(ssh_key)
     return key_paths
 
 
 def augment_instance(instance):
-    from ploy_ansible import get_ansible_version, get_playbooks_directory
+    from ploy_ansible import get_playbooks_directory
     from ploy_ansible import has_playbook
     from ploy.config import ConfigSection
-
-    if get_ansible_version() < (1, 5):
-        log.error("You have an Ansible version below 1.5.0, which isn't supported anymore.")
-        sys.exit(1)
 
     main_config = instance.master.main_config
 

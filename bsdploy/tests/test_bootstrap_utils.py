@@ -1,6 +1,5 @@
 from ansible.errors import AnsibleUndefinedVariable
 from bsdploy import bootstrap_utils
-from bsdploy.tests.conftest import default_mounts, run_result
 import os
 import pytest
 
@@ -29,7 +28,7 @@ def test_interfaces_missing(bu, run_mock):
     assert bu.phys_interfaces == []
 
 
-def test_devices(bu, run_mock):
+def test_devices(bu, default_mounts, run_mock):
     run_mock.expected = [
         ('sysctl -n kern.disks', {}, 'ada0 cd0\n'),
         ('mount', {}, default_mounts),
@@ -39,7 +38,7 @@ def test_devices(bu, run_mock):
     assert bu.devices == set(['ada0'])
 
 
-def test_devices_cdrom_mounted(bu, run_mock):
+def test_devices_cdrom_mounted(bu, default_mounts, run_mock):
     run_mock.expected = [
         ('sysctl -n kern.disks', {}, 'ada0 cd0\n'),
         ('mount', {}, '\n'.join([
@@ -50,7 +49,7 @@ def test_devices_cdrom_mounted(bu, run_mock):
     assert bu.devices == set(['ada0'])
 
 
-def test_devices_usb_mounted(bu, run_mock):
+def test_devices_usb_mounted(bu, default_mounts, run_mock):
     run_mock.expected = [
         ('sysctl -n kern.disks', {}, 'ada0 da0\n'),
         ('mount', {}, '\n'.join([
@@ -61,7 +60,7 @@ def test_devices_usb_mounted(bu, run_mock):
     assert bu.devices == set(['ada0'])
 
 
-def test_devices_different_cdrom(bu, run_mock, env_mock):
+def test_devices_different_cdrom(bu, default_mounts, run_mock, env_mock):
     run_mock.expected = [
         ('sysctl -n kern.disks', {}, 'ada0 cd1\n'),
         ('mount', {}, default_mounts),
@@ -72,7 +71,7 @@ def test_devices_different_cdrom(bu, run_mock, env_mock):
     assert bu.devices == set(['ada0'])
 
 
-def test_devices_different_usb(bu, run_mock, env_mock):
+def test_devices_different_usb(bu, default_mounts, run_mock, env_mock):
     run_mock.expected = [
         ('sysctl -n kern.disks', {}, 'ada0 cd0 da1\n'),
         ('mount', {}, default_mounts),
@@ -83,7 +82,7 @@ def test_devices_different_usb(bu, run_mock, env_mock):
     assert bu.devices == set(['ada0'])
 
 
-def test_devices_from_config(bu, run_mock, env_mock):
+def test_devices_from_config(bu, default_mounts, run_mock, env_mock):
     env_mock.instance.config = {'bootstrap-system-devices': 'ada0'}
     run_mock.expected = [
         ('sysctl -n kern.disks', {}, 'ada0 cd0\n'),
@@ -94,7 +93,7 @@ def test_devices_from_config(bu, run_mock, env_mock):
     assert bu.devices == set(['ada0'])
 
 
-def test_bsd_url(bu, run_mock):
+def test_bsd_url(bu, run_mock, run_result):
     run_mock.expected = [
         ('mount', {}, ''),
         ('test -e /dev/cd0 && mount_cd9660 /dev/cd0 /cdrom || true', {}, '\n'),
@@ -103,7 +102,7 @@ def test_bsd_url(bu, run_mock):
     assert bu.bsd_url == '/cdrom/9.2-RELEASE-amd64'
 
 
-def test_bsd_url_not_found(bu, run_mock):
+def test_bsd_url_not_found(bu, run_mock, run_result):
     run_mock.expected = [
         ('mount', {}, ''),
         ('test -e /dev/cd0 && mount_cd9660 /dev/cd0 /cdrom || true', {}, '\n'),
@@ -129,7 +128,7 @@ def test_bootstrap_files_no_ssh_keys(bu, capsys, tempdir):
     (out, err) = capsys.readouterr()
     out_lines = out.splitlines()
     assert out_lines == [
-        "Found no public key in %(tempdir)s/.ssh, you have to create '%(tempdir)s/bootstrap-files/authorized_keys' manually" % format_info]
+        "Found no public key in %(tempdir)s/.ssh, you have to create '%(tempdir)s/default-test_instance/bootstrap-files/authorized_keys' manually" % format_info]
 
 
 def test_bootstrap_files_multiple_ssh_keys_but_none_used(bu, capsys, tempdir, yesno_mock):
@@ -145,7 +144,7 @@ def test_bootstrap_files_multiple_ssh_keys_but_none_used(bu, capsys, tempdir, ye
     (out, err) = capsys.readouterr()
     out_lines = out.splitlines()
     assert out_lines == [
-        "The '%(tempdir)s/bootstrap-files/authorized_keys' file is missing." % format_info,
+        "The '%(tempdir)s/default-test_instance/bootstrap-files/authorized_keys' file is missing." % format_info,
         "Should we generate it using the key in '%(tempdir)s/.ssh/id_dsa.pub'?" % format_info,
         "Should we generate it using the key in '%(tempdir)s/.ssh/id_rsa.pub'?" % format_info]
 
@@ -161,11 +160,11 @@ def test_bootstrap_files_multiple_ssh_keys_use_second(bu, capsys, run_mock, temp
     (out, err) = capsys.readouterr()
     out_lines = out.splitlines()
     assert out_lines == [
-        "The '%(tempdir)s/bootstrap-files/authorized_keys' file is missing." % format_info,
+        "The '%(tempdir)s/default-test_instance/bootstrap-files/authorized_keys' file is missing." % format_info,
         "Should we generate it using the key in '%(tempdir)s/.ssh/id_dsa.pub'?" % format_info,
         "Should we generate it using the key in '%(tempdir)s/.ssh/id_rsa.pub'?" % format_info]
-    assert os.path.exists(tempdir['bootstrap-files/authorized_keys'].path)
-    with open(tempdir['bootstrap-files/authorized_keys'].path) as f:
+    assert os.path.exists(tempdir['default-test_instance/bootstrap-files/authorized_keys'].path)
+    with open(tempdir['default-test_instance/bootstrap-files/authorized_keys'].path) as f:
         assert f.read() == 'id_rsa'
 
 
@@ -179,7 +178,9 @@ class TestFileEncryption:
     @pytest.fixture
     def passwd_source(self, monkeypatch):
         class DummySource:
-            passwd = 'dummy-vault-password'
+            id = b'dummy-id'
+            passwd = b'dummy-vault-password'
+            bytes = bytes(passwd)
 
             def get(self, fail_on_error=True):
                 return self.passwd
@@ -189,19 +190,19 @@ class TestFileEncryption:
 
     def test_bootstrap_files_encrypted(self, bu, env_mock, passwd_source, tempdir):
         vaultlib = env_mock.instance.get_vault_lib()
-        tempdir['bootstrap-files/authorized_keys'].fill('id_dsa')
-        tempdir['bootstrap-files/secret.txt'].fill(vaultlib.encrypt('test-secret'))
+        tempdir['default-test_instance/bootstrap-files/authorized_keys'].fill('id_dsa')
+        tempdir['default-test_instance/bootstrap-files/secret.txt'].fill_binary(vaultlib.encrypt('test-secret'))
         bindata = ''.join(chr(x) for x in range(256))
-        tempdir['bootstrap-files/secret.bin'].fill(vaultlib.encrypt(bindata))
-        with open(tempdir['bootstrap-files/secret.txt'].path) as f:
+        tempdir['default-test_instance/bootstrap-files/secret.bin'].fill_binary(vaultlib.encrypt(bindata))
+        with open(tempdir['default-test_instance/bootstrap-files/secret.txt'].path) as f:
             assert 'test-secret' not in f.read()
-        tempdir['bootstrap-files/files.yml'].fill([
+        tempdir['default-test_instance/bootstrap-files/files.yml'].fill([
             "'secret.txt':",
             "    remote: /root/secret.txt"])
         for name, bf in bu.bootstrap_files.items():
             if name == 'secret.txt':
                 assert bf.encrypted
-                assert bf.open({}).read() == 'test-secret'
+                assert bf.open({}).read() == b'test-secret'
             elif name == 'secret.bin':
                 assert bf.encrypted
                 assert bf.open({}).read() == bindata
@@ -210,39 +211,39 @@ class TestFileEncryption:
 
 
 def test_default_rc_conf(bu, tempdir):
-    tempdir['bootstrap-files/authorized_keys'].fill('id_dsa')
+    tempdir['default-test_instance/bootstrap-files/authorized_keys'].fill('id_dsa')
     bfs = bu.bootstrap_files
     result = bfs['rc.conf'].read({
         'hostname': 'foo',
         'interfaces': []})
-    assert result == '\n'.join([
-        'hostname="foo"',
-        'sshd_enable="YES"',
-        'syslogd_flags="-ss"',
-        'zfs_enable="YES"',
-        'pf_enable="YES"',
-        ''])
+    assert result == b'\n'.join([
+        b'hostname="foo"',
+        b'sshd_enable="YES"',
+        b'syslogd_flags="-ss"',
+        b'zfs_enable="YES"',
+        b'pf_enable="YES"',
+        b''])
 
 
 @pytest.mark.parametrize("input, context, expected", [
-    ('foo', {}, 'foo'),
+    ('foo', {}, b'foo'),
     ('{{ foo }}', {}, AnsibleUndefinedVariable),
-    ('{{ foo }}', {'foo': 'bar'}, 'bar'),
-    ('    {% for x in xs %}bar\nfoo_{{x}}\n{% endfor %}\n', {'xs': []}, '    \n'),
-    ('    {% for x in xs %}bar\nfoo_{{x}}\n{% endfor %}\n', {'xs': ['bar']}, '    bar\nfoo_bar\n'),
-    ('    {% for x in xs -%}\nfoo_{{x}}\n{% endfor %}\n', {'xs': ['bar']}, '    foo_bar\n'),
-    ('    {% for x in xs %}bar\n    foo_{{x}}\n{% endfor %}\n', {'xs': []}, '    \n'),
-    ('    {% for x in xs %}bar\n    foo_{{x}}\n{% endfor %}\n', {'xs': ['bar']}, '    bar\n    foo_bar\n'),
-    ('    {% for x in xs -%}\n    foo_{{x}}\n{% endfor %}\n', {'xs': ['bar']}, '    foo_bar\n'),
+    ('{{ foo }}', {'foo': 'bar'}, b'bar'),
+    ('    {% for x in xs %}bar\nfoo_{{x}}\n{% endfor %}\n', {'xs': []}, b'    \n'),
+    ('    {% for x in xs %}bar\nfoo_{{x}}\n{% endfor %}\n', {'xs': ['bar']}, b'    bar\nfoo_bar\n'),
+    ('    {% for x in xs -%}\nfoo_{{x}}\n{% endfor %}\n', {'xs': ['bar']}, b'    foo_bar\n'),
+    ('    {% for x in xs %}bar\n    foo_{{x}}\n{% endfor %}\n', {'xs': []}, b'    \n'),
+    ('    {% for x in xs %}bar\n    foo_{{x}}\n{% endfor %}\n', {'xs': ['bar']}, b'    bar\n    foo_bar\n'),
+    ('    {% for x in xs -%}\n    foo_{{x}}\n{% endfor %}\n', {'xs': ['bar']}, b'    foo_bar\n'),
 ])
 def test_bootstrap_files_template(bu, input, context, expected, tempdir):
-    tempdir['bootstrap-files/authorized_keys'].fill('id_dsa')
-    tempdir['bootstrap-files/rc.conf'].fill(input)
+    tempdir['default-test_instance/bootstrap-files/authorized_keys'].fill('id_dsa')
+    tempdir['default-test_instance/bootstrap-files/rc.conf'].fill(input, allow_conf=True)
     bfs = bu.bootstrap_files
-    if isinstance(expected, basestring):
+    if isinstance(expected, bytes):
         result = bfs['rc.conf'].read(context)
         assert result == expected
-        assert not isinstance(result, unicode)
+        assert isinstance(result, bytes)
     else:
         with pytest.raises(expected):
             bfs['rc.conf'].read(context)
@@ -250,7 +251,7 @@ def test_bootstrap_files_template(bu, input, context, expected, tempdir):
 
 def test_fetch_assets(bu, local_mock, tempdir):
     format_info = dict(tempdir=tempdir.directory)
-    tempdir['bootstrap-files/authorized_keys'].fill('id_dsa')
+    tempdir['default-test_instance/bootstrap-files/authorized_keys'].fill('id_dsa')
     local_mock.expected = [
         ('wget -c -O "%(tempdir)s/downloads/pkg.txz" "http://pkg.freebsd.org/freebsd:10:x86:64/quarterly/Latest/pkg.txz"' % format_info, {}, '')]
     bu.fetch_assets()
@@ -260,13 +261,13 @@ def test_fetch_assets_packagesite(bu, local_mock, tempdir):
     from bsdploy import bsdploy_path
     pytest.importorskip("lzma")
     format_info = dict(tempdir=tempdir.directory)
-    tempdir['bootstrap-files/authorized_keys'].fill('id_dsa')
-    tempdir['bootstrap-files/files.yml'].fill([
+    tempdir['default-test_instance/bootstrap-files/authorized_keys'].fill('id_dsa')
+    tempdir['default-test_instance/bootstrap-files/files.yml'].fill([
         "'packagesite.txz':",
         "    url: 'http://pkg.freebsd.org/freebsd:10:x86:64/quarterly/packagesite.txz'",
         "    remote: '/mnt/var/cache/pkg/packagesite.txz'"])
-    with open(os.path.join(bsdploy_path, 'tests', 'packagesite.txz')) as f:
-        tempdir['downloads/packagesite.txz'].fill(f.read())
+    with open(os.path.join(bsdploy_path, 'tests', 'packagesite.txz'), 'rb') as f:
+        tempdir['downloads/packagesite.txz'].fill_binary(f.read())
     local_mock.expected = [
         ('wget -c -O "%(tempdir)s/downloads/packagesite.txz" "http://pkg.freebsd.org/freebsd:10:x86:64/quarterly/packagesite.txz"' % format_info, {}, ''),
         ('wget -c -O "%(tempdir)s/downloads/packages/freebsd:10:x86:64/latest/All/python27-2.7.6_4.txz" "http://pkg.freebsd.org/freebsd:10:x86:64/latest/All/python27-2.7.6_4.txz"' % format_info, {}, ''),

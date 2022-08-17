@@ -1,9 +1,6 @@
 from __future__ import print_function
-try:  # pragma: nocover
-    from cStringIO import StringIO
-except ImportError:  # pragma: nocover
-    from StringIO import StringIO
-from bsdploy import bsdploy_path
+from io import BytesIO
+from bsdploy import bsdploy_path, get_bootstrap_path
 from fabric.api import env, local, put, quiet, run, settings
 from lazy import lazy
 from os.path import abspath, dirname, expanduser, exists, join
@@ -16,6 +13,18 @@ import os
 import sys
 import weakref
 import yaml
+
+
+try:
+    string_types = basestring
+except NameError:
+    string_types = str
+
+
+try:
+    unicode
+except NameError:
+    unicode = str
 
 
 class BootstrapFile(object):
@@ -33,12 +42,12 @@ class BootstrapFile(object):
         if 'url' in self.info:
             return self.bu().download_path
         else:
-            return self.bu().custom_template_path
+            return self.bu().bootstrap_path
 
     @property
     def raw_fallback(self):
         paths = self.info.get('fallback', [])
-        if isinstance(paths, basestring):
+        if isinstance(paths, string_types):
             paths = [paths]
         return paths
 
@@ -55,7 +64,7 @@ class BootstrapFile(object):
         if self.raw_fallback:
             return local_path
         if not exists(local_path) and not self.url:
-            local_path = join(self.bu().default_template_path, self.filename)
+            local_path = join(self.bu().default_bootstrap_path, self.filename)
         if not exists(local_path) and not self.url:
             return
         return local_path
@@ -69,9 +78,20 @@ class BootstrapFile(object):
 
     @lazy
     def template_from_file(self):
-        from ploy_ansible import inject_ansible_paths
+        from ploy_ansible import ANSIBLE1, inject_ansible_paths
         inject_ansible_paths()
-        from ansible.utils.template import template_from_file
+        if ANSIBLE1:
+            from ansible.utils.template import template_from_file
+            return template_from_file
+        from ansible.parsing.dataloader import DataLoader
+        from ansible.template import Templar
+        loader = DataLoader()
+
+        def template_from_file(basedir, path, variables, vault_password=None):
+            templar = Templar(loader, variables=variables)
+            with open(path) as f:
+                template = f.read()
+            return templar.template(template)
         return template_from_file
 
     def open(self, context):
@@ -79,12 +99,12 @@ class BootstrapFile(object):
             result = self.template_from_file(dirname(self.local), self.local, context)
             if isinstance(result, unicode):
                 result = result.encode('utf-8')
-            return StringIO(result)
+            return BytesIO(result)
         elif self.encrypted:
             vaultlib = env.instance.get_vault_lib()
             with open(self.local, 'r') as f:
                 result = f.read()
-            return StringIO(vaultlib.decrypt(result))
+            return BytesIO(vaultlib.decrypt(result))
         else:
             return open(self.local, 'r')
 
@@ -106,16 +126,12 @@ class BootstrapUtils:
         return env.instance.master.main_config.path
 
     @property
-    def default_template_path(self):
+    def default_bootstrap_path(self):
         return join(bsdploy_path, 'bootstrap-files')
 
     @property
-    def custom_template_path(self):
-        host_defined_path = env.instance.config.get('bootstrap-files')
-        if host_defined_path is None:
-            return abspath(join(self.ploy_conf_path, '..', 'bootstrap-files'))
-        else:
-            return abspath(join(self.ploy_conf_path, host_defined_path))
+    def bootstrap_path(self):
+        return get_bootstrap_path(env.instance)
 
     @property
     def env_vars(self):
@@ -130,12 +146,20 @@ class BootstrapUtils:
         return abspath(join(self.ploy_conf_path, '..', 'downloads'))
 
     def generate_ssh_keys(self):
+        missing = []
         for ssh_key_name, ssh_keygen_args in sorted(self.ssh_keys):
-            if not exists(self.custom_template_path):
-                os.mkdir(self.custom_template_path)
-            ssh_key = join(self.custom_template_path, ssh_key_name)
+            ssh_key = join(self.bootstrap_path, ssh_key_name)
             if exists(ssh_key):
                 continue
+            missing.append((ssh_key, ssh_key_name, ssh_keygen_args))
+        if missing:
+            yes = env.instance.config.get('bootstrap-yes', False)
+            print("\n".join("Missing %s." % x[0] for x in missing))
+            if not yes and not yesno("Should the above missing ssh host keys be generated in '%s'?" % self.bootstrap_path):
+                sys.exit(1)
+        if not exists(self.bootstrap_path):
+            os.makedirs(self.bootstrap_path)
+        for ssh_key, ssh_key_name, ssh_keygen_args in missing:
             with settings(quiet(), warn_only=True):
                 result = local(
                     "ssh-keygen %s -f %s -N ''" % (ssh_keygen_args, ssh_key),
@@ -168,7 +192,7 @@ class BootstrapUtils:
 
         For files that cannot be downloaded (authorized_keys, rc.conf etc.) we allow the user to provide their
         own version in a ``bootstrap-files`` folder. The location of this folder can either be explicitly provided
-        via the ``bootstrap-files`` key in the host definition of the config file or it defaults to ``deployment/bootstrap-files``.
+        via the ``bootstrap-files`` key in the host definition of the config file or it defaults to ``deployment/[instance-uid]/bootstrap-files``.
 
         User provided files can be rendered as Jinja2 templates, by providing ``use_jinja: True`` in the YAML file.
         They will be rendered with the instance configuration dictionary as context.
@@ -178,8 +202,8 @@ class BootstrapUtils:
         we look in ``~/.ssh/identity.pub``.
         """
         bootstrap_file_yamls = [
-            abspath(join(self.default_template_path, self.bootstrap_files_yaml)),
-            abspath(join(self.custom_template_path, self.bootstrap_files_yaml))]
+            abspath(join(self.default_bootstrap_path, self.bootstrap_files_yaml)),
+            abspath(join(self.bootstrap_path, self.bootstrap_files_yaml))]
         bootstrap_files = dict()
         if self.upload_authorized_keys:
             bootstrap_files['authorized_keys'] = BootstrapFile(self, 'authorized_keys', **{
@@ -211,7 +235,7 @@ class BootstrapUtils:
                     yes = env.instance.config.get('bootstrap-yes', False)
                     if yes or yesno("Should we generate it using the key in '%s'?" % path):
                         if not exists(bf.expected_path):
-                            os.mkdir(bf.expected_path)
+                            os.makedirs(bf.expected_path)
                         with open(bf.local, 'wb') as out:
                             with open(path, 'rb') as f:
                                 out.write(f.read())
@@ -239,7 +263,7 @@ class BootstrapUtils:
 
         if self.ssh_keys is not None:
             for ssh_key_name, ssh_key_options in list(self.ssh_keys):
-                ssh_key = join(self.custom_template_path, ssh_key_name)
+                ssh_key = join(self.bootstrap_path, ssh_key_name)
                 if exists(ssh_key):
                     pub_key_name = '%s.pub' % ssh_key_name
                     pub_key = '%s.pub' % ssh_key
@@ -250,12 +274,12 @@ class BootstrapUtils:
                         self, ssh_key_name, **dict(
                             local=ssh_key,
                             remote='/mnt/etc/ssh/%s' % ssh_key_name,
-                            mode=0600))
+                            mode=0o600))
                     bootstrap_files[pub_key_name] = BootstrapFile(
                         self, pub_key_name, **dict(
                             local=pub_key,
                             remote='/mnt/etc/ssh/%s' % pub_key_name,
-                            mode=0644))
+                            mode=0o644))
         if hasattr(env.instance, 'get_vault_lib'):
             vaultlib = env.instance.get_vault_lib()
             for bf in bootstrap_files.values():
@@ -279,8 +303,6 @@ class BootstrapUtils:
                         print("\nUsing http proxy {http_proxy}".format(**env.instance.config))
                 to_be_fetched_count += 1
                 print('{0.url} -> {0.remote}'.format(bf))
-        if to_be_fetched_count == 0:
-            print("\nNo files will be downloaded on the host during bootstrap.")
         print()
 
     def create_bootstrap_directories(self):
@@ -392,29 +414,34 @@ class BootstrapUtils:
         bsd_url = env.instance.config.get('bootstrap-bsd-url')
         if not bsd_url:
             with settings(quiet(), warn_only=True):
-                result = run("find /cdrom/ /media/ -name 'base.txz' -exec dirname {} \;")
+                result = run("find /cdrom/ /media/ -name 'base.txz' -exec dirname {} \\;")
                 if result.return_code == 0:
                     bsd_url = result.strip()
         return bsd_url
 
     @lazy
+    def destroygeom(self):
+        destroygeom = env.instance.config.get('bootstrap-destroygeom')
+        if destroygeom:
+            dest = '/root/bsdploy_destroygeom'
+            put(abspath(join(self.ploy_conf_path, destroygeom)), dest, mode=0o755)
+            return dest
+        else:
+            return 'destroygeom'
+
+    @lazy
     def zfsinstall(self):
         zfsinstall = env.instance.config.get('bootstrap-zfsinstall')
         if zfsinstall:
-            dest = '/root/bin/bsdploy_zfsinstall'
-            put(abspath(join(self.ploy_conf_path, zfsinstall)), dest, mode=0755)
+            dest = '/root/bsdploy_zfsinstall'
+            put(abspath(join(self.ploy_conf_path, zfsinstall)), dest, mode=0o755)
             return dest
         else:
             return 'zfsinstall'
 
     def _fetch_packages(self, packagesite, packages):
         import tarfile
-        try:
-            import lzma
-        except ImportError:
-            print("ERROR: The lzma package couldn't be imported.")
-            print("You most likely need to install pyliblzma in your virtualenv.")
-            sys.exit(1)
+        import lzma
         packageinfo = {}
         print("Loading package information from '%s'." % packagesite)
         if SafeLoader.__name__ != 'CSafeLoader':

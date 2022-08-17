@@ -68,7 +68,7 @@ class Zpool(object):
             self.module.fail_json(msg="Failed to generate '%s'.\n%s" % (self.geli_passphrase_location, err))
         with open(self.geli_passphrase_location, 'w') as f:
             f.write(out)
-        os.chmod(self.geli_passphrase_location, 0600)
+        os.chmod(self.geli_passphrase_location, 0o600)
 
     def prepare_data_devices(self, devices):
         data_devices = []
@@ -172,7 +172,7 @@ class Zpool(object):
         return result
 
     def destroy(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def __call__(self):
         result = dict(name=self.name, state=self.state)

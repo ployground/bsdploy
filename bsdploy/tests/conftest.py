@@ -1,25 +1,24 @@
+from __future__ import print_function
 from mock import Mock
-from ploy.tests.conftest import ployconf, tempdir
 import pytest
-
-
-(ployconf, tempdir)  # shutup pyflakes
 
 
 def pytest_addoption(parser):
     parser.addoption(
         "--quickstart-bsdploy", help="Run the quickstart with this bsdploy sdist",
-        action="store", dest="quickstart_bsdploy")
+        action="store", dest="quickstart_bsdploy", default=False)
     parser.addoption(
         "--ansible-version", help="The ansible version to use for quickstart tests, defaults to newest",
         action="store", dest="ansible_version")
 
 
-default_mounts = '\n'.join([
-    '/dev/md0 on / (ufs, local, read-only)',
-    'devfs on /dev (devfs, local, multilabel)',
-    'tmpfs on /rw (tmpfs, local)',
-    'devfs on /rw/dev (devfs, local, multilabel)'])
+@pytest.fixture
+def default_mounts():
+    return '\n'.join([
+        '/dev/md0 on / (ufs, local, read-only)',
+        'devfs on /dev (devfs, local, multilabel)',
+        'tmpfs on /rw (tmpfs, local)',
+        'devfs on /mnt/dev (devfs, local, multilabel)'])
 
 
 @pytest.fixture
@@ -44,12 +43,15 @@ class RunResult(str):
     pass
 
 
-def run_result(out, rc):
-    result = RunResult(out)
-    result.return_code = rc
-    result.succeeded = rc == 0
-    result.failed = rc != 0
-    return result
+@pytest.fixture
+def run_result():
+    def run_result(out, rc):
+        result = RunResult(out)
+        result.return_code = rc
+        result.succeeded = rc == 0
+        result.failed = rc != 0
+        return result
+    return run_result
 
 
 @pytest.fixture
@@ -152,7 +154,7 @@ def yesno_mock(monkeypatch):
             expected = '', False
         cmd, result = expected
         assert question == cmd
-        print question
+        print(question)
         return result
 
     yesno.side_effect = _yesno
