@@ -5,7 +5,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.rst')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
 
-version = "3.0.0b4"
+version = "3.0.0"
 
 install_requires = [
     'ansible;python_version>="3.10"',
