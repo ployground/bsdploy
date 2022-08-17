@@ -12,10 +12,10 @@ install_requires = [
     'PyYAML',
     'jinja2',
     'setuptools',
-    'ploy>=2.0.0b3',
-    'ploy_ansible>=2.0.0b7',
-    'ploy_ezjail>=2.0.0b2',
-    'ploy_fabric>=2.0.0b2',
+    'ploy>=2.0.0',
+    'ploy_ansible>=2.0.0',
+    'ploy_ezjail>=2.0.0',
+    'ploy_fabric>=2.0.0',
 ]
 
 setup(
@@ -35,7 +35,9 @@ setup(
         'Intended Audience :: System Administrators',
         'Operating System :: POSIX :: BSD :: FreeBSD',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 2 :: Only',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Topic :: System :: Installation/Setup',
         'Topic :: System :: Systems Administration',
     ],
@@ -43,6 +45,7 @@ setup(
     zip_safe=False,
     packages=['bsdploy'],
     install_requires=install_requires,
+    python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*, !=3.6.*',
     extras_require={
         'development': [
             'Sphinx',
