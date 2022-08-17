@@ -170,7 +170,9 @@ def test_quickstart_calls(confext, qs_path, ployconf, tempdir):
         '- hosts: jailhost-demo_jail',
         '  tasks:',
         '    - name: install nginx',
-        '      pkgng: name=nginx state=present',
+        '      pkgng:',
+        '        name: "nginx"',
+        '        state: "present"',
         '    - name: Setup nginx to start immediately and on boot',
         '      service: name=nginx enabled=yes state=started']
     assert tempdir['host_vars/jailhost.yml'].content().splitlines() == [

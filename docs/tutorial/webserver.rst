@@ -86,7 +86,9 @@ For jail instances, this name contains both the name of the master instance *and
 	- hosts: jailhost-webserver
 	  tasks:
 	    - name: install nginx
-	      pkgng: name=nginx state=present
+          pkgng:
+            name: "nginx"
+            state: "present"
 	    - name: enable nginx at startup time
 	      lineinfile: dest=/etc/rc.conf state=present line='nginx_enable=YES' create=yes
 	    - name: make sure nginx is running or reloaded

@@ -1,6 +1,8 @@
 ---
 - name: Ensure zfstools is installed
-  pkgng: name=zfstools state=present
+  pkgng:
+    name: "zfstools"
+    state: "present"
   tags: zfs_auto_snapshot
 
 - name: Setup hourly zfs-auto-snapshot

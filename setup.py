@@ -8,6 +8,7 @@ CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
 version = "3.0.0b4"
 
 install_requires = [
+    'ansible;python_version>="3.10"',
     'backports.lzma',
     'PyYAML',
     'jinja2',
@@ -38,6 +39,7 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'Topic :: System :: Installation/Setup',
         'Topic :: System :: Systems Administration',
     ],

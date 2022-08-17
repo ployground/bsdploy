@@ -233,7 +233,9 @@ Like with the jailhost, we could assign roles to our demo jail, but another way 
     - hosts: jailhost-demo_jail
       tasks:
         - name: install nginx
-          pkgng: name=nginx state=present
+          pkgng:
+            name: "nginx"
+            state: "present"
         - name: Setup nginx to start immediately and on boot
           service: name=nginx enabled=yes state=started
 
