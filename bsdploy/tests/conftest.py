@@ -18,7 +18,7 @@ def default_mounts():
         '/dev/md0 on / (ufs, local, read-only)',
         'devfs on /dev (devfs, local, multilabel)',
         'tmpfs on /rw (tmpfs, local)',
-        'devfs on /rw/dev (devfs, local, multilabel)'])
+        'devfs on /mnt/dev (devfs, local, multilabel)'])
 
 
 @pytest.fixture
