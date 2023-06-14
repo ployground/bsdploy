@@ -90,16 +90,18 @@
 
 - name: Set data zpool options
   zfs:
-    name="{{ ploy_bootstrap_data_pool_name }}"
-    state=present
-    atime=off
-    checksum=fletcher4
+    name: "{{ ploy_bootstrap_data_pool_name }}"
+    state: present
+    extra_zfs_properties:
+      atime: off
+      checksum: fletcher4
 
 - name: Jails ZFS file system
   zfs:
-    name="{{ ploy_jails_zfs_root }}"
-    state=present
-    mountpoint=/usr/jails
+    name: "{{ ploy_jails_zfs_root }}"
+    state: present
+    extra_zfs_properties:
+      mountpoint: /usr/jails
 
 - name: Initialize ezjail (using http proxy)
   command: "ezjail-admin install -h {{ ploy_ezjail_install_host }} -r {{ ploy_ezjail_install_release|default(ansible_distribution_release) }} creates=/usr/jails/basejail"
